@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python in Linux: Beginner's Interactive Handbook</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4)); }
+      50% { filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.6)); }
+    }
+    .python-badge {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(56, 189, 248, 0.15);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-[#0a0f1d] text-slate-200 antialiased font-sans selection:bg-yellow-500/30 selection:text-yellow-200">
+
+  <!-- Top Sticky Navigation -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-yellow-500 p-0.5 shadow-lg python-badge">
+          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center font-mono font-bold text-lg text-yellow-400">
+            Py
+          </div>
+        </div>
+        <div>
+          <span class="text-lg font-bold bg-gradient-to-r from-sky-400 via-cyan-200 to-yellow-300 bg-clip-text text-transparent">
+            Python & Linux Quickstart
+          </span>
+          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-950 text-sky-400 border border-sky-800">
+            Beginner Friendly
+          </span>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-5 text-sm text-slate-300">
+        <a href="#linux-files" class="hover:text-yellow-400 transition-colors">1. Linux Files</a>
+        <a href="#printing-math" class="hover:text-yellow-400 transition-colors">2. Print & Math</a>
+        <a href="#data-types" class="hover:text-yellow-400 transition-colors">3. Data Types</a>
+        <a href="#user-input" class="hover:text-yellow-400 transition-colors">4. User Input</a>
+        <a href="#comparisons" class="hover:text-yellow-400 transition-colors">5. Operators</a>
+        <a href="#complete-app" class="px-3 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-medium transition-all">Live Project</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="relative overflow-hidden py-14 sm:py-20 border-b border-slate-800">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(56,189,248,0.15),rgba(250,204,21,0.08),rgba(0,0,0,0))]"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-sky-400 mb-5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Zero-Setup Interactive Tutorial
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Learn Python Fundamentals on <span class="bg-gradient-to-r from-sky-400 to-yellow-400 bg-clip-text text-transparent">Linux OS</span>
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+        From opening your first terminal and editing with <code class="text-yellow-300 bg-slate-800 px-1.5 py-0.5 rounded">nano</code>, to variables, arithmetic, user inputs, and condition checks.
+      </p>
+
+      <!-- Quick Summary Cards -->
+      <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="glass-card rounded-xl p-3 text-center">
+          <div class="text-xl font-bold text-sky-400">Terminal</div>
+          <div class="text-xs text-slate-400 mt-0.5">nano & python3</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center">
+          <div class="text-xl font-bold text-emerald-400">Math</div>
+          <div class="text-xs text-slate-400 mt-0.5">7 Core Operators</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center">
+          <div class="text-xl font-bold text-yellow-400">4 Types</div>
+          <div class="text-xs text-slate-400 mt-0.5">int, float, str, bool</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center">
+          <div class="text-xl font-bold text-purple-400">Interactive</div>
+          <div class="text-xs text-slate-400 mt-0.5">Live Playground</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+    <!-- 1. CREATING AND RUNNING PYTHON IN LINUX -->
+    <section id="linux-files" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm border border-sky-500/40">1</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Creating &amp; Running a Python File in Linux</h2>
+          <p class="text-xs text-slate-400">Use the Linux command line and the built-in nano text editor</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Step 1 & 2 Card -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+              <h3 class="text-base font-semibold text-white">Step 1: Open Terminal &amp; Create File</h3>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              In Linux, you don't need heavyweight IDEs to get started. Open your terminal emulator and create a new Python script using the <code class="text-yellow-300 font-mono">nano</code> editor:
+            </p>
+
+            <!-- Terminal Mockup 1 -->
+            <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md">
+              <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex space-x-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-400">bash - terminal</span>
+                <button onclick="copyToClipboard('nano script.py', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+              </div>
+              <div class="p-4 font-mono text-xs text-slate-200">
+                <span class="text-emerald-400">user@linux:~$</span> nano script.py
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <h4 class="text-xs font-semibold text-slate-300 mb-2">Write your Python code inside:</h4>
+              <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+                <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                  <span class="text-[11px] font-mono text-slate-400">GNU nano - script.py</span>
+                  <button onclick="copyToClipboard('print(\"Hello from Linux!\")', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+                </div>
+                <div class="p-4 font-mono text-xs text-yellow-300">
+                  <span class="text-sky-400">print</span>(<span class="text-emerald-300">"Hello from Linux!"</span>)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 & 4 Card -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h3 class="text-base font-semibold text-white">Step 2: Save, Exit &amp; Execute</h3>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Nano provides keyboard shortcuts displayed at the bottom of the screen:
+            </p>
+
+            <!-- Keyboard shortcut guide -->
+            <div class="space-y-3 mb-5">
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="text-xs text-slate-300 font-medium">1. Save (WriteOut):</div>
+                <div class="flex items-center gap-1">
+                  <kbd class="px-2 py-1 text-[11px] font-mono bg-slate-800 text-yellow-300 rounded border border-slate-700 shadow-sm">Ctrl + O</kbd>
+                  <span class="text-xs text-slate-400 mx-1">&rarr;</span>
+                  <kbd class="px-2 py-1 text-[11px] font-mono bg-slate-800 text-yellow-300 rounded border border-slate-700 shadow-sm">Enter</kbd>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="text-xs text-slate-300 font-medium">2. Exit nano:</div>
+                <kbd class="px-2 py-1 text-[11px] font-mono bg-slate-800 text-yellow-300 rounded border border-slate-700 shadow-sm">Ctrl + X</kbd>
+              </div>
+            </div>
+
+            <!-- Terminal Run command -->
+            <h4 class="text-xs font-semibold text-slate-300 mb-2">Run with the python3 interpreter:</h4>
+            <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md">
+              <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <span class="text-[11px] font-mono text-slate-400">Terminal Execution</span>
+                <button onclick="copyToClipboard('python3 script.py', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+              </div>
+              <div class="p-4 font-mono text-xs space-y-1">
+                <div><span class="text-emerald-400">user@linux:~$</span> python3 script.py</div>
+                <div class="text-slate-100 font-bold">Hello from Linux!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PRINTING AND MATH CALCULATIONS -->
+    <section id="printing-math" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/40">2</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Printing &amp; Math Calculations</h2>
+          <p class="text-xs text-slate-400">The print() function and Python's 7 arithmetic operators</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Explanation & Code (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-card rounded-2xl p-6">
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              The <code class="text-sky-400 font-mono">print()</code> function displays whatever you put inside the parentheses. You can print plain text, direct arithmetic calculations, or combine both by separating items with commas.
+            </p>
+
+            <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+              <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <span class="text-[11px] font-mono text-slate-400">math_demo.py</span>
+                <button onclick="copyCode('code-math', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy Code</button>
+              </div>
+              <pre id="code-math" class="p-4 font-mono text-xs text-slate-200 overflow-x-auto leading-relaxed"><span class="text-slate-500"># Basic printing</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Hello, World!"</span>)
+
+<span class="text-slate-500"># Math operators</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Addition (10 + 5):"</span>, <span class="text-amber-400">10 + 5</span>)             <span class="text-slate-500"># +  adds</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Subtraction (10 - 5):"</span>, <span class="text-amber-400">10 - 5</span>)          <span class="text-slate-500"># -  subtracts</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Multiplication (10 * 5):"</span>, <span class="text-amber-400">10 * 5</span>)       <span class="text-slate-500"># *  multiplies</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Division (10 / 3):"</span>, <span class="text-amber-400">10 / 3</span>)             <span class="text-slate-500"># /  divides (always returns float)</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Floor Division (10 // 3):"</span>, <span class="text-amber-400">10 // 3</span>)     <span class="text-slate-500"># // divides and drops decimal</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Modulus / Remainder (10 % 3):"</span>, <span class="text-amber-400">10 % 3</span>)  <span class="text-slate-500"># %  gives only remainder</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Exponent / Power (2 ** 3):"</span>, <span class="text-amber-400">2 ** 3</span>)     <span class="text-slate-500"># ** raises to the power (2³)</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Output & Interactive Calculator (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Terminal Output -->
+          <div class="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 p-5 shadow-lg">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+              <span class="text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Expected Terminal Output
+              </span>
+              <span class="text-[10px] text-slate-500 uppercase">stdout</span>
+            </div>
+            <pre class="font-mono text-xs text-slate-300 space-y-1 overflow-x-auto leading-relaxed">Hello, World!
+Addition (10 + 5): 15
+Subtraction (10 - 5): 5
+Multiplication (10 * 5): 50
+Division (10 / 3): 3.3333333333333335
+Floor Division (10 // 3): 3
+Modulus / Remainder (10 % 3): 1
+Exponent / Power (2 ** 3): 8</pre>
+          </div>
+
+          <!-- Interactive Mini Math Tester -->
+          <div class="glass-card rounded-2xl p-5">
+            <h4 class="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <span>⚡</span> Try An Operator Live
+            </h4>
+            <div class="flex items-center gap-2 mb-3">
+              <input type="number" id="math-num1" value="10" class="w-16 px-2.5 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 text-center font-mono">
+              <select id="math-op" class="px-2 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 font-mono text-yellow-300 font-bold">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+                <option value="//">// (floor)</option>
+                <option value="%">% (modulus)</option>
+                <option value="**">** (power)</option>
+              </select>
+              <input type="number" id="math-num2" value="3" class="w-16 px-2.5 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 text-center font-mono">
+              <button onclick="calculateLiveMath()" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-colors">Compute</button>
+            </div>
+            <div id="math-result" class="p-2.5 rounded-lg bg-slate-950 font-mono text-xs text-emerald-400 border border-slate-800">
+              Result: 10 + 3 = 13
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. VARIABLES, DATA TYPES & TYPE() -->
+    <section id="data-types" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold text-sm border border-yellow-500/40">3</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Variables, Data Types &amp; type()</h2>
+          <p class="text-xs text-slate-400">How Python stores data in memory and automatically figures out types</p>
+        </div>
+      </div>
+
+      <!-- Data Type Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card rounded-xl p-4 border-l-4 border-l-sky-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-mono font-bold text-sky-400">int</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300">Integer</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-2">Whole numbers without decimals (positive or negative).</p>
+          <div class="text-[11px] font-mono text-slate-200 bg-slate-950 p-2 rounded">age = 25</div>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 border-l-4 border-l-emerald-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-mono font-bold text-emerald-400">float</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300">Floating Point</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-2">Numbers containing decimal points for precision.</p>
+          <div class="text-[11px] font-mono text-slate-200 bg-slate-950 p-2 rounded">price = 19.99</div>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 border-l-4 border-l-yellow-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-mono font-bold text-yellow-400">str</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-950 text-yellow-300">String</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-2">Text sequences wrapped in double or single quotes.</p>
+          <div class="text-[11px] font-mono text-slate-200 bg-slate-950 p-2 rounded">name = "Alice"</div>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 border-l-4 border-l-purple-400">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-mono font-bold text-purple-400">bool</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300">Boolean</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-2">Binary truth conditions: exactly True or False.</p>
+          <div class="text-[11px] font-mono text-slate-200 bg-slate-950 p-2 rounded">is_online = True</div>
+        </div>
+      </div>
+
+      <!-- Code & Output side by side -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
+            <span class="text-xs font-mono text-slate-400">types_demo.py</span>
+            <button onclick="copyCode('code-types', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy Code</button>
+          </div>
+          <pre id="code-types" class="font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto"><span class="text-sky-300">city</span> = <span class="text-emerald-300">"Bengaluru"</span>      <span class="text-slate-500"># String</span>
+<span class="text-sky-300">item_count</span> = <span class="text-amber-400">12</span>         <span class="text-slate-500"># Integer</span>
+<span class="text-sky-300">temperature</span> = <span class="text-amber-400">28.5</span>      <span class="text-slate-500"># Float</span>
+<span class="text-sky-300">is_raining</span> = <span class="text-purple-400">False</span>      <span class="text-slate-500"># Boolean</span>
+
+<span class="text-slate-500"># Printing variables directly</span>
+<span class="text-sky-400">print</span>(city)
+<span class="text-sky-400">print</span>(item_count)
+
+<span class="text-slate-500"># Checking types using type()</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"city is:"</span>, <span class="text-sky-400">type</span>(city))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"item_count is:"</span>, <span class="text-sky-400">type</span>(item_count))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"temperature is:"</span>, <span class="text-sky-400">type</span>(temperature))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"is_raining is:"</span>, <span class="text-sky-400">type</span>(is_raining))</pre>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+              <span class="text-xs font-mono font-bold text-yellow-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-yellow-400"></span> Output from Terminal
+              </span>
+              <span class="text-[10px] text-slate-500">python3 output</span>
+            </div>
+            <pre class="font-mono text-xs text-slate-300 leading-relaxed overflow-x-auto">Bengaluru
+12
+city is: &lt;class 'str'&gt;
+item_count is: &lt;class 'int'&gt;
+temperature is: &lt;class 'float'&gt;
+is_raining is: &lt;class 'bool'&gt;</pre>
+          </div>
+
+          <div class="mt-4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
+            <span class="text-amber-400 font-bold">💡 Dynamic Typing:</span> In Python, you do not write <code class="text-slate-300 font-mono">int age = 25</code> like in Java/C++. Python checks the value on the right side of <code class="text-slate-300 font-mono">=</code> and assigns the data type automatically!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. GETTING USER INPUT (input()) -->
+    <section id="user-input" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/40">4</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Getting User Input: input()</h2>
+          <p class="text-xs text-slate-400">Pausing script execution to accept keyboard input from the user</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <!-- Callout Alert -->
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+          <span class="text-xl">⚠️</span>
+          <div>
+            <div class="text-xs font-bold text-amber-300 uppercase tracking-wide">Crucial Beginner Rule</div>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+              The <code class="text-yellow-300 font-mono font-bold">input()</code> function <strong class="text-white">always</strong> reads whatever the user types as a <strong class="text-yellow-300">string (text)</strong>. If you want to do arithmetic with numbers entered by the user, you must convert them using <code class="text-sky-400 font-mono">int()</code> or <code class="text-sky-400 font-mono">float()</code>!
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Code -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">input_demo.py</span>
+              <button onclick="copyCode('code-input', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy Code</button>
+            </div>
+            <pre id="code-input" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># 1. Text input (kept as string)</span>
+<span class="text-sky-300">user_name</span> = <span class="text-sky-400">input</span>(<span class="text-emerald-300">"Enter your name: "</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Hello,"</span>, user_name)
+
+<span class="text-slate-500"># 2. Number input (converted using int)</span>
+<span class="text-sky-300">num1</span> = <span class="text-sky-400">int</span>(<span class="text-sky-400">input</span>(<span class="text-emerald-300">"Enter first number: "</span>))
+<span class="text-sky-300">num2</span> = <span class="text-sky-400">int</span>(<span class="text-sky-400">input</span>(<span class="text-emerald-300">"Enter second number: "</span>))
+
+<span class="text-sky-300">total</span> = num1 + num2
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"The sum is:"</span>, total)</pre>
+          </div>
+
+          <!-- Interactive Simulator -->
+          <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span>💻</span> Interactive Input Simulator
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="text-[11px] text-slate-400 block mb-1">Enter your name:</label>
+                  <input type="text" id="sim-name" value="Sangeetha" class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">First Number:</label>
+                    <input type="number" id="sim-num1" value="25" class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+                  </div>
+                  <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Second Number:</label>
+                    <input type="number" id="sim-num2" value="35" class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800">
+              <button onclick="runInputSimulator()" class="w-full py-2 rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold text-xs shadow-md hover:from-sky-400 hover:to-blue-500 transition-all">
+                Run Simulation
+              </button>
+              <div id="sim-output" class="mt-3 p-3 rounded-lg bg-slate-900 font-mono text-xs text-emerald-400 border border-slate-800">
+                Hello, Sangeetha<br>The sum is: 60
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. COMPARISON OPERATORS -->
+    <section id="comparisons" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm border border-blue-500/40">5</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Comparison Operators</h2>
+          <p class="text-xs text-slate-400">Evaluate conditions and always return True or False (Booleans)</p>
+        </div>
+      </div>
+
+      <!-- Comparison Operators Table -->
+      <div class="glass-card rounded-2xl overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-300 border-b border-slate-800 font-mono">
+                <th class="p-3.5 font-bold text-yellow-400">Operator</th>
+                <th class="p-3.5 font-bold">Meaning</th>
+                <th class="p-3.5 font-bold">Example Code</th>
+                <th class="p-3.5 font-bold text-right">Result</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">&gt;</td>
+                <td class="p-3.5 font-sans">Greater than</td>
+                <td class="p-3.5 text-slate-200">10 &gt; 5</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800">True</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">&lt;</td>
+                <td class="p-3.5 font-sans">Less than</td>
+                <td class="p-3.5 text-slate-200">10 &lt; 5</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-red-950 text-red-400 font-bold border border-red-800">False</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">&gt;=</td>
+                <td class="p-3.5 font-sans">Greater than or equal to</td>
+                <td class="p-3.5 text-slate-200">10 &gt;= 10</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800">True</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">&lt;=</td>
+                <td class="p-3.5 font-sans">Less than or equal to</td>
+                <td class="p-3.5 text-slate-200">7 &lt;= 6</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-red-950 text-red-400 font-bold border border-red-800">False</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">==</td>
+                <td class="p-3.5 font-sans">Equal to (checks equality)</td>
+                <td class="p-3.5 text-slate-200">5 == 5</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800">True</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-bold text-sky-400 text-sm">!=</td>
+                <td class="p-3.5 font-sans">Not equal to (checks if values differ)</td>
+                <td class="p-3.5 text-slate-200">5 != 3</td>
+                <td class="p-3.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800">True</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Code Example -->
+      <div class="glass-card rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
+          <span class="text-xs font-mono text-slate-400">comparison_demo.py</span>
+          <button onclick="copyCode('code-comparison', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy Code</button>
+        </div>
+        <pre id="code-comparison" class="font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto"><span class="text-sky-300">x</span> = <span class="text-amber-400">15</span>
+<span class="text-sky-300">y</span> = <span class="text-amber-400">20</span>
+
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"x &gt; y :"</span>, x &gt; y)    <span class="text-slate-500"># Is 15 greater than 20? -&gt; False</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"x &lt; y :"</span>, x &lt; y)    <span class="text-slate-500"># Is 15 less than 20? -&gt; True</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"x &gt;= 15:"</span>, x &gt;= <span class="text-amber-400">15</span>) <span class="text-slate-500"># Is 15 greater than or equal to 15? -&gt; True</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"y &lt;= 10:"</span>, y &lt;= <span class="text-amber-400">10</span>) <span class="text-slate-500"># Is 20 less than or equal to 10? -&gt; False</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"x == y :"</span>, x == y)  <span class="text-slate-500"># Is 15 equal to 20? -&gt; False</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"x != y :"</span>, x != y)  <span class="text-slate-500"># Is 15 not equal to 20? -&gt; True</span></pre>
+      </div>
+    </section>
+
+    <!-- 6. COMPLETE REAL-WORLD EXAMPLE -->
+    <section id="complete-app" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold text-sm border border-yellow-500/40">★</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">A Complete Integrated Example: app.py</h2>
+          <p class="text-xs text-slate-400">Bringing user input, arithmetic, type conversion, and comparison together</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Save the following code as <code class="text-yellow-300 font-mono font-semibold">app.py</code> in Linux to see how all these pieces seamlessly connect into a real program:
+        </p>
+
+        <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+          <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-yellow-400">app.py</span>
+            <button onclick="copyCode('code-full-app', this)" class="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors">Copy Complete Code</button>
+          </div>
+          <pre id="code-full-app" class="p-5 font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># Ask for user information</span>
+<span class="text-sky-300">name</span> = <span class="text-sky-400">input</span>(<span class="text-emerald-300">"Enter your name: "</span>)
+<span class="text-sky-300">birth_year</span> = <span class="text-sky-400">int</span>(<span class="text-sky-400">input</span>(<span class="text-emerald-300">"Enter your birth year: "</span>))
+
+<span class="text-slate-500"># Calculation</span>
+<span class="text-sky-300">current_year</span> = <span class="text-amber-400">2026</span>
+<span class="text-sky-300">age</span> = current_year - birth_year
+
+<span class="text-slate-500"># Comparison check</span>
+<span class="text-sky-300">is_adult</span> = age &gt;= <span class="text-amber-400">18</span>
+
+<span class="text-slate-500"># Display results</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"\n--- Summary ---"</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Name:"</span>, name, <span class="text-emerald-300">"| Data Type:"</span>, <span class="text-sky-400">type</span>(name))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Age:"</span>, age, <span class="text-emerald-300">"| Data Type:"</span>, <span class="text-sky-400">type</span>(age))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Eligible adult (age &gt;= 18):"</span>, is_adult)</pre>
+        </div>
+
+        <!-- How to run it in terminal -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Run it in your Linux Terminal:</h4>
+          <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-300">
+            <span class="text-emerald-400 font-bold">user@linux:~$</span> python3 app.py
+          </div>
+        </div>
+
+        <!-- Interactive Browser Runner -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-sky-500/30">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Live In-Browser Simulation
+            </h4>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800 font-mono">Run app.py</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="text-[11px] text-slate-400 block mb-1">Enter your name:</label>
+              <input type="text" id="live-name" value="Alex" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-400 block mb-1">Enter your birth year:</label>
+              <input type="number" id="live-year" value="2002" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+            </div>
+          </div>
+
+          <button onclick="runLiveApp()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-slate-950 font-bold text-xs tracking-wider uppercase transition-all shadow-lg shadow-yellow-500/20">
+            Execute Program
+          </button>
+
+          <!-- Output Box -->
+          <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-400" id="live-app-output">
+            --- Summary ---<br>
+            Name: Alex | Data Type: &lt;class 'str'&gt;<br>
+            Age: 24 | Data Type: &lt;class 'int'&gt;<br>
+            Eligible adult (age &gt;= 18): True
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-8 border-t border-slate-800 text-center text-xs text-slate-500">
+    <p>Python on Linux Beginner's Guide &bull; Designed for rapid learning and interactive experimentation</p>
+  </footer>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1500);
+      });
+    }
+
+    function copyCode(elementId, btn) {
+      const code = document.getElementById(elementId).innerText;
+      copyToClipboard(code, btn);
+    }
+
+    function calculateLiveMath() {
+      const n1 = parseFloat(document.getElementById('math-num1').value);
+      const n2 = parseFloat(document.getElementById('math-num2').value);
+      const op = document.getElementById('math-op').value;
+      let res;
+      let expr = `${n1} ${op} ${n2}`;
+
+      switch (op) {
+        case '+': res = n1 + n2; break;
+        case '-': res = n1 - n2; break;
+        case '*': res = n1 * n2; break;
+        case '/': res = n2 !== 0 ? (n1 / n2) : 'Error (division by zero)'; break;
+        case '//': res = n2 !== 0 ? Math.floor(n1 / n2) : 'Error'; break;
+        case '%': res = n2 !== 0 ? (n1 % n2) : 'Error'; break;
+        case '**': res = Math.pow(n1, n2); break;
+      }
+      document.getElementById('math-result').innerText = `Result: ${expr} = ${res}`;
+    }
+
+    function runInputSimulator() {
+      const name = document.getElementById('sim-name').value || 'User';
+      const n1 = parseInt(document.getElementById('sim-num1').value) || 0;
+      const n2 = parseInt(document.getElementById('sim-num2').value) || 0;
+      const total = n1 + n2;
+
+      document.getElementById('sim-output').innerHTML = `Hello, ${name}<br>The sum is: ${total}`;
+    }
+
+    function runLiveApp() {
+      const name = document.getElementById('live-name').value || 'Anonymous';
+      const birthYear = parseInt(document.getElementById('live-year').value) || 2000;
+      const currentYear = 2026;
+      const age = currentYear - birthYear;
+      const isAdult = age >= 18;
+
+      const out = document.getElementById('live-app-output');
+      out.innerHTML = `--- Summary ---<br>` +
+                      `Name: ${name} | Data Type: &lt;class 'str'&gt;<br>` +
+                      `Age: ${age} | Data Type: &lt;class 'int'&gt;<br>` +
+                      `Eligible adult (age &gt;= 18): ${isAdult ? 'True' : 'False'}`;
+    }
+  </script>
+</body>
+</html>

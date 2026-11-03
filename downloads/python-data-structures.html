@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Collections & Data Structures: Beginner Visual Guide</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4)); }
+      50% { transform: scale(1.03); filter: drop-shadow(0 0 14px rgba(234, 179, 8, 0.5)); }
+    }
+    .badge-glow {
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(56, 189, 248, 0.15);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-[#090d1a] text-slate-200 antialiased font-sans selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- Top Sticky Navigation -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 via-indigo-600 to-amber-500 p-0.5 shadow-lg badge-glow">
+          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center font-mono font-bold text-lg text-amber-400">
+            { }
+          </div>
+        </div>
+        <div>
+          <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 via-sky-200 to-amber-300 bg-clip-text text-transparent">
+            Python Data Structures
+          </span>
+          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-950 text-sky-400 border border-sky-800">
+            Collections Guide
+          </span>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-5 text-sm text-slate-300">
+        <a href="#simple-vars" class="hover:text-amber-400 transition-colors">1. Simple Vars</a>
+        <a href="#lists" class="hover:text-amber-400 transition-colors">2. Lists [ ]</a>
+        <a href="#tuples" class="hover:text-amber-400 transition-colors">3. Tuples ( )</a>
+        <a href="#dicts" class="hover:text-amber-400 transition-colors">4. Dicts {k:v}</a>
+        <a href="#sets" class="hover:text-amber-400 transition-colors">5. Sets { }</a>
+        <a href="#comparison-matrix" class="hover:text-amber-400 transition-colors">Comparison</a>
+        <a href="#complete-app" class="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-medium transition-all">Classroom App</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden py-14 sm:py-20 border-b border-slate-800">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(56,189,248,0.15),rgba(245,158,11,0.08),rgba(0,0,0,0))]"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-amber-400 mb-5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Single Values vs. Collections Explained
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Python Variables &amp; <span class="bg-gradient-to-r from-sky-400 via-indigo-300 to-amber-400 bg-clip-text text-transparent">Data Collections</span>
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+        Learn how a variable can store either a single data point or an entire organized container of information: <strong class="text-sky-300">Lists</strong>, <strong class="text-emerald-300">Tuples</strong>, <strong class="text-amber-300">Dictionaries</strong>, and <strong class="text-purple-300">Sets</strong>.
+      </p>
+
+      <!-- 5 Containers Summary Grid -->
+      <div class="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-4xl mx-auto">
+        <div class="glass-card rounded-xl p-3 text-center border-t-2 border-t-slate-400">
+          <div class="text-base font-bold text-slate-200">Simple</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">1 Slot (Overwrite)</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center border-t-2 border-t-sky-400">
+          <div class="text-base font-bold text-sky-400">List [ ]</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Ordered &amp; Mutable</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center border-t-2 border-t-emerald-400">
+          <div class="text-base font-bold text-emerald-400">Tuple ( )</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Locked &amp; Permanent</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center border-t-2 border-t-amber-400">
+          <div class="text-base font-bold text-amber-400">Dict { : }</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Key-Value Pairs</div>
+        </div>
+        <div class="glass-card rounded-xl p-3 text-center border-t-2 border-t-purple-400">
+          <div class="text-base font-bold text-purple-400">Set { }</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Unique &amp; Unordered</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+    <!-- 1. SIMPLE VARIABLES (SINGLE-VALUE CONTAINERS) -->
+    <section id="simple-vars" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-slate-700/50 text-slate-200 flex items-center justify-center font-bold text-sm border border-slate-600">1</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Simple Variables (Single-Value Containers)</h2>
+          <p class="text-xs text-slate-400">Holds exactly one piece of information at a time; new assignments overwrite the old value</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Types description -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-semibold text-white mb-3 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+              The 4 Core Primitive Types
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              A simple variable holds just one value. If you put a new value inside, the previous data is discarded:
+            </p>
+
+            <div class="space-y-2.5 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div><strong class="text-sky-400 font-mono">int</strong> <span class="text-slate-400">(Integer): Whole numbers</span></div>
+                <code class="text-slate-300 font-mono">count = 5</code>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div><strong class="text-emerald-400 font-mono">float</strong> <span class="text-slate-400">(Decimal numbers)</span></div>
+                <code class="text-slate-300 font-mono">price = 12.50</code>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div><strong class="text-amber-400 font-mono">str</strong> <span class="text-slate-400">(Words / text)</span></div>
+                <code class="text-slate-300 font-mono">name = "Ravi"</code>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div><strong class="text-purple-400 font-mono">bool</strong> <span class="text-slate-400">(True or False)</span></div>
+                <code class="text-slate-300 font-mono">is_logged_in = True</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-slate-300">
+            <strong class="text-amber-400">📦 Overwriting Rule:</strong> When you execute <code class="text-sky-300 font-mono">age = 17</code> after <code class="text-sky-300 font-mono">age = 16</code>, memory slot <code class="text-sky-300 font-mono">age</code> replaces 16 with 17 permanently!
+          </div>
+        </div>
+
+        <!-- Code snippet & output -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">simple_vars.py</span>
+              <button onclick="copyCode('code-simple', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+            </div>
+            <pre id="code-simple" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># Simple variables holding one value each</span>
+<span class="text-sky-300">student_name</span> = <span class="text-emerald-300">"Priya"</span>
+<span class="text-sky-300">age</span> = <span class="text-amber-400">16</span>
+<span class="text-sky-300">height_meters</span> = <span class="text-amber-400">1.65</span>
+<span class="text-sky-300">has_passed</span> = <span class="text-purple-400">True</span>
+
+<span class="text-sky-400">print</span>(student_name)
+<span class="text-sky-400">print</span>(age)
+<span class="text-sky-400">print</span>(height_meters)
+<span class="text-sky-400">print</span>(has_passed)
+
+<span class="text-slate-500"># Overwriting a simple variable</span>
+<span class="text-sky-300">age</span> = <span class="text-amber-400">17</span>  <span class="text-slate-500"># The old value (16) is replaced by 17</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Updated age:"</span>, age)</pre>
+          </div>
+
+          <!-- Output -->
+          <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Terminal Output:</div>
+            Priya<br>16<br>1.65<br>True<br>Updated age: 17
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. LISTS: ORDERED AND CHANGEABLE -->
+    <section id="lists" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-sm border border-sky-500/40">2</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Lists (list): Ordered &amp; Changeable</h2>
+          <p class="text-xs text-slate-400">Like a notebook where items are recorded sequentially in numbered rows</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <!-- Visual List Index Diagram -->
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-3">
+            Index Structure: Zero-Based &amp; Negative Indexing
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center font-mono">
+            <!-- Item 1 -->
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-sky-500/40">
+              <div class="text-[10px] text-sky-400 font-bold mb-1">index [0]</div>
+              <div class="text-sm font-bold text-white">"Apple"</div>
+              <div class="text-[10px] text-slate-500 mt-1">index [-4]</div>
+            </div>
+            <!-- Item 2 -->
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-sky-500/40">
+              <div class="text-[10px] text-sky-400 font-bold mb-1">index [1]</div>
+              <div class="text-sm font-bold text-white">"Banana"</div>
+              <div class="text-[10px] text-slate-500 mt-1">index [-3]</div>
+            </div>
+            <!-- Item 3 -->
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-sky-500/40">
+              <div class="text-[10px] text-sky-400 font-bold mb-1">index [2]</div>
+              <div class="text-sm font-bold text-white">"Mango"</div>
+              <div class="text-[10px] text-slate-500 mt-1">index [-2]</div>
+            </div>
+            <!-- Item 4 -->
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-sky-500/40">
+              <div class="text-[10px] text-sky-400 font-bold mb-1">index [3]</div>
+              <div class="text-sm font-bold text-white">"Orange"</div>
+              <div class="text-[10px] text-slate-500 mt-1">index [-1]</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Code -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">lists_demo.py</span>
+              <button onclick="copyCode('code-list', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+            </div>
+            <pre id="code-list" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># Creating a list of fruits</span>
+<span class="text-sky-300">fruits</span> = [<span class="text-emerald-300">"Apple"</span>, <span class="text-emerald-300">"Banana"</span>, <span class="text-emerald-300">"Mango"</span>, <span class="text-emerald-300">"Orange"</span>]
+
+<span class="text-slate-500"># 1. Reading items using index numbers (starts at 0)</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"First fruit:"</span>, fruits[<span class="text-amber-400">0</span>])   <span class="text-slate-500"># Apple</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Second fruit:"</span>, fruits[<span class="text-amber-400">1</span>])  <span class="text-slate-500"># Banana</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Last fruit:"</span>, fruits[<span class="text-amber-400">-1</span>])   <span class="text-slate-500"># Orange (from back)</span>
+
+<span class="text-slate-500"># 2. Changing an item (Mutable)</span>
+fruits[<span class="text-amber-400">1</span>] = <span class="text-emerald-300">"Blueberry"</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"After updating:"</span>, fruits)
+
+<span class="text-slate-500"># 3. Adding a new item with .append()</span>
+fruits.<span class="text-sky-400">append</span>(<span class="text-emerald-300">"Pineapple"</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"After append:"</span>, fruits)
+
+<span class="text-slate-500"># 4. Removing an item with .remove()</span>
+fruits.<span class="text-sky-400">remove</span>(<span class="text-emerald-300">"Mango"</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"After removing Mango:"</span>, fruits)
+
+<span class="text-slate-500"># 5. Counting items with len()</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Total fruits in list:"</span>, <span class="text-sky-400">len</span>(fruits))</pre>
+          </div>
+
+          <!-- Interactive List Playground -->
+          <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span>🍎</span> Interactive List Mutator
+              </div>
+              <p class="text-xs text-slate-400 mb-3">Add or remove items live to observe mutability in action:</p>
+
+              <div class="flex gap-2 mb-3">
+                <input type="text" id="list-input-item" placeholder="e.g. Kiwi" class="flex-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-white">
+                <button onclick="appendFruitLive()" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-colors">.append()</button>
+                <button onclick="popFruitLive()" class="px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 text-xs transition-colors">.pop()</button>
+              </div>
+
+              <div class="text-[11px] text-slate-400 mb-1">Live Fruit Array in Memory:</div>
+              <div id="live-fruits-display" class="p-3 rounded-lg bg-slate-900 font-mono text-xs text-emerald-400 border border-slate-800 min-h-[44px]">
+                ['Apple', 'Blueberry', 'Orange', 'Pineapple']
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+              <span class="text-sky-400 font-bold">Key takeaway:</span> Lists preserve exact insertion order and permit repeated items anytime.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TUPLES: ORDERED BUT UNCHANGEABLE -->
+    <section id="tuples" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/40">3</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Tuples (tuple): Ordered but Unchangeable</h2>
+          <p class="text-xs text-slate-400">Permanent data sealed in an envelope with permanent marker</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Concepts Card -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                🔒 Immutable (Locked)
+              </span>
+              <span class="text-xs font-mono text-slate-400">Round Brackets ( )</span>
+            </div>
+            <h3 class="text-base font-semibold text-white mb-2">Why Lock Data in a Tuple?</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              A Tuple is identical to a list in how you read it with zero-based index numbers <code class="text-sky-300 font-mono">[0]</code>, but once created, it is <strong class="text-emerald-400">permanently frozen</strong>. You cannot add, remove, or modify items.
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+                <span class="text-emerald-400">📍</span>
+                <span class="text-slate-300"><strong>GPS Coordinates:</strong> Latitude and longitude should never drift.</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+                <span class="text-emerald-400">🗓️</span>
+                <span class="text-slate-300"><strong>Days of the Week:</strong> Mon-Sun never changes in structure.</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+                <span class="text-emerald-400">🖥️</span>
+                <span class="text-slate-300"><strong>Screen Resolutions:</strong> (1920, 1080) fixed dimensions.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-[11px] text-red-300">
+            <strong>❌ TypeError:</strong> Running <code class="font-mono text-red-200">location[0] = 13.0</code> throws: <br>
+            <span class="font-mono text-[10px]">TypeError: 'tuple' object does not support item assignment</span>
+          </div>
+        </div>
+
+        <!-- Code & Output -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">tuple_demo.py</span>
+              <button onclick="copyCode('code-tuple', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+            </div>
+            <pre id="code-tuple" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># GPS coordinates of a place: (Latitude, Longitude)</span>
+<span class="text-sky-300">location</span> = (<span class="text-amber-400">12.9716</span>, <span class="text-amber-400">77.5946</span>)
+
+<span class="text-slate-500"># Reading from a tuple works just like a list</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Latitude:"</span>, location[<span class="text-amber-400">0</span>])
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Longitude:"</span>, location[<span class="text-amber-400">1</span>])
+
+<span class="text-slate-500"># This would cause an ERROR because tuples cannot change:</span>
+<span class="text-slate-500"># location[0] = 13.0000</span></pre>
+          </div>
+
+          <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Terminal Output:</div>
+            Latitude: 12.9716<br>
+            Longitude: 77.5946
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DICTIONARIES: KEY-VALUE PAIRS -->
+    <section id="dicts" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/40">4</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Dictionaries (dict): Key-Value Pairs</h2>
+          <p class="text-xs text-slate-400">Like a real phonebook or ID card where descriptive labels point to values</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Code -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">dict_demo.py</span>
+              <button onclick="copyCode('code-dict', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+            </div>
+            <pre id="code-dict" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># Student record using a dictionary</span>
+<span class="text-sky-300">student</span> = {
+    <span class="text-emerald-300">"name"</span>: <span class="text-emerald-300">"Kiran"</span>,
+    <span class="text-emerald-300">"grade"</span>: <span class="text-emerald-300">"10th"</span>,
+    <span class="text-emerald-300">"marks"</span>: <span class="text-amber-400">92</span>,
+    <span class="text-emerald-300">"is_present"</span>: <span class="text-purple-400">True</span>
+}
+
+<span class="text-slate-500"># 1. Looking up values using the key name</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Student name:"</span>, student[<span class="text-emerald-300">"name"</span>])
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Marks:"</span>, student[<span class="text-emerald-300">"marks"</span>])
+
+<span class="text-slate-500"># 2. Adding a new key-value pair</span>
+student[<span class="text-emerald-300">"email"</span>] = <span class="text-emerald-300">"kiran@example.com"</span>
+
+<span class="text-slate-500"># 3. Changing an existing value</span>
+student[<span class="text-emerald-300">"marks"</span>] = <span class="text-amber-400">95</span>
+
+<span class="text-slate-500"># 4. Deleting a key-value pair with del</span>
+<span class="text-sky-400">del</span> student[<span class="text-emerald-300">"is_present"</span>]
+
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Updated student profile:"</span>, student)</pre>
+          </div>
+
+          <!-- Dictionary Explorer View -->
+          <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span>📇</span> Live Dictionary Key-Value Inspector
+              </div>
+              <p class="text-xs text-slate-400 mb-3">Instead of memorizing positions (0, 1), you access data directly by name:</p>
+
+              <!-- Key Value Table -->
+              <div class="space-y-2 font-mono text-xs">
+                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex justify-between items-center">
+                  <span class="text-amber-300">student["name"]</span>
+                  <span class="text-emerald-400">"Kiran"</span>
+                </div>
+                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex justify-between items-center">
+                  <span class="text-amber-300">student["grade"]</span>
+                  <span class="text-emerald-400">"10th"</span>
+                </div>
+                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex justify-between items-center">
+                  <span class="text-amber-300">student["marks"]</span>
+                  <span class="text-emerald-400">95 <span class="text-[10px] text-slate-500">(updated)</span></span>
+                </div>
+                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex justify-between items-center">
+                  <span class="text-amber-300">student["email"]</span>
+                  <span class="text-emerald-400">"kiran@example.com" <span class="text-[10px] text-sky-400">(new)</span></span>
+                </div>
+                <div class="p-2.5 rounded-lg bg-slate-900/40 border border-red-900/40 flex justify-between items-center opacity-60">
+                  <span class="text-slate-500 line-through">student["is_present"]</span>
+                  <span class="text-red-400 text-[10px] font-sans">Deleted via del</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+              <span class="text-amber-400 font-bold">Rule:</span> Keys must be completely unique. Reassigning to an existing key replaces its value!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SETS: UNIQUE AND UNORDERED -->
+    <section id="sets" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/40">5</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Sets (set): Unique &amp; Unordered</h2>
+          <p class="text-xs text-slate-400">A magic collection bag where duplicate items are automatically thrown away</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Concepts Card -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-950 text-purple-400 border border-purple-800">
+                ✨ Zero Duplicates Allowed
+              </span>
+              <span class="text-xs font-mono text-slate-400">Curly Brackets { }</span>
+            </div>
+            <h3 class="text-base font-semibold text-white mb-2">How Sets Behave</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              A Set stores single items separated by commas inside curly brackets (no colons). Because items have no index numbers, you cannot do <code class="text-purple-300 font-mono">colors[0]</code>.
+            </p>
+
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="font-bold text-purple-400">1. Instant De-duplication:</span> If you feed <code class="text-slate-200 font-mono">{"Red", "Blue", "Green", "Red"}</code>, Python discards the second "Red" automatically.
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="font-bold text-purple-400">2. Adding items:</span> Use <code class="text-sky-300 font-mono">.add("Yellow")</code>. Adding an already existing item does nothing!
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="font-bold text-purple-400">3. Lightning fast lookup:</span> Use <code class="text-amber-300 font-mono">"Green" in colors</code> to check membership with O(1) performance.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code & Output -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400">set_demo.py</span>
+              <button onclick="copyCode('code-set', this)" class="text-[11px] text-slate-400 hover:text-white transition-colors">Copy</button>
+            </div>
+            <pre id="code-set" class="rounded-xl p-4 font-mono text-xs bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># Notice that "Red" appears twice</span>
+<span class="text-sky-300">colors</span> = {<span class="text-emerald-300">"Red"</span>, <span class="text-emerald-300">"Blue"</span>, <span class="text-emerald-300">"Green"</span>, <span class="text-emerald-300">"Red"</span>}
+
+<span class="text-slate-500"># Python removes the duplicate automatically</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Unique colors:"</span>, colors)
+
+<span class="text-slate-500"># Adding an item</span>
+colors.<span class="text-sky-400">add</span>(<span class="text-emerald-300">"Yellow"</span>)
+
+<span class="text-slate-500"># Trying to add an existing item changes nothing</span>
+colors.<span class="text-sky-400">add</span>(<span class="text-emerald-300">"Blue"</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"After adding colors:"</span>, colors)
+
+<span class="text-slate-500"># Checking if an item is inside using 'in'</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Is Green in the set?"</span>, <span class="text-emerald-300">"Green"</span> <span class="text-sky-400">in</span> colors)</pre>
+          </div>
+
+          <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Terminal Output:</div>
+            Unique colors: {'Red', 'Blue', 'Green'}<br>
+            After adding colors: {'Red', 'Blue', 'Green', 'Yellow'}<br>
+            Is Green in the set? True
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARISON MATRIX -->
+    <section id="comparison-matrix" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-500/40">⚖️</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Comparison Matrix: Which One To Choose?</h2>
+          <p class="text-xs text-slate-400">At-a-glance cheat sheet to pick the exact right data structure every time</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl overflow-hidden mb-4">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse font-sans">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-300 border-b border-slate-800 font-mono">
+                <th class="p-3.5 font-bold text-amber-400">Type</th>
+                <th class="p-3.5 font-bold">Brackets</th>
+                <th class="p-3.5 font-bold">Ordered?</th>
+                <th class="p-3.5 font-bold">Can Change? (Mutable)</th>
+                <th class="p-3.5 font-bold">Duplicates?</th>
+                <th class="p-3.5 font-bold">Best Used For</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-mono font-bold text-sky-400">List</td>
+                <td class="p-3.5 font-mono text-white">[ ]</td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span> (Mutable)</td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5 text-slate-400">Ordered collections (shopping carts, task lists)</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-mono font-bold text-emerald-400">Tuple</td>
+                <td class="p-3.5 font-mono text-white">( )</td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5"><span class="text-red-400 font-bold">No</span> (Immutable)</td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5 text-slate-400">Fixed data that must stay protected (GPS, resolutions)</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-mono font-bold text-amber-400">Dictionary</td>
+                <td class="p-3.5 font-mono text-white">{key: val}</td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes*</span></td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span> (Values mutable)</td>
+                <td class="p-3.5 text-slate-400">Keys: <span class="text-red-400 font-bold">No</span> / Values: <span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5 text-slate-400">Labeled records (user profiles, database rows)</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3.5 font-mono font-bold text-purple-400">Set</td>
+                <td class="p-3.5 font-mono text-white">{ }</td>
+                <td class="p-3.5"><span class="text-red-400 font-bold">No</span></td>
+                <td class="p-3.5"><span class="text-emerald-400 font-bold">Yes</span></td>
+                <td class="p-3.5"><span class="text-red-400 font-bold">No</span> (Unique only)</td>
+                <td class="p-3.5 text-slate-400">Tracking unique items, removing duplicates fast</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-500 italic">*Note: Dictionaries maintain insertion order in modern Python versions (3.7+).</p>
+    </section>
+
+    <!-- COMPLETE INTEGRATED PROGRAM: classroom.py -->
+    <section id="complete-app" class="scroll-mt-20">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/40">★</div>
+        <div>
+          <h2 class="text-2xl font-bold text-white">Complete Program: Combining All Types Together</h2>
+          <p class="text-xs text-slate-400">How real-world software combines variables, lists, tuples, dicts, and sets into one cohesive system</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Save this code in a file named <code class="text-amber-300 font-mono font-semibold">classroom.py</code> to see how all 5 container types work together:
+        </p>
+
+        <!-- Code Block -->
+        <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+          <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-amber-400">classroom.py</span>
+            <button onclick="copyCode('code-classroom', this)" class="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors">Copy Complete Code</button>
+          </div>
+          <pre id="code-classroom" class="p-5 font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto"><span class="text-slate-500"># 1. Simple variables</span>
+<span class="text-sky-300">class_room_id</span> = <span class="text-amber-400">101</span>
+<span class="text-sky-300">teacher_name</span> = <span class="text-emerald-300">"Mr. Sharma"</span>
+
+<span class="text-slate-500"># 2. List (list of student names)</span>
+<span class="text-sky-300">students_list</span> = [<span class="text-emerald-300">"Amit"</span>, <span class="text-emerald-300">"Sneha"</span>, <span class="text-emerald-300">"Rahul"</span>]
+
+<span class="text-slate-500"># 3. Tuple (fixed school timings: start hour, end hour)</span>
+<span class="text-sky-300">school_hours</span> = (<span class="text-amber-400">9</span>, <span class="text-amber-400">16</span>)
+
+<span class="text-slate-500"># 4. Dictionary (detailed info about one student)</span>
+<span class="text-sky-300">top_student</span> = {
+    <span class="text-emerald-300">"name"</span>: <span class="text-emerald-300">"Sneha"</span>,
+    <span class="text-emerald-300">"roll_no"</span>: <span class="text-amber-400">12</span>,
+    <span class="text-emerald-300">"subjects"</span>: [<span class="text-emerald-300">"Math"</span>, <span class="text-emerald-300">"Science"</span>, <span class="text-emerald-300">"English"</span>]  <span class="text-slate-500"># A list inside a dictionary!</span>
+}
+
+<span class="text-slate-500"># 5. Set (unique club activities available - duplicate "Art" is auto-removed)</span>
+<span class="text-sky-300">clubs</span> = {<span class="text-emerald-300">"Robotics"</span>, <span class="text-emerald-300">"Art"</span>, <span class="text-emerald-300">"Chess"</span>, <span class="text-emerald-300">"Art"</span>}
+
+<span class="text-slate-500"># Displaying the data</span>
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"=== School Room"</span>, class_room_id, <span class="text-emerald-300">"==="</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Teacher:"</span>, teacher_name)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Class Timings:"</span>, school_hours[<span class="text-amber-400">0</span>], <span class="text-emerald-300">"AM to"</span>, school_hours[<span class="text-amber-400">1</span>] - <span class="text-amber-400">12</span>, <span class="text-emerald-300">"PM"</span>)
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Total Students Registered:"</span>, <span class="text-sky-400">len</span>(students_list))
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"First Student on the Roll:"</span>, students_list[<span class="text-amber-400">0</span>])
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Topper Name:"</span>, top_student[<span class="text-emerald-300">"name"</span>], <span class="text-emerald-300">"| Top Subject:"</span>, top_student[<span class="text-emerald-300">"subjects"</span>][<span class="text-amber-400">0</span>])
+<span class="text-sky-400">print</span>(<span class="text-emerald-300">"Available Clubs (No duplicates):"</span>, clubs)</pre>
+        </div>
+
+        <!-- Terminal Command -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Run in Linux Terminal:</h4>
+          <div class="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-300">
+            <span class="text-emerald-400 font-bold">user@linux:~$</span> python3 classroom.py
+          </div>
+        </div>
+
+        <!-- Live In-Browser Runner Simulator -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-amber-500/30">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Live Program Output Simulator
+            </h4>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-mono">python3 classroom.py</span>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-400 leading-relaxed overflow-x-auto">
+            === School Room 101 ===<br>
+            Teacher: Mr. Sharma<br>
+            Class Timings: 9 AM to 4 PM<br>
+            Total Students Registered: 3<br>
+            First Student on the Roll: Amit<br>
+            Topper Name: Sneha | Top Subject: Math<br>
+            Available Clubs (No duplicates): {'Robotics', 'Chess', 'Art'}
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-8 border-t border-slate-800 text-center text-xs text-slate-500">
+    <p>Python Collections Handbook &bull; Built for beginners exploring modern Python data structures</p>
+  </footer>
+
+  <script>
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1500);
+      });
+    }
+
+    function copyCode(elementId, btn) {
+      const code = document.getElementById(elementId).innerText;
+      copyToClipboard(code, btn);
+    }
+
+    let fruitsArray = ['Apple', 'Blueberry', 'Orange', 'Pineapple'];
+
+    function updateFruitDisplay() {
+      document.getElementById('live-fruits-display').innerText = JSON.stringify(fruitsArray).replace(/"/g, "'");
+    }
+
+    function appendFruitLive() {
+      const input = document.getElementById('list-input-item');
+      const val = input.value.trim() || 'Grape';
+      fruitsArray.push(val);
+      input.value = '';
+      updateFruitDisplay();
+    }
+
+    function popFruitLive() {
+      if (fruitsArray.length > 0) {
+        fruitsArray.pop();
+        updateFruitDisplay();
+      }
+    }
+  </script>
+</body>
+</html>
