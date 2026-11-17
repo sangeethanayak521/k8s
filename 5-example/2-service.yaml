@@ -1,0 +1,37 @@
+---
+# Supported annotations reference:
+# https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/annotations/
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: 5-example
+  annotations:
+    # 1. Instructs Kubernetes to use AWS Load Balancer Controller instead of in-tree cloud controller
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+
+    # 2. IP mode routes traffic directly to Pod IPs across the VPC subnets (no NodePort/SNAT overhead)
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+
+    # 3. Places the Network Load Balancer in public subnets (tagged with kubernetes.io/role/elb = 1)
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+
+    # 4. Explicit HTTP Health Checks on /health endpoint rather than blind TCP connection checks
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: HTTP
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "8080"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /health
+spec:
+  type: LoadBalancer
+  ports:
+    # Standard Web Port (port 80) -> allows direct browser access without typing :8080
+    - name: http
+      port: 80
+      targetPort: http # Resolves to container port 8080
+      protocol: TCP
+    # Secondary Direct Port (port 8080) -> preserves compatibility with original tutorial
+    - name: http-alt
+      port: 8080
+      targetPort: http
+      protocol: TCP
+  selector:
+    app: myapp
