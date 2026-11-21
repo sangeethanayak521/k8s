@@ -940,14 +940,7 @@ no</code></pre>
     "category": "Global Configuration",
     "aws_resources": "None (Terraform Local Values)",
     "purpose": "Centralizes global environment variables, AWS region, availability zones, and cluster naming constants. Acts as the single source of truth for the entire infrastructure, eliminating hardcoded strings and preventing configuration drift across all 21 downstream Terraform files.",
-    "code": "locals {
-  env         = \"staging\"
-  region      = \"eu-north-1\"
-  zone1       = \"eu-north-1a\"
-  zone2       = \"eu-north-1b\"
-  eks_name    = \"demo\"
-  eks_version = \"1.35\"
-}",
+    "code": "locals {\n  env         = \"staging\"\n  region      = \"eu-north-1\"\n  zone1       = \"eu-north-1a\"\n  zone2       = \"eu-north-1b\"\n  eks_name    = \"demo\"\n  eks_version = \"1.35\"\n}",
     "components_used": [
       [
         "locals {}",
@@ -987,33 +980,7 @@ no</code></pre>
     "category": "Provider Configuration",
     "aws_resources": "None (Terraform Provider Plugins)",
     "purpose": "Configures and initializes all third-party Terraform plugins required to manage AWS resources, Kubernetes objects, Helm charts, and TLS certificates. Enforces strict provider version locking to guarantee reproducible infrastructure runs across team members and CI/CD pipelines.",
-    "code": "provider \"aws\" {
-  region  = local.region
-  profile = \"my-profile\"
-}
-
-terraform {
-  required_version = \">= 1.0\"
-
-  required_providers {
-    aws = {
-      source  = \"hashicorp/aws\"
-      version = \"~> 5.80\"
-    }
-    helm = {
-      source  = \"hashicorp/helm\"
-      version = \"~> 2.16\"
-    }
-    kubernetes = {
-      source  = \"hashicorp/kubernetes\"
-      version = \"~> 2.35\"
-    }
-    tls = {
-      source  = \"hashicorp/tls\"
-      version = \"~> 4.0\"
-    }
-  }
-}",
+    "code": "provider \"aws\" {\n  region  = local.region\n  profile = \"my-profile\"\n}\n\nterraform {\n  required_version = \">= 1.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 5.80\"\n    }\n    helm = {\n      source  = \"hashicorp/helm\"\n      version = \"~> 2.16\"\n    }\n    kubernetes = {\n      source  = \"hashicorp/kubernetes\"\n      version = \"~> 2.35\"\n    }\n    tls = {\n      source  = \"hashicorp/tls\"\n      version = \"~> 4.0\"\n    }\n  }\n}",
     "components_used": [
       [
         "provider 'aws' {}",
@@ -1053,16 +1020,7 @@ terraform {
     "category": "Core Networking",
     "aws_resources": "aws_vpc.main",
     "purpose": "Provisions the dedicated, private Virtual Private Cloud (VPC) network boundary. Provides isolated software-defined networking, private IP space, and internal domain name resolution required for EKS control plane and worker node communication.",
-    "code": "resource \"aws_vpc\" \"main\" {
-  cidr_block = \"10.0.0.0/16\"
-
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-
-  tags = {
-    Name = \"${local.env}-main\"
-  }
-}",
+    "code": "resource \"aws_vpc\" \"main\" {\n  cidr_block = \"10.0.0.0/16\"\n\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name = \"${local.env}-main\"\n  }\n}",
     "components_used": [
       [
         "resource 'aws_vpc' 'main'",
@@ -1094,13 +1052,7 @@ terraform {
     "category": "Core Networking",
     "aws_resources": "aws_internet_gateway.igw",
     "purpose": "Attaches an Internet Gateway (IGW) to the VPC. Provides a horizontally scaled, redundant VPC component that enables direct bidirectional internet access for public subnets (hosting public ALBs, NLBs, and the NAT Gateway).",
-    "code": "resource \"aws_internet_gateway\" \"igw\" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = \"${local.env}-igw\"
-  }
-}",
+    "code": "resource \"aws_internet_gateway\" \"igw\" {\n  vpc_id = aws_vpc.main.id\n\n  tags = {\n    Name = \"${local.env}-igw\"\n  }\n}",
     "components_used": [
       [
         "resource 'aws_internet_gateway' 'igw'",
@@ -1124,55 +1076,7 @@ terraform {
     "category": "Core Networking",
     "aws_resources": "aws_subnet.private_zone1, private_zone2, public_zone1, public_zone2",
     "purpose": "Segments the 10.0.0.0/16 VPC into 4 dedicated subnets (2 Private and 2 Public) across 2 Availability Zones. Applies mandatory AWS Kubernetes discovery tags for external and internal load balancers.",
-    "code": "resource \"aws_subnet\" \"private_zone1\" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = \"10.0.0.0/19\"
-  availability_zone = local.zone1
-
-  tags = {
-    \"Name\"                                                 = \"${local.env}-private-${local.zone1}\"
-    \"kubernetes.io/role/internal-elb\"                      = \"1\"
-    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
-  }
-}
-
-resource \"aws_subnet\" \"private_zone2\" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = \"10.0.32.0/19\"
-  availability_zone = local.zone2
-
-  tags = {
-    \"Name\"                                                 = \"${local.env}-private-${local.zone2}\"
-    \"kubernetes.io/role/internal-elb\"                      = \"1\"
-    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
-  }
-}
-
-resource \"aws_subnet\" \"public_zone1\" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = \"10.0.64.0/19\"
-  availability_zone       = local.zone1
-  map_public_ip_on_launch = true
-
-  tags = {
-    \"Name\"                                                 = \"${local.env}-public-${local.zone1}\"
-    \"kubernetes.io/role/elb\"                               = \"1\"
-    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
-  }
-}
-
-resource \"aws_subnet\" \"public_zone2\" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = \"10.0.96.0/19\"
-  availability_zone       = local.zone2
-  map_public_ip_on_launch = true
-
-  tags = {
-    \"Name\"                                                 = \"${local.env}-public-${local.zone2}\"
-    \"kubernetes.io/role/elb\"                               = \"1\"
-    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
-  }
-}",
+    "code": "resource \"aws_subnet\" \"private_zone1\" {\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = \"10.0.0.0/19\"\n  availability_zone = local.zone1\n\n  tags = {\n    \"Name\"                                                 = \"${local.env}-private-${local.zone1}\"\n    \"kubernetes.io/role/internal-elb\"                      = \"1\"\n    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"\n  }\n}\n\nresource \"aws_subnet\" \"private_zone2\" {\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = \"10.0.32.0/19\"\n  availability_zone = local.zone2\n\n  tags = {\n    \"Name\"                                                 = \"${local.env}-private-${local.zone2}\"\n    \"kubernetes.io/role/internal-elb\"                      = \"1\"\n    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"\n  }\n}\n\nresource \"aws_subnet\" \"public_zone1\" {\n  vpc_id                  = aws_vpc.main.id\n  cidr_block              = \"10.0.64.0/19\"\n  availability_zone       = local.zone1\n  map_public_ip_on_launch = true\n\n  tags = {\n    \"Name\"                                                 = \"${local.env}-public-${local.zone1}\"\n    \"kubernetes.io/role/elb\"                               = \"1\"\n    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"\n  }\n}\n\nresource \"aws_subnet\" \"public_zone2\" {\n  vpc_id                  = aws_vpc.main.id\n  cidr_block              = \"10.0.96.0/19\"\n  availability_zone       = local.zone2\n  map_public_ip_on_launch = true\n\n  tags = {\n    \"Name\"                                                 = \"${local.env}-public-${local.zone2}\"\n    \"kubernetes.io/role/elb\"                               = \"1\"\n    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"\n  }\n}",
     "components_used": [
       [
         "cidr_block = '10.0.x.0/19'",
@@ -1204,24 +1108,7 @@ resource \"aws_subnet\" \"public_zone2\" {
     "category": "Core Networking",
     "aws_resources": "aws_eip.nat, aws_nat_gateway.nat",
     "purpose": "Allocates a static Elastic IP (EIP) and deploys a managed AWS NAT Gateway inside public_zone1. Enables worker nodes and pods residing in private subnets to reach the public internet securely (for pulling container images and calling external APIs) without accepting incoming internet connections.",
-    "code": "resource \"aws_eip\" \"nat\" {
-  domain = \"vpc\"
-
-  tags = {
-    Name = \"${local.env}-nat\"
-  }
-}
-
-resource \"aws_nat_gateway\" \"nat\" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public_zone1.id
-
-  tags = {
-    Name = \"${local.env}-nat\"
-  }
-
-  depends_on = [aws_internet_gateway.igw]
-}",
+    "code": "resource \"aws_eip\" \"nat\" {\n  domain = \"vpc\"\n\n  tags = {\n    Name = \"${local.env}-nat\"\n  }\n}\n\nresource \"aws_nat_gateway\" \"nat\" {\n  allocation_id = aws_eip.nat.id\n  subnet_id     = aws_subnet.public_zone1.id\n\n  tags = {\n    Name = \"${local.env}-nat\"\n  }\n\n  depends_on = [aws_internet_gateway.igw]\n}",
     "components_used": [
       [
         "resource 'aws_eip' 'nat'",
@@ -1257,51 +1144,7 @@ resource \"aws_nat_gateway\" \"nat\" {
     "category": "Core Networking",
     "aws_resources": "aws_route_table.private, public; aws_route_table_association (4x)",
     "purpose": "Defines routing tables directing traffic flows within the VPC. Routes private subnet egress to the NAT Gateway and public subnet traffic directly to the Internet Gateway, then binds the 4 subnets to their respective tables.",
-    "code": "resource \"aws_route_table\" \"private\" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = \"0.0.0.0/0\"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
-
-  tags = {
-    Name = \"${local.env}-private\"
-  }
-}
-
-resource \"aws_route_table\" \"public\" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = \"0.0.0.0/0\"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
-  tags = {
-    Name = \"${local.env}-public\"
-  }
-}
-
-resource \"aws_route_table_association\" \"private_zone1\" {
-  subnet_id      = aws_subnet.private_zone1.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource \"aws_route_table_association\" \"private_zone2\" {
-  subnet_id      = aws_subnet.private_zone2.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource \"aws_route_table_association\" \"public_zone1\" {
-  subnet_id      = aws_subnet.public_zone1.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource \"aws_route_table_association\" \"public_zone2\" {
-  subnet_id      = aws_subnet.public_zone2.id
-  route_table_id = aws_route_table.public.id
-}",
+    "code": "resource \"aws_route_table\" \"private\" {\n  vpc_id = aws_vpc.main.id\n\n  route {\n    cidr_block     = \"0.0.0.0/0\"\n    nat_gateway_id = aws_nat_gateway.nat.id\n  }\n\n  tags = {\n    Name = \"${local.env}-private\"\n  }\n}\n\nresource \"aws_route_table\" \"public\" {\n  vpc_id = aws_vpc.main.id\n\n  route {\n    cidr_block = \"0.0.0.0/0\"\n    gateway_id = aws_internet_gateway.igw.id\n  }\n\n  tags = {\n    Name = \"${local.env}-public\"\n  }\n}\n\nresource \"aws_route_table_association\" \"private_zone1\" {\n  subnet_id      = aws_subnet.private_zone1.id\n  route_table_id = aws_route_table.private.id\n}\n\nresource \"aws_route_table_association\" \"private_zone2\" {\n  subnet_id      = aws_subnet.private_zone2.id\n  route_table_id = aws_route_table.private.id\n}\n\nresource \"aws_route_table_association\" \"public_zone1\" {\n  subnet_id      = aws_subnet.public_zone1.id\n  route_table_id = aws_route_table.public.id\n}\n\nresource \"aws_route_table_association\" \"public_zone2\" {\n  subnet_id      = aws_subnet.public_zone2.id\n  route_table_id = aws_route_table.public.id\n}",
     "components_used": [
       [
         "route { cidr_block = '0.0.0.0/0', nat_gateway_id = ... }",
@@ -1325,52 +1168,7 @@ resource \"aws_route_table_association\" \"public_zone2\" {
     "category": "Compute & Control Plane",
     "aws_resources": "aws_iam_role.eks, aws_iam_role_policy_attachment.eks, aws_eks_cluster.eks",
     "purpose": "Creates the managed Kubernetes Control Plane (kube-apiserver, etcd, scheduler, controller-manager) across 3 AWS Availability Zones. Configures IAM service roles and activates modern EKS API-based authentication.",
-    "code": "resource \"aws_iam_role\" \"eks\" {
-  name = \"${local.env}-${local.eks_name}-eks-cluster\"
-
-  assume_role_policy = <<POLICY
-{
-  \"Version\": \"2012-10-17\",
-  \"Statement\": [
-    {
-      \"Effect\": \"Allow\",
-      \"Action\": \"sts:AssumeRole\",
-      \"Principal\": {
-        \"Service\": \"eks.amazonaws.com\"
-      }
-    }
-  ]
-}
-POLICY
-}
-
-resource \"aws_iam_role_policy_attachment\" \"eks\" {
-  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSClusterPolicy\"
-  role       = aws_iam_role.eks.name
-}
-
-resource \"aws_eks_cluster\" \"eks\" {
-  name     = \"${local.env}-${local.eks_name}\"
-  version  = local.eks_version
-  role_arn = aws_iam_role.eks.arn
-
-  vpc_config {
-    endpoint_private_access = false
-    endpoint_public_access  = true
-
-    subnet_ids = [
-      aws_subnet.private_zone1.id,
-      aws_subnet.private_zone2.id
-    ]
-  }
-
-  access_config {
-    authentication_mode                         = \"API\"
-    bootstrap_cluster_creator_admin_permissions = true
-  }
-
-  depends_on = [aws_iam_role_policy_attachment.eks]
-}",
+    "code": "resource \"aws_iam_role\" \"eks\" {\n  name = \"${local.env}-${local.eks_name}-eks-cluster\"\n\n  assume_role_policy = <<POLICY\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRole\",\n      \"Principal\": {\n        \"Service\": \"eks.amazonaws.com\"\n      }\n    }\n  ]\n}\nPOLICY\n}\n\nresource \"aws_iam_role_policy_attachment\" \"eks\" {\n  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSClusterPolicy\"\n  role       = aws_iam_role.eks.name\n}\n\nresource \"aws_eks_cluster\" \"eks\" {\n  name     = \"${local.env}-${local.eks_name}\"\n  version  = local.eks_version\n  role_arn = aws_iam_role.eks.arn\n\n  vpc_config {\n    endpoint_private_access = false\n    endpoint_public_access  = true\n\n    subnet_ids = [\n      aws_subnet.private_zone1.id,\n      aws_subnet.private_zone2.id\n    ]\n  }\n\n  access_config {\n    authentication_mode                         = \"API\"\n    bootstrap_cluster_creator_admin_permissions = true\n  }\n\n  depends_on = [aws_iam_role_policy_attachment.eks]\n}",
     "components_used": [
       [
         "aws_iam_role.eks",
@@ -1406,78 +1204,7 @@ resource \"aws_eks_cluster\" \"eks\" {
     "category": "Compute & Node Group",
     "aws_resources": "aws_iam_role.nodes, policy attachments (3x), aws_eks_node_group.general",
     "purpose": "Provisions the AWS Managed Node Group (EC2 worker instances), attaches the required IAM node policies, and configures Auto Scaling parameters. Deploys instances in private subnets with t3.large instance sizing to support all controllers and application pods.",
-    "code": "resource \"aws_iam_role\" \"nodes\" {
-  name = \"${local.env}-${local.eks_name}-eks-nodes\"
-
-  assume_role_policy = <<POLICY
-{
-  \"Version\": \"2012-10-17\",
-  \"Statement\": [
-    {
-      \"Effect\": \"Allow\",
-      \"Action\": \"sts:AssumeRole\",
-      \"Principal\": {
-        \"Service\": \"ec2.amazonaws.com\"
-      }
-    }
-  ]
-}
-POLICY
-}
-
-resource \"aws_iam_role_policy_attachment\" \"amazon_eks_worker_node_policy\" {
-  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"
-  role       = aws_iam_role.nodes.name
-}
-
-resource \"aws_iam_role_policy_attachment\" \"amazon_eks_cni_policy\" {
-  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"
-  role       = aws_iam_role.nodes.name
-}
-
-resource \"aws_iam_role_policy_attachment\" \"amazon_ec2_container_registry_read_only\" {
-  policy_arn = \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"
-  role       = aws_iam_role.nodes.name
-}
-
-resource \"aws_eks_node_group\" \"general\" {
-  cluster_name    = aws_eks_cluster.eks.name
-  version         = local.eks_version
-  node_group_name = \"general\"
-  node_role_arn   = aws_iam_role.nodes.arn
-
-  subnet_ids = [
-    aws_subnet.private_zone1.id,
-    aws_subnet.private_zone2.id
-  ]
-
-  capacity_type  = \"ON_DEMAND\"
-  instance_types = [\"t3.large\"]
-
-  scaling_config {
-    desired_size = 2
-    max_size     = 10
-    min_size     = 1
-  }
-
-  update_config {
-    max_unavailable = 1
-  }
-
-  labels = {
-    role = \"general\"
-  }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
-    aws_iam_role_policy_attachment.amazon_eks_cni_policy,
-    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
-  ]
-
-  lifecycle {
-    ignore_changes = [scaling_config[0].desired_size]
-  }
-}",
+    "code": "resource \"aws_iam_role\" \"nodes\" {\n  name = \"${local.env}-${local.eks_name}-eks-nodes\"\n\n  assume_role_policy = <<POLICY\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRole\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      }\n    }\n  ]\n}\nPOLICY\n}\n\nresource \"aws_iam_role_policy_attachment\" \"amazon_eks_worker_node_policy\" {\n  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"\n  role       = aws_iam_role.nodes.name\n}\n\nresource \"aws_iam_role_policy_attachment\" \"amazon_eks_cni_policy\" {\n  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"\n  role       = aws_iam_role.nodes.name\n}\n\nresource \"aws_iam_role_policy_attachment\" \"amazon_ec2_container_registry_read_only\" {\n  policy_arn = \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"\n  role       = aws_iam_role.nodes.name\n}\n\nresource \"aws_eks_node_group\" \"general\" {\n  cluster_name    = aws_eks_cluster.eks.name\n  version         = local.eks_version\n  node_group_name = \"general\"\n  node_role_arn   = aws_iam_role.nodes.arn\n\n  subnet_ids = [\n    aws_subnet.private_zone1.id,\n    aws_subnet.private_zone2.id\n  ]\n\n  capacity_type  = \"ON_DEMAND\"\n  instance_types = [\"t3.large\"]\n\n  scaling_config {\n    desired_size = 2\n    max_size     = 10\n    min_size     = 1\n  }\n\n  update_config {\n    max_unavailable = 1\n  }\n\n  labels = {\n    role = \"general\"\n  }\n\n  depends_on = [\n    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,\n    aws_iam_role_policy_attachment.amazon_eks_cni_policy,\n    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,\n  ]\n\n  lifecycle {\n    ignore_changes = [scaling_config[0].desired_size]\n  }\n}",
     "components_used": [
       [
         "instance_types = ['t3.large']",
@@ -1513,40 +1240,7 @@ resource \"aws_eks_node_group\" \"general\" {
     "category": "IAM & Security",
     "aws_resources": "aws_iam_user.developer, aws_iam_policy.developer_eks, aws_iam_user_policy_attachment, aws_eks_access_entry.developer",
     "purpose": "Creates an IAM user for a developer with least-privilege AWS permissions (DescribeCluster, ListClusters) and maps the user into the Kubernetes 'my-viewer' RBAC group using native EKS Access Entries.",
-    "code": "resource \"aws_iam_user\" \"developer\" {
-  name = \"${local.env}-${local.eks_name}-developer\"
-}
-
-resource \"aws_iam_policy\" \"developer_eks\" {
-  name = \"${local.env}-${local.eks_name}-AmazonEKSDeveloperPolicy\"
-
-  policy = <<POLICY
-{
-    \"Version\": \"2012-10-17\",
-    \"Statement\": [
-        {
-            \"Effect\": \"Allow\",
-            \"Action\": [
-                \"eks:DescribeCluster\",
-                \"eks:ListClusters\"
-            ],
-            \"Resource\": \"*\"
-        }
-    ]
-}
-POLICY
-}
-
-resource \"aws_iam_user_policy_attachment\" \"developer_eks\" {
-  user       = aws_iam_user.developer.name
-  policy_arn = aws_iam_policy.developer_eks.arn
-}
-
-resource \"aws_eks_access_entry\" \"developer\" {
-  cluster_name      = aws_eks_cluster.eks.name
-  principal_arn     = aws_iam_user.developer.arn
-  kubernetes_groups = [\"my-viewer\"]
-}",
+    "code": "resource \"aws_iam_user\" \"developer\" {\n  name = \"${local.env}-${local.eks_name}-developer\"\n}\n\nresource \"aws_iam_policy\" \"developer_eks\" {\n  name = \"${local.env}-${local.eks_name}-AmazonEKSDeveloperPolicy\"\n\n  policy = <<POLICY\n{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Effect\": \"Allow\",\n            \"Action\": [\n                \"eks:DescribeCluster\",\n                \"eks:ListClusters\"\n            ],\n            \"Resource\": \"*\"\n        }\n    ]\n}\nPOLICY\n}\n\nresource \"aws_iam_user_policy_attachment\" \"developer_eks\" {\n  user       = aws_iam_user.developer.name\n  policy_arn = aws_iam_policy.developer_eks.arn\n}\n\nresource \"aws_eks_access_entry\" \"developer\" {\n  cluster_name      = aws_eks_cluster.eks.name\n  principal_arn     = aws_iam_user.developer.arn\n  kubernetes_groups = [\"my-viewer\"]\n}",
     "components_used": [
       [
         "aws_iam_user.developer",
@@ -1574,94 +1268,7 @@ resource \"aws_eks_access_entry\" \"developer\" {
     "category": "IAM & Security",
     "aws_resources": "aws_iam_role.eks_admin, aws_iam_user.manager, policies (2x), attachments (2x), aws_eks_access_entry.manager",
     "purpose": "Implements enterprise security best practices: creates a manager IAM user who assumes a privileged EKS Admin role using temporary STS credentials, and binds that role to the 'my-admin' Kubernetes group.",
-    "code": "data \"aws_caller_identity\" \"current\" {}
-
-resource \"aws_iam_role\" \"eks_admin\" {
-  name = \"${local.env}-${local.eks_name}-eks-admin\"
-
-  assume_role_policy = <<POLICY
-{
-  \"Version\": \"2012-10-17\",
-  \"Statement\": [
-    {
-      \"Effect\": \"Allow\",
-      \"Action\": \"sts:AssumeRole\",
-      \"Principal\": {
-        \"AWS\": \"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root\"
-      }
-    }
-  ]
-}
-POLICY
-}
-
-resource \"aws_iam_policy\" \"eks_admin\" {
-  name = \"${local.env}-${local.eks_name}-AmazonEKSAdminPolicy\"
-
-  policy = <<POLICY
-{
-    \"Version\": \"2012-10-17\",
-    \"Statement\": [
-        {
-            \"Effect\": \"Allow\",
-            \"Action\": [
-                \"eks:*\"
-            ],
-            \"Resource\": \"*\"
-        },
-        {
-            \"Effect\": \"Allow\",
-            \"Action\": \"iam:PassRole\",
-            \"Resource\": \"*\",
-            \"Condition\": {
-                \"StringEquals\": {
-                    \"iam:PassedToService\": \"eks.amazonaws.com\"
-                }
-            }
-        }
-    ]
-}
-POLICY
-}
-
-resource \"aws_iam_role_policy_attachment\" \"eks_admin\" {
-  role       = aws_iam_role.eks_admin.name
-  policy_arn = aws_iam_policy.eks_admin.arn
-}
-
-resource \"aws_iam_user\" \"manager\" {
-  name = \"${local.env}-${local.eks_name}-manager\"
-}
-
-resource \"aws_iam_policy\" \"eks_assume_admin\" {
-  name = \"${local.env}-${local.eks_name}-AmazonEKSAssumeAdminPolicy\"
-
-  policy = <<POLICY
-{
-    \"Version\": \"2012-10-17\",
-    \"Statement\": [
-        {
-            \"Effect\": \"Allow\",
-            \"Action\": [
-                \"sts:AssumeRole\"
-            ],
-            \"Resource\": \"${aws_iam_role.eks_admin.arn}\"
-        }
-    ]
-}
-POLICY
-}
-
-resource \"aws_iam_user_policy_attachment\" \"manager\" {
-  user       = aws_iam_user.manager.name
-  policy_arn = aws_iam_policy.eks_assume_admin.arn
-}
-
-resource \"aws_eks_access_entry\" \"manager\" {
-  cluster_name      = aws_eks_cluster.eks.name
-  principal_arn     = aws_iam_role.eks_admin.arn
-  kubernetes_groups = [\"my-admin\"]
-}",
+    "code": "data \"aws_caller_identity\" \"current\" {}\n\nresource \"aws_iam_role\" \"eks_admin\" {\n  name = \"${local.env}-${local.eks_name}-eks-admin\"\n\n  assume_role_policy = <<POLICY\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:AssumeRole\",\n      \"Principal\": {\n        \"AWS\": \"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root\"\n      }\n    }\n  ]\n}\nPOLICY\n}\n\nresource \"aws_iam_policy\" \"eks_admin\" {\n  name = \"${local.env}-${local.eks_name}-AmazonEKSAdminPolicy\"\n\n  policy = <<POLICY\n{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Effect\": \"Allow\",\n            \"Action\": [\n                \"eks:*\"\n            ],\n            \"Resource\": \"*\"\n        },\n        {\n            \"Effect\": \"Allow\",\n            \"Action\": \"iam:PassRole\",\n            \"Resource\": \"*\",\n            \"Condition\": {\n                \"StringEquals\": {\n                    \"iam:PassedToService\": \"eks.amazonaws.com\"\n                }\n            }\n        }\n    ]\n}\nPOLICY\n}\n\nresource \"aws_iam_role_policy_attachment\" \"eks_admin\" {\n  role       = aws_iam_role.eks_admin.name\n  policy_arn = aws_iam_policy.eks_admin.arn\n}\n\nresource \"aws_iam_user\" \"manager\" {\n  name = \"${local.env}-${local.eks_name}-manager\"\n}\n\nresource \"aws_iam_policy\" \"eks_assume_admin\" {\n  name = \"${local.env}-${local.eks_name}-AmazonEKSAssumeAdminPolicy\"\n\n  policy = <<POLICY\n{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Effect\": \"Allow\",\n            \"Action\": [\n                \"sts:AssumeRole\"\n            ],\n            \"Resource\": \"${aws_iam_role.eks_admin.arn}\"\n        }\n    ]\n}\nPOLICY\n}\n\nresource \"aws_iam_user_policy_attachment\" \"manager\" {\n  user       = aws_iam_user.manager.name\n  policy_arn = aws_iam_policy.eks_assume_admin.arn\n}\n\nresource \"aws_eks_access_entry\" \"manager\" {\n  cluster_name      = aws_eks_cluster.eks.name\n  principal_arn     = aws_iam_role.eks_admin.arn\n  kubernetes_groups = [\"my-admin\"]\n}",
     "components_used": [
       [
         "data 'aws_caller_identity' 'current'",
@@ -1689,27 +1296,7 @@ resource \"aws_eks_access_entry\" \"manager\" {
     "category": "Helm & K8s Auth",
     "aws_resources": "Data Sources: aws_eks_cluster, aws_eks_cluster_auth",
     "purpose": "Configures authentication for the Helm and Kubernetes providers. Extracts the API endpoint, cluster Certificate Authority, and temporary bearer token directly from EKS to manage Kubernetes resources inside Terraform.",
-    "code": "data \"aws_eks_cluster\" \"eks\" {
-  name = \"${local.env}-${local.eks_name}\"
-}
-
-data \"aws_eks_cluster_auth\" \"eks\" {
-  name = \"${local.env}-${local.eks_name}\"
-}
-
-provider \"helm\" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.eks.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks.token
-  }
-}
-
-provider \"kubernetes\" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-}",
+    "code": "data \"aws_eks_cluster\" \"eks\" {\n  name = \"${local.env}-${local.eks_name}\"\n}\n\ndata \"aws_eks_cluster_auth\" \"eks\" {\n  name = \"${local.env}-${local.eks_name}\"\n}\n\nprovider \"helm\" {\n  kubernetes {\n    host                   = data.aws_eks_cluster.eks.endpoint\n    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n    token                  = data.aws_eks_cluster_auth.eks.token\n  }\n}\n\nprovider \"kubernetes\" {\n  host                   = data.aws_eks_cluster.eks.endpoint\n  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n  token                  = data.aws_eks_cluster_auth.eks.token\n}",
     "components_used": [
       [
         "name = '${local.env}-${local.eks_name}'",
@@ -1737,18 +1324,7 @@ provider \"kubernetes\" {
     "category": "Add-ons & Metrics",
     "aws_resources": "helm_release.metrics_server",
     "purpose": "Deploys the Kubernetes Metrics Server via Helm into the kube-system namespace. Scrapes CPU and memory utilization metrics from node kubelets and exposes them via the metrics.k8s.io API for the Horizontal Pod Autoscaler.",
-    "code": "resource \"helm_release\" \"metrics_server\" {
-  name = \"metrics-server\"
-
-  repository = \"https://kubernetes-sigs.github.io/metrics-server/\"
-  chart      = \"metrics-server\"
-  namespace  = \"kube-system\"
-  version    = \"3.12.2\"
-
-  values = [file(\"${path.module}/values/metrics-server.yaml\")]
-
-  depends_on = [aws_eks_node_group.general]
-}",
+    "code": "resource \"helm_release\" \"metrics_server\" {\n  name = \"metrics-server\"\n\n  repository = \"https://kubernetes-sigs.github.io/metrics-server/\"\n  chart      = \"metrics-server\"\n  namespace  = \"kube-system\"\n  version    = \"3.12.2\"\n\n  values = [file(\"${path.module}/values/metrics-server.yaml\")]\n\n  depends_on = [aws_eks_node_group.general]\n}",
     "components_used": [
       [
         "name = 'metrics-server'",
@@ -1776,14 +1352,7 @@ provider \"kubernetes\" {
     "category": "Add-ons & IAM",
     "aws_resources": "aws_eks_addon.pod_identity",
     "purpose": "Installs the official AWS EKS Pod Identity Agent DaemonSet on all worker nodes. This agent intercepts container token requests and enables Pods to assume IAM roles securely without configuring OIDC thumbprints or public STS internet endpoints.",
-    "code": "resource \"aws_eks_addon\" \"pod_identity\" {
-  cluster_name                = aws_eks_cluster.eks.name
-  addon_name                  = \"eks-pod-identity-agent\"
-  resolve_conflicts_on_create = \"OVERWRITE\"
-  resolve_conflicts_on_update = \"OVERWRITE\"
-
-  depends_on = [aws_eks_node_group.general]
-}",
+    "code": "resource \"aws_eks_addon\" \"pod_identity\" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = \"eks-pod-identity-agent\"\n  resolve_conflicts_on_create = \"OVERWRITE\"\n  resolve_conflicts_on_update = \"OVERWRITE\"\n\n  depends_on = [aws_eks_node_group.general]\n}",
     "components_used": [
       [
         "addon_name = 'eks-pod-identity-agent'",
@@ -1807,101 +1376,7 @@ provider \"kubernetes\" {
     "category": "Add-ons & Scaling",
     "aws_resources": "aws_iam_role, aws_iam_policy, aws_iam_role_policy_attachment, aws_eks_pod_identity_association, helm_release",
     "purpose": "Deploys Kubernetes Cluster Autoscaler with Pod Identity. Monitors for unschedulable (Pending) pods due to resource constraints and automatically calls AWS Auto Scaling APIs to launch additional EC2 worker nodes.",
-    "code": "resource \"aws_iam_role\" \"cluster_autoscaler\" {
-  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"
-
-  assume_role_policy = jsonencode({
-    Version = \"2012-10-17\"
-    Statement = [
-      {
-        Effect = \"Allow\"
-        Action = [
-          \"sts:AssumeRole\",
-          \"sts:TagSession\"
-        ]
-        Principal = {
-          Service = \"pods.eks.amazonaws.com\"
-        }
-      }
-    ]
-  })
-}
-
-resource \"aws_iam_policy\" \"cluster_autoscaler\" {
-  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"
-
-  policy = jsonencode({
-    Version = \"2012-10-17\"
-    Statement = [
-      {
-        Effect = \"Allow\"
-        Action = [
-          \"autoscaling:DescribeAutoScalingGroups\",
-          \"autoscaling:DescribeAutoScalingInstances\",
-          \"autoscaling:DescribeLaunchConfigurations\",
-          \"autoscaling:DescribeScalingActivities\",
-          \"autoscaling:DescribeTags\",
-          \"ec2:DescribeImages\",
-          \"ec2:DescribeInstanceTypes\",
-          \"ec2:DescribeLaunchTemplateVersions\",
-          \"ec2:GetInstanceTypesFromInstanceRequirements\",
-          \"eks:DescribeNodegroup\"
-        ]
-        Resource = \"*\"
-      },
-      {
-        Effect = \"Allow\"
-        Action = [
-          \"autoscaling:SetDesiredCapacity\",
-          \"autoscaling:TerminateInstanceInAutoScalingGroup\"
-        ]
-        Resource = \"*\"
-      },
-    ]
-  })
-}
-
-resource \"aws_iam_role_policy_attachment\" \"cluster_autoscaler\" {
-  policy_arn = aws_iam_policy.cluster_autoscaler.arn
-  role       = aws_iam_role.cluster_autoscaler.name
-}
-
-resource \"aws_eks_pod_identity_association\" \"cluster_autoscaler\" {
-  cluster_name    = aws_eks_cluster.eks.name
-  namespace       = \"kube-system\"
-  service_account = \"cluster-autoscaler\"
-  role_arn        = aws_iam_role.cluster_autoscaler.arn
-}
-
-resource \"helm_release\" \"cluster_autoscaler\" {
-  name       = \"autoscaler\"
-  repository = \"https://kubernetes.github.io/autoscaler\"
-  chart      = \"cluster-autoscaler\"
-  namespace  = \"kube-system\"
-  version    = \"9.37.0\"
-  timeout    = 600
-
-  set {
-    name  = \"rbac.serviceAccount.name\"
-    value = \"cluster-autoscaler\"
-  }
-
-  set {
-    name  = \"autoDiscovery.clusterName\"
-    value = aws_eks_cluster.eks.name
-  }
-
-  set {
-    name  = \"awsRegion\"
-    value = local.region
-  }
-
-  depends_on = [
-    helm_release.metrics_server,
-    aws_eks_addon.pod_identity,
-    aws_eks_pod_identity_association.cluster_autoscaler
-  ]
-}",
+    "code": "resource \"aws_iam_role\" \"cluster_autoscaler\" {\n  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"\n\n  assume_role_policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Effect = \"Allow\"\n        Action = [\n          \"sts:AssumeRole\",\n          \"sts:TagSession\"\n        ]\n        Principal = {\n          Service = \"pods.eks.amazonaws.com\"\n        }\n      }\n    ]\n  })\n}\n\nresource \"aws_iam_policy\" \"cluster_autoscaler\" {\n  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"\n\n  policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Effect = \"Allow\"\n        Action = [\n          \"autoscaling:DescribeAutoScalingGroups\",\n          \"autoscaling:DescribeAutoScalingInstances\",\n          \"autoscaling:DescribeLaunchConfigurations\",\n          \"autoscaling:DescribeScalingActivities\",\n          \"autoscaling:DescribeTags\",\n          \"ec2:DescribeImages\",\n          \"ec2:DescribeInstanceTypes\",\n          \"ec2:DescribeLaunchTemplateVersions\",\n          \"ec2:GetInstanceTypesFromInstanceRequirements\",\n          \"eks:DescribeNodegroup\"\n        ]\n        Resource = \"*\"\n      },\n      {\n        Effect = \"Allow\"\n        Action = [\n          \"autoscaling:SetDesiredCapacity\",\n          \"autoscaling:TerminateInstanceInAutoScalingGroup\"\n        ]\n        Resource = \"*\"\n      },\n    ]\n  })\n}\n\nresource \"aws_iam_role_policy_attachment\" \"cluster_autoscaler\" {\n  policy_arn = aws_iam_policy.cluster_autoscaler.arn\n  role       = aws_iam_role.cluster_autoscaler.name\n}\n\nresource \"aws_eks_pod_identity_association\" \"cluster_autoscaler\" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = \"kube-system\"\n  service_account = \"cluster-autoscaler\"\n  role_arn        = aws_iam_role.cluster_autoscaler.arn\n}\n\nresource \"helm_release\" \"cluster_autoscaler\" {\n  name       = \"autoscaler\"\n  repository = \"https://kubernetes.github.io/autoscaler\"\n  chart      = \"cluster-autoscaler\"\n  namespace  = \"kube-system\"\n  version    = \"9.37.0\"\n  timeout    = 600\n\n  set {\n    name  = \"rbac.serviceAccount.name\"\n    value = \"cluster-autoscaler\"\n  }\n\n  set {\n    name  = \"autoDiscovery.clusterName\"\n    value = aws_eks_cluster.eks.name\n  }\n\n  set {\n    name  = \"awsRegion\"\n    value = local.region\n  }\n\n  depends_on = [\n    helm_release.metrics_server,\n    aws_eks_addon.pod_identity,\n    aws_eks_pod_identity_association.cluster_autoscaler\n  ]\n}",
     "components_used": [
       [
         "Principal = 'pods.eks.amazonaws.com'",
@@ -1929,69 +1404,7 @@ resource \"helm_release\" \"cluster_autoscaler\" {
     "category": "Controllers & Ingress",
     "aws_resources": "aws_iam_role.aws_lbc, aws_iam_policy, aws_eks_pod_identity_association, helm_release",
     "purpose": "Deploys AWS Load Balancer Controller with Pod Identity. Satisfies Kubernetes Ingress objects by provisioning AWS Application Load Balancers (ALBs) and Service type: LoadBalancer by provisioning Network Load Balancers (NLBs) with IP targets.",
-    "code": "data \"aws_iam_policy_document\" \"aws_lbc\" {
-  statement {
-    effect = \"Allow\"
-
-    principals {
-      type        = \"Service\"
-      identifiers = [\"pods.eks.amazonaws.com\"]
-    }
-
-    actions = [
-      \"sts:AssumeRole\",
-      \"sts:TagSession\"
-    ]
-  }
-}
-
-resource \"aws_iam_role\" \"aws_lbc\" {
-  name               = \"${aws_eks_cluster.eks.name}-aws-lbc\"
-  assume_role_policy = data.aws_iam_policy_document.aws_lbc.json
-}
-
-resource \"aws_iam_policy\" \"aws_lbc\" {
-  policy = file(\"${path.module}/iam/AWSLoadBalancerController.json\")
-  name   = \"${aws_eks_cluster.eks.name}-AWSLoadBalancerController\"
-}
-
-resource \"aws_iam_role_policy_attachment\" \"aws_lbc\" {
-  policy_arn = aws_iam_policy.aws_lbc.arn
-  role       = aws_iam_role.aws_lbc.name
-}
-
-resource \"aws_eks_pod_identity_association\" \"aws_lbc\" {
-  cluster_name    = aws_eks_cluster.eks.name
-  namespace       = \"kube-system\"
-  service_account = \"aws-load-balancer-controller\"
-  role_arn        = aws_iam_role.aws_lbc.arn
-}
-
-resource \"helm_release\" \"aws_lbc\" {
-  name = \"aws-load-balancer-controller\"
-
-  repository = \"https://aws.github.io/eks-charts\"
-  chart      = \"aws-load-balancer-controller\"
-  namespace  = \"kube-system\"
-  version    = \"1.8.1\"
-
-  set {
-    name  = \"clusterName\"
-    value = aws_eks_cluster.eks.name
-  }
-
-  set {
-    name  = \"serviceAccount.name\"
-    value = \"aws-load-balancer-controller\"
-  }
-
-  set {
-    name  = \"vpcId\"
-    value = aws_vpc.main.id
-  }
-
-  depends_on = [helm_release.cluster_autoscaler]
-}",
+    "code": "data \"aws_iam_policy_document\" \"aws_lbc\" {\n  statement {\n    effect = \"Allow\"\n\n    principals {\n      type        = \"Service\"\n      identifiers = [\"pods.eks.amazonaws.com\"]\n    }\n\n    actions = [\n      \"sts:AssumeRole\",\n      \"sts:TagSession\"\n    ]\n  }\n}\n\nresource \"aws_iam_role\" \"aws_lbc\" {\n  name               = \"${aws_eks_cluster.eks.name}-aws-lbc\"\n  assume_role_policy = data.aws_iam_policy_document.aws_lbc.json\n}\n\nresource \"aws_iam_policy\" \"aws_lbc\" {\n  policy = file(\"${path.module}/iam/AWSLoadBalancerController.json\")\n  name   = \"${aws_eks_cluster.eks.name}-AWSLoadBalancerController\"\n}\n\nresource \"aws_iam_role_policy_attachment\" \"aws_lbc\" {\n  policy_arn = aws_iam_policy.aws_lbc.arn\n  role       = aws_iam_role.aws_lbc.name\n}\n\nresource \"aws_eks_pod_identity_association\" \"aws_lbc\" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = \"kube-system\"\n  service_account = \"aws-load-balancer-controller\"\n  role_arn        = aws_iam_role.aws_lbc.arn\n}\n\nresource \"helm_release\" \"aws_lbc\" {\n  name = \"aws-load-balancer-controller\"\n\n  repository = \"https://aws.github.io/eks-charts\"\n  chart      = \"aws-load-balancer-controller\"\n  namespace  = \"kube-system\"\n  version    = \"1.8.1\"\n\n  set {\n    name  = \"clusterName\"\n    value = aws_eks_cluster.eks.name\n  }\n\n  set {\n    name  = \"serviceAccount.name\"\n    value = \"aws-load-balancer-controller\"\n  }\n\n  set {\n    name  = \"vpcId\"\n    value = aws_vpc.main.id\n  }\n\n  depends_on = [helm_release.cluster_autoscaler]\n}",
     "components_used": [
       [
         "iam/AWSLoadBalancerController.json",
@@ -2015,19 +1428,7 @@ resource \"helm_release\" \"aws_lbc\" {
     "category": "Controllers & Ingress",
     "aws_resources": "helm_release.external_nginx",
     "purpose": "Deploys Ingress NGINX controller with Helm in the 'ingress' namespace. Uses values/nginx-ingress.yaml to provision an external AWS Network Load Balancer (NLB) that routes public internet traffic directly into the NGINX pods.",
-    "code": "resource \"helm_release\" \"external_nginx\" {
-  name = \"external\"
-
-  repository       = \"https://kubernetes.github.io/ingress-nginx\"
-  chart            = \"ingress-nginx\"
-  namespace        = \"ingress\"
-  create_namespace = true
-  version          = \"4.11.3\"
-
-  values = [file(\"${path.module}/values/nginx-ingress.yaml\")]
-
-  depends_on = [helm_release.aws_lbc]
-}",
+    "code": "resource \"helm_release\" \"external_nginx\" {\n  name = \"external\"\n\n  repository       = \"https://kubernetes.github.io/ingress-nginx\"\n  chart            = \"ingress-nginx\"\n  namespace        = \"ingress\"\n  create_namespace = true\n  version          = \"4.11.3\"\n\n  values = [file(\"${path.module}/values/nginx-ingress.yaml\")]\n\n  depends_on = [helm_release.aws_lbc]\n}",
     "components_used": [
       [
         "chart = 'ingress-nginx' (v4.11.3)",
@@ -2055,22 +1456,7 @@ resource \"helm_release\" \"aws_lbc\" {
     "category": "Controllers & SSL",
     "aws_resources": "helm_release.cert_manager",
     "purpose": "Installs Jetstack Cert-Manager with Custom Resource Definitions (CRDs). Automates the issuance, renewal, and management of free TLS certificates from Let's Encrypt using ACME HTTP-01 challenges.",
-    "code": "resource \"helm_release\" \"cert_manager\" {
-  name = \"cert-manager\"
-
-  repository       = \"https://charts.jetstack.io\"
-  chart            = \"cert-manager\"
-  namespace        = \"cert-manager\"
-  create_namespace = true
-  version          = \"v1.16.2\"
-
-  set {
-    name  = \"installCRDs\"
-    value = \"true\"
-  }
-
-  depends_on = [helm_release.external_nginx]
-}",
+    "code": "resource \"helm_release\" \"cert_manager\" {\n  name = \"cert-manager\"\n\n  repository       = \"https://charts.jetstack.io\"\n  chart            = \"cert-manager\"\n  namespace        = \"cert-manager\"\n  create_namespace = true\n  version          = \"v1.16.2\"\n\n  set {\n    name  = \"installCRDs\"\n    value = \"true\"\n  }\n\n  depends_on = [helm_release.external_nginx]\n}",
     "components_used": [
       [
         "chart = 'cert-manager' (v1.16.2)",
@@ -2094,77 +1480,7 @@ resource \"helm_release\" \"aws_lbc\" {
     "category": "Persistent Storage",
     "aws_resources": "aws_iam_role, policy attachments, aws_eks_pod_identity_association, aws_eks_addon.ebs_csi_driver",
     "purpose": "Installs the Amazon EBS Container Storage Interface (CSI) Driver managed add-on with Pod Identity. Allows Kubernetes pods (such as StatefulSets) to dynamically provision, attach, and mount AWS EBS block volumes (gp2/gp3).",
-    "code": "data \"aws_iam_policy_document\" \"ebs_csi_driver\" {
-  statement {
-    effect = \"Allow\"
-
-    principals {
-      type        = \"Service\"
-      identifiers = [\"pods.eks.amazonaws.com\"]
-    }
-
-    actions = [
-      \"sts:AssumeRole\",
-      \"sts:TagSession\"
-    ]
-  }
-}
-
-resource \"aws_iam_role\" \"ebs_csi_driver\" {
-  name               = \"${aws_eks_cluster.eks.name}-ebs-csi-driver\"
-  assume_role_policy = data.aws_iam_policy_document.ebs_csi_driver.json
-}
-
-resource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver\" {
-  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy\"
-  role       = aws_iam_role.ebs_csi_driver.name
-}
-
-# Optional: only if you want to encrypt the EBS drives
-resource \"aws_iam_policy\" \"ebs_csi_driver_encryption\" {
-  name = \"${aws_eks_cluster.eks.name}-ebs-csi-driver-encryption\"
-
-  policy = jsonencode({
-    Version = \"2012-10-17\"
-    Statement = [
-      {
-        Effect = \"Allow\"
-        Action = [
-          \"kms:Decrypt\",
-          \"kms:GenerateDataKeyWithoutPlaintext\",
-          \"kms:CreateGrant\"
-        ]
-        Resource = \"*\"
-      }
-    ]
-  })
-}
-
-# Optional: only if you want to encrypt the EBS drives
-resource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver_encryption\" {
-  policy_arn = aws_iam_policy.ebs_csi_driver_encryption.arn
-  role       = aws_iam_role.ebs_csi_driver.name
-}
-
-resource \"aws_eks_pod_identity_association\" \"ebs_csi_driver\" {
-  cluster_name    = aws_eks_cluster.eks.name
-  namespace       = \"kube-system\"
-  service_account = \"ebs-csi-controller-sa\"
-  role_arn        = aws_iam_role.ebs_csi_driver.arn
-}
-
-resource \"aws_eks_addon\" \"ebs_csi_driver\" {
-  cluster_name                = aws_eks_cluster.eks.name
-  addon_name                  = \"aws-ebs-csi-driver\"
-  resolve_conflicts_on_create = \"OVERWRITE\"
-  resolve_conflicts_on_update = \"OVERWRITE\"
-
-  depends_on = [
-    aws_eks_node_group.general,
-    aws_eks_addon.pod_identity,
-    aws_eks_pod_identity_association.ebs_csi_driver
-  ]
-}",
+    "code": "data \"aws_iam_policy_document\" \"ebs_csi_driver\" {\n  statement {\n    effect = \"Allow\"\n\n    principals {\n      type        = \"Service\"\n      identifiers = [\"pods.eks.amazonaws.com\"]\n    }\n\n    actions = [\n      \"sts:AssumeRole\",\n      \"sts:TagSession\"\n    ]\n  }\n}\n\nresource \"aws_iam_role\" \"ebs_csi_driver\" {\n  name               = \"${aws_eks_cluster.eks.name}-ebs-csi-driver\"\n  assume_role_policy = data.aws_iam_policy_document.ebs_csi_driver.json\n}\n\nresource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver\" {\n  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy\"\n  role       = aws_iam_role.ebs_csi_driver.name\n}\n\n# Optional: only if you want to encrypt the EBS drives\nresource \"aws_iam_policy\" \"ebs_csi_driver_encryption\" {\n  name = \"${aws_eks_cluster.eks.name}-ebs-csi-driver-encryption\"\n\n  policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Effect = \"Allow\"\n        Action = [\n          \"kms:Decrypt\",\n          \"kms:GenerateDataKeyWithoutPlaintext\",\n          \"kms:CreateGrant\"\n        ]\n        Resource = \"*\"\n      }\n    ]\n  })\n}\n\n# Optional: only if you want to encrypt the EBS drives\nresource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver_encryption\" {\n  policy_arn = aws_iam_policy.ebs_csi_driver_encryption.arn\n  role       = aws_iam_role.ebs_csi_driver.name\n}\n\nresource \"aws_eks_pod_identity_association\" \"ebs_csi_driver\" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = \"kube-system\"\n  service_account = \"ebs-csi-controller-sa\"\n  role_arn        = aws_iam_role.ebs_csi_driver.arn\n}\n\nresource \"aws_eks_addon\" \"ebs_csi_driver\" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = \"aws-ebs-csi-driver\"\n  resolve_conflicts_on_create = \"OVERWRITE\"\n  resolve_conflicts_on_update = \"OVERWRITE\"\n\n  depends_on = [\n    aws_eks_node_group.general,\n    aws_eks_addon.pod_identity,\n    aws_eks_pod_identity_association.ebs_csi_driver\n  ]\n}",
     "components_used": [
       [
         "AmazonEBSCSIDriverPolicy",
@@ -2192,15 +1508,7 @@ resource \"aws_eks_addon\" \"ebs_csi_driver\" {
     "category": "IAM & OIDC",
     "aws_resources": "data.tls_certificate.eks, aws_iam_openid_connect_provider.eks",
     "purpose": "Creates the IAM OpenID Connect (OIDC) Provider for the EKS cluster. Enables legacy IAM Roles for Service Accounts (IRSA) for tools (such as EFS CSI Driver and Secrets Store CSI Driver) that use web identity token federation.",
-    "code": "data \"tls_certificate\" \"eks\" {
-  url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
-}
-
-resource \"aws_iam_openid_connect_provider\" \"eks\" {
-  client_id_list  = [\"sts.amazonaws.com\"]
-  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
-  url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer
-}",
+    "code": "data \"tls_certificate\" \"eks\" {\n  url = aws_eks_cluster.eks.identity[0].oidc[0].issuer\n}\n\nresource \"aws_iam_openid_connect_provider\" \"eks\" {\n  client_id_list  = [\"sts.amazonaws.com\"]\n  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]\n  url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer\n}",
     "components_used": [
       [
         "data 'tls_certificate' 'eks'",
@@ -2224,121 +1532,7 @@ resource \"aws_iam_openid_connect_provider\" \"eks\" {
     "category": "Shared Storage",
     "aws_resources": "aws_efs_file_system, aws_security_group, aws_efs_mount_target (2x), IAM role, helm_release, kubernetes_storage_class_v1.efs",
     "purpose": "Provisions an Amazon Elastic File System (EFS), creates NFS mount targets in private subnets, installs the EFS CSI Driver via Helm, and creates a Kubernetes StorageClass with ReadWriteMany (RWX) multi-pod shared storage.",
-    "code": "resource \"aws_efs_file_system\" \"eks\" {
-  creation_token = \"eks\"
-
-  performance_mode = \"generalPurpose\"
-  throughput_mode  = \"bursting\"
-  encrypted        = true
-}
-
-resource \"aws_security_group\" \"efs\" {
-  name        = \"${aws_eks_cluster.eks.name}-efs\"
-  description = \"Allow NFS inbound traffic for EFS CSI driver\"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description = \"NFS inbound from VPC\"
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = \"tcp\"
-    cidr_blocks = [aws_vpc.main.cidr_block]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = \"-1\"
-    cidr_blocks      = [\"0.0.0.0/0\"]
-    ipv6_cidr_blocks = [\"::/0\"]
-  }
-
-  tags = {
-    Name = \"${aws_eks_cluster.eks.name}-efs\"
-  }
-}
-
-resource \"aws_efs_mount_target\" \"zone_a\" {
-  file_system_id  = aws_efs_file_system.eks.id
-  subnet_id       = aws_subnet.private_zone1.id
-  security_groups = [aws_security_group.efs.id]
-}
-
-resource \"aws_efs_mount_target\" \"zone_b\" {
-  file_system_id  = aws_efs_file_system.eks.id
-  subnet_id       = aws_subnet.private_zone2.id
-  security_groups = [aws_security_group.efs.id]
-}
-
-data \"aws_iam_policy_document\" \"efs_csi_driver\" {
-  statement {
-    actions = [\"sts:AssumeRoleWithWebIdentity\"]
-    effect  = \"Allow\"
-
-    condition {
-      test     = \"StringEquals\"
-      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"
-      values   = [\"system:serviceaccount:kube-system:efs-csi-controller-sa\"]
-    }
-
-    principals {
-      identifiers = [aws_iam_openid_connect_provider.eks.arn]
-      type        = \"Federated\"
-    }
-  }
-}
-
-resource \"aws_iam_role\" \"efs_csi_driver\" {
-  name               = \"${aws_eks_cluster.eks.name}-efs-csi-driver\"
-  assume_role_policy = data.aws_iam_policy_document.efs_csi_driver.json
-}
-
-resource \"aws_iam_role_policy_attachment\" \"efs_csi_driver\" {
-  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy\"
-  role       = aws_iam_role.efs_csi_driver.name
-}
-
-resource \"helm_release\" \"efs_csi_driver\" {
-  name = \"aws-efs-csi-driver\"
-
-  repository = \"https://kubernetes-sigs.github.io/aws-efs-csi-driver/\"
-  chart      = \"aws-efs-csi-driver\"
-  namespace  = \"kube-system\"
-  version    = \"3.0.5\"
-
-  set {
-    name  = \"controller.serviceAccount.name\"
-    value = \"efs-csi-controller-sa\"
-  }
-
-  set {
-    name  = \"controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn\"
-    value = aws_iam_role.efs_csi_driver.arn
-  }
-
-  depends_on = [
-    aws_efs_mount_target.zone_a,
-    aws_efs_mount_target.zone_b
-  ]
-}
-
-resource \"kubernetes_storage_class_v1\" \"efs\" {
-  metadata {
-    name = \"efs\"
-  }
-
-  storage_provisioner = \"efs.csi.aws.com\"
-
-  parameters = {
-    provisioningMode = \"efs-ap\"
-    fileSystemId     = aws_efs_file_system.eks.id
-    directoryPerms   = \"700\"
-  }
-
-  mount_options = [\"iam\"]
-
-  depends_on = [helm_release.efs_csi_driver]
-}",
+    "code": "resource \"aws_efs_file_system\" \"eks\" {\n  creation_token = \"eks\"\n\n  performance_mode = \"generalPurpose\"\n  throughput_mode  = \"bursting\"\n  encrypted        = true\n}\n\nresource \"aws_security_group\" \"efs\" {\n  name        = \"${aws_eks_cluster.eks.name}-efs\"\n  description = \"Allow NFS inbound traffic for EFS CSI driver\"\n  vpc_id      = aws_vpc.main.id\n\n  ingress {\n    description = \"NFS inbound from VPC\"\n    from_port   = 2049\n    to_port     = 2049\n    protocol    = \"tcp\"\n    cidr_blocks = [aws_vpc.main.cidr_block]\n  }\n\n  egress {\n    from_port        = 0\n    to_port          = 0\n    protocol         = \"-1\"\n    cidr_blocks      = [\"0.0.0.0/0\"]\n    ipv6_cidr_blocks = [\"::/0\"]\n  }\n\n  tags = {\n    Name = \"${aws_eks_cluster.eks.name}-efs\"\n  }\n}\n\nresource \"aws_efs_mount_target\" \"zone_a\" {\n  file_system_id  = aws_efs_file_system.eks.id\n  subnet_id       = aws_subnet.private_zone1.id\n  security_groups = [aws_security_group.efs.id]\n}\n\nresource \"aws_efs_mount_target\" \"zone_b\" {\n  file_system_id  = aws_efs_file_system.eks.id\n  subnet_id       = aws_subnet.private_zone2.id\n  security_groups = [aws_security_group.efs.id]\n}\n\ndata \"aws_iam_policy_document\" \"efs_csi_driver\" {\n  statement {\n    actions = [\"sts:AssumeRoleWithWebIdentity\"]\n    effect  = \"Allow\"\n\n    condition {\n      test     = \"StringEquals\"\n      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"\n      values   = [\"system:serviceaccount:kube-system:efs-csi-controller-sa\"]\n    }\n\n    principals {\n      identifiers = [aws_iam_openid_connect_provider.eks.arn]\n      type        = \"Federated\"\n    }\n  }\n}\n\nresource \"aws_iam_role\" \"efs_csi_driver\" {\n  name               = \"${aws_eks_cluster.eks.name}-efs-csi-driver\"\n  assume_role_policy = data.aws_iam_policy_document.efs_csi_driver.json\n}\n\nresource \"aws_iam_role_policy_attachment\" \"efs_csi_driver\" {\n  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy\"\n  role       = aws_iam_role.efs_csi_driver.name\n}\n\nresource \"helm_release\" \"efs_csi_driver\" {\n  name = \"aws-efs-csi-driver\"\n\n  repository = \"https://kubernetes-sigs.github.io/aws-efs-csi-driver/\"\n  chart      = \"aws-efs-csi-driver\"\n  namespace  = \"kube-system\"\n  version    = \"3.0.5\"\n\n  set {\n    name  = \"controller.serviceAccount.name\"\n    value = \"efs-csi-controller-sa\"\n  }\n\n  set {\n    name  = \"controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn\"\n    value = aws_iam_role.efs_csi_driver.arn\n  }\n\n  depends_on = [\n    aws_efs_mount_target.zone_a,\n    aws_efs_mount_target.zone_b\n  ]\n}\n\nresource \"kubernetes_storage_class_v1\" \"efs\" {\n  metadata {\n    name = \"efs\"\n  }\n\n  storage_provisioner = \"efs.csi.aws.com\"\n\n  parameters = {\n    provisioningMode = \"efs-ap\"\n    fileSystemId     = aws_efs_file_system.eks.id\n    directoryPerms   = \"700\"\n  }\n\n  mount_options = [\"iam\"]\n\n  depends_on = [helm_release.efs_csi_driver]\n}",
     "components_used": [
       [
         "port = 2049 (NFS)",
@@ -2366,83 +1560,7 @@ resource \"kubernetes_storage_class_v1\" \"efs\" {
     "category": "Secrets Management",
     "aws_resources": "helm_release (2x), IAM role, policy, attachment, output",
     "purpose": "Deploys the Secrets Store CSI Driver and its AWS Provider with IRSA authentication. Allows pods to mount credentials stored in AWS Secrets Manager directly as files and automatically synchronizes them into native Kubernetes Secrets.",
-    "code": "resource \"helm_release\" \"secrets_csi_driver\" {
-  name       = \"secrets-store-csi-driver\"
-  repository = \"https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts\"
-  chart      = \"secrets-store-csi-driver\"
-  namespace  = \"kube-system\"
-  version    = \"1.4.3\"
-  timeout    = 600
-
-  # MUST be set if you use ENV variables
-  set {
-    name  = \"syncSecret.enabled\"
-    value = true
-  }
-
-  depends_on = [helm_release.efs_csi_driver]
-}
-
-resource \"helm_release\" \"secrets_csi_driver_aws_provider\" {
-  name       = \"secrets-store-csi-driver-provider-aws\"
-  repository = \"https://aws.github.io/secrets-store-csi-driver-provider-aws\"
-  chart      = \"secrets-store-csi-driver-provider-aws\"
-  namespace  = \"kube-system\"
-  version    = \"0.3.9\"
-  timeout    = 600
-
-  depends_on = [helm_release.secrets_csi_driver]
-}
-
-data \"aws_iam_policy_document\" \"myapp_secrets\" {
-  statement {
-    actions = [\"sts:AssumeRoleWithWebIdentity\"]
-    effect  = \"Allow\"
-
-    condition {
-      test     = \"StringEquals\"
-      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"
-      values   = [\"system:serviceaccount:12-example:myapp\"]
-    }
-
-    principals {
-      identifiers = [aws_iam_openid_connect_provider.eks.arn]
-      type        = \"Federated\"
-    }
-  }
-}
-
-resource \"aws_iam_role\" \"myapp_secrets\" {
-  name               = \"${aws_eks_cluster.eks.name}-myapp-secrets\"
-  assume_role_policy = data.aws_iam_policy_document.myapp_secrets.json
-}
-
-resource \"aws_iam_policy\" \"myapp_secrets\" {
-  name = \"${aws_eks_cluster.eks.name}-myapp-secrets\"
-
-  policy = jsonencode({
-    Version = \"2012-10-17\"
-    Statement = [
-      {
-        Effect = \"Allow\"
-        Action = [
-          \"secretsmanager:GetSecretValue\",
-          \"secretsmanager:DescribeSecret\"
-        ]
-        Resource = \"*\" # \"arn:*:secretsmanager:*:*:secret:my-secret-kkargS\"
-      }
-    ]
-  })
-}
-
-resource \"aws_iam_role_policy_attachment\" \"myapp_secrets\" {
-  policy_arn = aws_iam_policy.myapp_secrets.arn
-  role       = aws_iam_role.myapp_secrets.name
-}
-
-output \"myapp_secrets_role_arn\" {
-  value = aws_iam_role.myapp_secrets.arn
-}",
+    "code": "resource \"helm_release\" \"secrets_csi_driver\" {\n  name       = \"secrets-store-csi-driver\"\n  repository = \"https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts\"\n  chart      = \"secrets-store-csi-driver\"\n  namespace  = \"kube-system\"\n  version    = \"1.4.3\"\n  timeout    = 600\n\n  # MUST be set if you use ENV variables\n  set {\n    name  = \"syncSecret.enabled\"\n    value = true\n  }\n\n  depends_on = [helm_release.efs_csi_driver]\n}\n\nresource \"helm_release\" \"secrets_csi_driver_aws_provider\" {\n  name       = \"secrets-store-csi-driver-provider-aws\"\n  repository = \"https://aws.github.io/secrets-store-csi-driver-provider-aws\"\n  chart      = \"secrets-store-csi-driver-provider-aws\"\n  namespace  = \"kube-system\"\n  version    = \"0.3.9\"\n  timeout    = 600\n\n  depends_on = [helm_release.secrets_csi_driver]\n}\n\ndata \"aws_iam_policy_document\" \"myapp_secrets\" {\n  statement {\n    actions = [\"sts:AssumeRoleWithWebIdentity\"]\n    effect  = \"Allow\"\n\n    condition {\n      test     = \"StringEquals\"\n      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"\n      values   = [\"system:serviceaccount:12-example:myapp\"]\n    }\n\n    principals {\n      identifiers = [aws_iam_openid_connect_provider.eks.arn]\n      type        = \"Federated\"\n    }\n  }\n}\n\nresource \"aws_iam_role\" \"myapp_secrets\" {\n  name               = \"${aws_eks_cluster.eks.name}-myapp-secrets\"\n  assume_role_policy = data.aws_iam_policy_document.myapp_secrets.json\n}\n\nresource \"aws_iam_policy\" \"myapp_secrets\" {\n  name = \"${aws_eks_cluster.eks.name}-myapp-secrets\"\n\n  policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Effect = \"Allow\"\n        Action = [\n          \"secretsmanager:GetSecretValue\",\n          \"secretsmanager:DescribeSecret\"\n        ]\n        Resource = \"*\" # \"arn:*:secretsmanager:*:*:secret:my-secret-kkargS\"\n      }\n    ]\n  })\n}\n\nresource \"aws_iam_role_policy_attachment\" \"myapp_secrets\" {\n  policy_arn = aws_iam_policy.myapp_secrets.arn\n  role       = aws_iam_role.myapp_secrets.name\n}\n\noutput \"myapp_secrets_role_arn\" {\n  value = aws_iam_role.myapp_secrets.arn\n}",
     "components_used": [
       [
         "syncSecret.enabled = true",
