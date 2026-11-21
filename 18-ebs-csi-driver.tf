@@ -58,11 +58,14 @@ resource "aws_eks_pod_identity_association" "ebs_csi_driver" {
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name = aws_eks_cluster.eks.name
-  addon_name   = "aws-ebs-csi-driver"
+  cluster_name                = aws_eks_cluster.eks.name
+  addon_name                  = "aws-ebs-csi-driver"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
 
   depends_on = [
     aws_eks_node_group.general,
+    aws_eks_addon.pod_identity,
     aws_eks_pod_identity_association.ebs_csi_driver
   ]
 }

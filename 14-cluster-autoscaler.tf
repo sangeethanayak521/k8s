@@ -65,12 +65,12 @@ resource "aws_eks_pod_identity_association" "cluster_autoscaler" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
-  name = "autoscaler"
-
+  name       = "autoscaler"
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
   namespace  = "kube-system"
   version    = "9.37.0"
+  timeout    = 600
 
   set {
     name  = "rbac.serviceAccount.name"
@@ -87,5 +87,9 @@ resource "helm_release" "cluster_autoscaler" {
     value = local.region
   }
 
-  depends_on = [helm_release.metrics_server]
+  depends_on = [
+    helm_release.metrics_server,
+    aws_eks_addon.pod_identity,
+    aws_eks_pod_identity_association.cluster_autoscaler
+  ]
 }
