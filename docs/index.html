@@ -650,27 +650,52 @@
         <button onclick="switchExTab(12)" id="btn-ex-12" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">12-Secrets Store</button>
       </div>
 
-      <!-- Example Detail Card Container -->
-      <div class="glass-card p-6 rounded-2xl space-y-6" id="ex-content-display">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-          <div>
-            <h3 class="text-xl font-bold text-white flex items-center gap-2" id="ex-title">
-              <span class="text-cyan-400 font-mono">Example 1:</span> Developer RBAC Read-Only Access
+            <!-- Example Detail Card Container -->
+      <div class="glass-card p-6 sm:p-8 rounded-2xl space-y-6" id="ex-content-display">
+        <!-- Top Bar: Title, Category, Target, Copy Button -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-800 pb-5 gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="ex-badge-id" class="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">EX-01</span>
+              <span id="ex-category" class="px-2.5 py-0.5 rounded text-xs font-mono bg-purple-500/10 text-purple-300 border border-purple-500/30">RBAC & Least Privilege</span>
+              <span id="ex-target" class="px-2.5 py-0.5 rounded text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700">Group: my-viewer | User: developer</span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 mt-1" id="ex-title">
+              Developer RBAC Read-Only Access
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5" id="ex-desc">Restricts the developer IAM identity to view-only access across deployments, pods, and services.</p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 w-fit" id="ex-target">
-            Group: my-viewer
-          </span>
+          <button onclick="copyExCode()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition-colors border border-slate-700 w-fit">
+            <i class="fa-regular fa-copy"></i> <span id="copy-ex-text">Copy Manifest</span>
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Left: Manifest Code -->
-          <div class="space-y-2">
-            <span class="text-xs font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-regular fa-file-code text-cyan-400"></i> Manifest: <span id="ex-filename" class="text-white">0-viewer-cluster-role.yaml</span>
+        <!-- Purpose & Architectural Role -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+          <span class="text-xs font-mono text-cyan-400 font-semibold uppercase tracking-wider block mb-1">
+            <i class="fa-solid fa-bullseye mr-1.5"></i> Purpose & Real-World Problem Solved
+          </span>
+          <p class="text-sm text-slate-300 leading-relaxed" id="ex-purpose">
+            Implements the principle of least privilege for developer IAM users. Allows developers to list, inspect, and stream logs from pods and deployments to debug issues, while strictly prohibiting destructive operations.
+          </p>
+        </div>
+
+        <!-- Manifest Sub-Tabs Selector & Code Display -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-regular fa-folder-open text-cyan-400"></i> Manifest Files:
+              </span>
+              <div id="ex-file-tabs" class="flex flex-wrap gap-1.5 text-xs font-mono">
+                <!-- Dynamically generated manifest file buttons -->
+              </div>
+            </div>
+            <span class="text-xs font-mono text-slate-400 flex items-center gap-1">
+              <i class="fa-regular fa-file-code text-cyan-400"></i> <span id="ex-active-file-label" class="text-slate-200">0-viewer-cluster-role.yaml</span>
             </span>
-            <pre class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 overflow-x-auto text-xs font-mono text-slate-200 leading-relaxed"><code id="ex-code">apiVersion: rbac.authorization.k8s.io/v1
+          </div>
+
+          <pre class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800 overflow-x-auto text-xs font-mono text-slate-200 leading-relaxed max-h-[460px]"><code id="ex-code">apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: viewer
@@ -678,28 +703,69 @@ rules:
   - apiGroups: ["*"]
     resources: ["deployments", "configmaps", "pods", "secrets", "services"]
     verbs: ["get", "list", "watch"]</code></pre>
-          </div>
+        </div>
 
-          <!-- Right: Testing Commands & Internal Mechanics -->
-          <div class="space-y-4 text-xs">
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-              <span class="text-cyan-400 font-bold uppercase tracking-wider block">Terminal Testing Commands</span>
-              <pre class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400 font-mono leading-relaxed"><code id="ex-cmds"># Apply manifests:
+        <!-- Component Breakdown ("What all is used") -->
+        <div class="space-y-3">
+          <span class="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-cubes-stacked"></i> What All Is Used (Key Parameters & Configurations)
+          </span>
+          <div id="ex-components-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <!-- Dynamically populated component explanation pills -->
+          </div>
+        </div>
+
+        <!-- Testing Commands & Expected Output (Two-column grid) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- Terminal Testing Commands -->
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+            <span class="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-terminal"></i> Step-by-Step Terminal Testing Commands
+            </span>
+            <pre class="bg-slate-950 p-3.5 rounded-lg border border-slate-800 text-emerald-400 font-mono text-xs leading-relaxed overflow-x-auto"><code id="ex-cmds"># Apply manifests:
 kubectl apply -f 1-example/
 
 # Test developer permissions (Should return YES):
 kubectl auth can-i get pods --as developer
+kubectl auth can-i list deployments --as developer
 
 # Test deletion permission (Should return NO):
-kubectl auth can-i delete pods --as developer</code></pre>
-            </div>
+kubectl auth can-i delete pods --as developer
+kubectl auth can-i create deployments --as developer
+kubectl auth can-i delete namespaces --as developer</code></pre>
+          </div>
 
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-              <span class="text-purple-400 font-bold uppercase tracking-wider block">Internal Mechanics</span>
-              <p class="text-slate-300 leading-relaxed" id="ex-mechanics">
-                When the developer attempts to execute a command, `kube-apiserver` checks the caller's STS identity. EKS Access Entry maps the user to the `my-viewer` group. Kubernetes RBAC validates that the requested verb exists in the `viewer` ClusterRole.
-              </p>
-            </div>
+          <!-- Expected Terminal Output -->
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+            <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-square-check"></i> Expected Terminal Output
+            </span>
+            <pre class="bg-slate-950 p-3.5 rounded-lg border border-slate-800 text-slate-300 font-mono text-xs leading-relaxed overflow-x-auto"><code id="ex-expected-output">yes
+yes
+no
+no
+no</code></pre>
+          </div>
+        </div>
+
+        <!-- Bottom Grid: Internal Mechanics & Common Troubleshooting -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+            <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-gears"></i> Internal Mechanics & Control Loop
+            </span>
+            <p class="text-xs text-slate-300 leading-relaxed" id="ex-mechanics">
+              When the developer attempts to execute a command, kube-apiserver checks the caller's STS identity. EKS Access Entry maps the user to the 'my-viewer' group. Kubernetes RBAC validates that the requested verb exists in the 'viewer' ClusterRole.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+            <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i> Failure Modes & Troubleshooting
+            </span>
+            <p class="text-xs text-slate-300 leading-relaxed" id="ex-troubleshooting">
+              If 'kubectl auth can-i' returns 'no' for get pods, verify that 9-add-developer-user.tf was applied and that 'aws eks list-access-entries --cluster-name staging-demo' displays the developer ARN associated with group 'my-viewer'.
+            </p>
           </div>
         </div>
       </div>
@@ -2446,121 +2512,437 @@ output \"myapp_secrets_role_arn\" {
     // Initialize first tab on load
     window.addEventListener('DOMContentLoaded', () => {
       switchTfTab('0-locals');
+      switchExTab(1);
     });
 
-    // Database of all 12 Examples
+        // Complete Database of all 12 Practical Deployment Examples
     const exData = {
-      1: {
-        title: "Developer RBAC Read-Only Access",
-        desc: "Restricts the developer IAM identity to view-only access across deployments, pods, and services.",
-        target: "Group: my-viewer",
-        file: "0-viewer-cluster-role.yaml",
-        code: `apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: viewer\nrules:\n  - apiGroups: ["*"]\n    resources: ["deployments", "configmaps", "pods", "secrets", "services"]\n    verbs: ["get", "list", "watch"]`,
-        cmds: "# Apply manifests:\nkubectl apply -f 1-example/\n\n# Verify Developer permissions (Should return YES):\nkubectl auth can-i get pods --as developer\n\n# Verify deletion is blocked (Should return NO):\nkubectl auth can-i delete pods --as developer",
-        mech: "When the developer runs a kubectl command, kube-apiserver checks the caller's STS identity. EKS Access Entry maps the user to the 'my-viewer' group. Kubernetes RBAC validates that the requested verb exists in the 'viewer' ClusterRole."
-      },
-      2: {
-        title: "Manager Cluster Administrator Access",
-        desc: "Grants full administrative access (cluster-admin) to the manager role via IAM assume role.",
-        target: "Group: my-admin",
-        file: "admin-cluster-role-binding.yaml",
-        code: `apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: my-admin-binding\nroleRef:\n  kind: ClusterRole\n  name: cluster-admin\n  apiGroup: rbac.authorization.k8s.io\nsubjects:\n  - kind: Group\n    name: my-admin\n    apiGroup: rbac.authorization.k8s.io`,
-        cmds: "# Apply manifests:\nkubectl apply -f 2-example/\n\n# Verify manager can create pods (YES):\nkubectl auth can-i create pods --as manager\n\n# Verify manager can delete namespaces (YES):\nkubectl auth can-i delete namespaces --as manager",
-        mech: "Manager assumes IAM role 'staging-demo-eks-admin', which maps to group 'my-admin' via EKS Access Entry. The ClusterRoleBinding grants cluster-admin superpowers."
-      },
-      3: {
-        title: "Horizontal Pod Autoscaler (HPA)",
-        desc: "Autoscales application replicas between 1 and 5 based on CPU (>80%) and Memory (>70%) metrics.",
-        target: "Namespace: 3-example",
-        file: "3-hpa.yaml",
-        code: `apiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: myapp\n  namespace: 3-example\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: myapp\n  minReplicas: 1\n  maxReplicas: 5\n  metrics:\n    - type: Resource\n      resource:\n        name: cpu\n        target:\n          type: Utilization\n          averageUtilization: 80`,
-        cmds: "# Deploy HPA and test deployment:\nkubectl apply -f 3-example/\n\n# Watch autoscaling in real time:\nkubectl get hpa -n 3-example -w\n\n# Inspect resource consumption:\nkubectl top pods -n 3-example",
-        mech: "Metrics Server scrapes kubelet summary API every 15 seconds. HPA calculates desired replicas = ceil(currentReplicas * (currentUtilization / targetUtilization))."
-      },
-      4: {
-        title: "Cluster Autoscaler (EC2 Scale Out)",
-        desc: "Launches 5 replicas requesting 500m CPU each (2.5 cores total) to trigger AWS EC2 node expansion.",
-        target: "Namespace: 4-example",
-        file: "1-deployment.yaml",
-        code: `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 4-example\nspec:\n  replicas: 5\n  template:\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          resources:\n            requests:\n              cpu: 500m\n              memory: 512Mi`,
-        cmds: "# Deploy heavy workload:\nkubectl apply -f 4-example/\n\n# Observe pending pods waiting for capacity:\nkubectl get pods -n 4-example -o wide\n\n# Watch new EC2 worker nodes join the cluster:\nkubectl get nodes -w",
-        mech: "Kube-scheduler marks pods 'Pending' due to Insufficient CPU. Cluster Autoscaler notices pending pods, calls AWS Auto Scaling API, and increments ASG desired capacity."
-      },
-      5: {
-        title: "AWS Network Load Balancer (NLB)",
-        desc: "Provisions an ultra-fast Layer 4 AWS Network Load Balancer using IP target mode.",
-        target: "Namespace: 5-example",
-        file: "2-service.yaml",
-        code: `apiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 5-example\n  annotations:\n    service.beta.kubernetes.io/aws-load-balancer-type: external\n    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip\n    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing\nspec:\n  type: LoadBalancer\n  ports:\n    - port: 80\n      targetPort: http\n    - port: 8080\n      targetPort: http`,
-        cmds: "# Deploy NLB service:\nkubectl apply -f 5-example/\n\n# Get external NLB DNS address:\nkubectl get svc -n 5-example myapp\n\n# Test via curl:\ncurl http://<NLB-DNS-NAME>",
-        mech: "AWS Load Balancer Controller detects annotations and provisions an NLB in public subnets. Target groups register Pod IPs directly (bypassing NodePort)."
-      },
-      6: {
-        title: "AWS Application Load Balancer (ALB Ingress)",
-        desc: "Routes HTTP traffic for ex6.aiguru.website through an AWS ALB to container port 8080.",
-        target: "Host: ex6.aiguru.website",
-        file: "3-ingress.yaml",
-        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 6-example\n  annotations:\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\n    alb.ingress.kubernetes.io/healthcheck-path: /health\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex6.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080`,
-        cmds: "# Deploy ALB Ingress:\nkubectl apply -f 6-example/\n\n# Get ALB DNS name:\nkubectl get ingress -n 6-example myapp\n\n# Test (after pointing CNAME ex6 to ALB DNS):\ncurl http://ex6.aiguru.website/",
-        mech: "AWS Load Balancer Controller provisions a Layer 7 ALB in public subnets with host-based routing rule for ex6.aiguru.website."
-      },
-      7: {
-        title: "ALB with HTTPS & AWS Certificate Manager (ACM)",
-        desc: "Enforces SSL redirection (HTTP:80 -> HTTPS:443) and terminates TLS using an ACM certificate.",
-        target: "Host: ex7.aiguru.website",
-        file: "3-ingress.yaml",
-        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 7-example\n  annotations:\n    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-north-1:619544673475:certificate/<CERT_ID>\n    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'\n    alb.ingress.kubernetes.io/ssl-redirect: "443"\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex7.aiguru.website`,
-        cmds: "# Replace certificate ARN with your ACM cert in eu-north-1, then apply:\nkubectl apply -f 7-example/\n\n# Verify ingress:\nkubectl get ingress -n 7-example\n\n# Test HTTPS:\ncurl -k https://ex7.aiguru.website/",
-        mech: "ALB listener binds ACM certificate. Incoming HTTP requests receive a 301 redirect to HTTPS. Traffic between ALB and Pod IP remains private within VPC."
-      },
-      8: {
-        title: "NGINX Ingress Controller Routing",
-        desc: "Routes traffic for ex8.aiguru.website through the Ingress NGINX controller behind an AWS NLB.",
-        target: "Host: ex8.aiguru.website",
-        file: "3-ingress.yaml",
-        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 8-example\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex8.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080`,
-        cmds: "# Deploy NGINX ingress manifest:\nkubectl apply -f 8-example/\n\n# Get NGINX Load Balancer DNS:\nkubectl get svc -n ingress external-ingress-nginx-controller\n\n# Test via curl:\ncurl http://ex8.aiguru.website/",
-        mech: "Requests hit the AWS NLB, which passes TCP traffic directly into the NGINX Ingress controller pod. NGINX reads the Host header and proxies to the myapp service."
-      },
-      9: {
-        title: "Cert-Manager with Let's Encrypt Automated SSL",
-        desc: "Zero-touch SSL issuance: solves ACME HTTP-01 challenges and provisions free trusted certificates for ex9.aiguru.website.",
-        target: "Host: ex9.aiguru.website",
-        file: "4-ingress.yaml",
-        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 9-example\n  annotations:\n    cert-manager.io/cluster-issuer: http-01-production\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex9.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n  tls:\n    - hosts:\n        - ex9.aiguru.website\n      secretName: ex9-aiguru-website-tls`,
-        cmds: "# Apply ClusterIssuer and application:\nkubectl apply -f 9-example/0-cluster-issuer.yaml\nkubectl apply -f 9-example/\n\n# Watch certificate validation (READY should become True):\nkubectl get certificate -n 9-example -w\n\n# Open secure URL in browser:\nhttps://ex9.aiguru.website",
-        mech: "Cert-Manager creates an ACME order. Let's Encrypt queries http://ex9.aiguru.website/.well-known/acme-challenge/. Once validated, signed TLS secret is created automatically."
-      },
-      10: {
-        title: "StatefulSet with Amazon EBS (EBS CSI Driver)",
-        desc: "Dynamically provisions an AWS EBS volume (GP2) and attaches it to a StatefulSet pod at /data.",
-        target: "StorageClass: gp2",
-        file: "1-statefulset.yaml",
-        code: `apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: myapp\n  namespace: 10-example\nspec:\n  serviceName: nginx\n  replicas: 1\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        storageClassName: gp2\n        accessModes: [ReadWriteOnce]\n        resources:\n          requests:\n            storage: 5Gi`,
-        cmds: "# Deploy StatefulSet and headless service:\nkubectl apply -f 10-example/\n\n# Verify PVC and PV:\nkubectl get pvc -n 10-example\nkubectl get pv\n\n# Verify volume is mounted inside container:\nkubectl exec -it myapp-0 -n 10-example -- df -h /data",
-        mech: "AWS EBS CSI Driver detects volumeClaimTemplate, calls AWS EC2 CreateVolume in the node's availability zone, attaches EBS block device to the EC2 instance, and mounts ext4 filesystem."
-      },
-      11: {
-        title: "Shared Storage with Amazon EFS (ReadWriteMany)",
-        desc: "Two distinct pods mount the exact same EFS network share simultaneously and write to a shared file.",
-        target: "StorageClass: efs",
-        file: "1-pvc.yaml",
-        code: `apiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: myapp\n  namespace: 11-example\nspec:\n  accessModes:\n    - ReadWriteMany\n  storageClassName: efs\n  resources:\n    requests:\n      storage: 5Gi`,
-        cmds: "# Deploy EFS PVC and two reader/writer pods:\nkubectl apply -f 11-example/\n\n# Verify both pods see the same shared timestamps:\nkubectl exec -it myapp-1 -n 11-example -- cat /data/out1.txt\nkubectl exec -it myapp-2 -n 11-example -- cat /data/out1.txt",
-        mech: "AWS EFS CSI Driver connects over NFS (port 2049) to the EFS mount target in the local subnet. Multiple pods on different worker nodes can safely read and write simultaneously."
-      },
-      12: {
-        title: "AWS Secrets Store CSI Driver & IRSA",
-        desc: "Securely injects credentials from AWS Secrets Manager in eu-north-1 into container files and environment variables.",
-        target: "Secret: staging/myapp-secret-v4",
-        file: "1-secret-provider-class.yaml",
-        code: `apiVersion: secrets-store.csi.x-k8s.io/v1\nkind: SecretProviderClass\nmetadata:\n  name: myapp-aws-secrets\n  namespace: 12-example\nspec:\n  provider: aws\n  parameters:\n    region: eu-north-1\n    objects: |\n      - objectName: staging/myapp-secret-v4\n        objectType: secretsmanager\n        jmesPath:\n            - path: username\n              objectAlias: myusername\n            - path: password\n              objectAlias: mypassword\n  secretObjects:\n    - secretName: myapp-k8s-secret\n      type: Opaque\n      data:\n        - objectName: myusername\n          key: k8s-myusername\n        - objectName: mypassword\n          key: k8s-mypassword`,
-        cmds: "# 1. Create secret in AWS Secrets Manager:\naws secretsmanager create-secret --name staging/myapp-secret-v4 --secret-string '{\"username\":\"admin\",\"password\":\"SuperSecretPassword123\"}' --region eu-north-1\n\n# 2. Deploy Kubernetes manifests:\nkubectl apply -f 12-example/\n\n# 3. Verify mounted secret file inside container:\nkubectl exec -it deployment/myapp -n 12-example -- ls -la /mnt/secrets\n\n# 4. Check injected environment variables:\nkubectl exec -it deployment/myapp -n 12-example -- env | grep MY_",
-        mech: "During pod creation, Secrets Store CSI Driver invokes the AWS Provider. The provider uses IRSA token exchange to authenticate with Secrets Manager, pulls the secret, mounts it at /mnt/secrets, and creates a Kubernetes Secret."
-      }
-    };
+    "1": {
+        "title": "Developer RBAC Read-Only Access",
+        "category": "RBAC & Least Privilege",
+        "target": "Group: my-viewer | User: developer",
+        "purpose": "Implements the principle of least privilege for developer IAM users. Allows developers to list, inspect, and stream logs from pods and deployments to debug issues, while strictly prohibiting destructive operations (such as deleting namespaces, updating secrets, or modifying network policies).",
+        "components": [
+            [
+                "kind: ClusterRole & name: viewer",
+                "Defines a cluster-wide permission rule set that applies across all namespaces in the cluster."
+            ],
+            [
+                "apiGroups: ['*']",
+                "Covers the core API group ('') and named groups (apps, batch, extensions, networking.k8s.io)."
+            ],
+            [
+                "resources: ['deployments', 'configmaps', 'pods', 'secrets', 'services']",
+                "The exact Kubernetes resource types the developer is allowed to inspect."
+            ],
+            [
+                "verbs: ['get', 'list', 'watch']",
+                "Read-only verbs. Forbids 'create', 'update', 'patch', 'delete', and 'deletecollection'."
+            ],
+            [
+                "kind: ClusterRoleBinding & name: my-viewer-binding",
+                "Binds the ClusterRole 'viewer' to the subject 'Group: my-viewer'."
+            ],
+            [
+                "subjects.name = 'my-viewer'",
+                "Matches the group assigned by EKS Access Entry in 9-add-developer-user.tf."
+            ]
+        ],
+        "test_cmds": "# 1. Apply ClusterRole and ClusterRoleBinding:\nkubectl apply -f 1-example/\n\n# 2. Test Developer read permissions (Should return YES):\nkubectl auth can-i get pods --as developer\nkubectl auth can-i list deployments --as developer\n\n# 3. Test Developer write/delete permissions (Should return NO):\nkubectl auth can-i delete pods --as developer\nkubectl auth can-i create deployments --as developer\nkubectl auth can-i delete namespaces --as developer",
+        "expected_output": "yes\nyes\nno\nno\nno",
+        "mechanics": "When the developer executes a kubectl command, kube-apiserver validates the AWS STS identity. The EKS Access Entry maps the developer ARN to the 'my-viewer' group. The Kubernetes RBAC Authorizer evaluates the request against ClusterRoleBindings and allows the read verb while rejecting all modification verbs.",
+        "troubleshooting": "If 'kubectl auth can-i' returns 'no' for get pods, verify that 9-add-developer-user.tf was applied and that 'aws eks list-access-entries --cluster-name staging-demo' displays the developer ARN associated with group 'my-viewer'.",
+        "manifests": {
+            "0-viewer-cluster-role.yaml": "---\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: viewer\nrules:\n  - apiGroups: [\"*\"]\n    resources: [\"deployments\", \"configmaps\", \"pods\", \"secrets\", \"services\"]\n    verbs: [\"get\", \"list\", \"watch\"]\n",
+            "1-viewer-cluster-role-binding.yaml": "---\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: my-viewer-binding\nroleRef:\n  kind: ClusterRole\n  name: viewer\n  apiGroup: rbac.authorization.k8s.io\nsubjects:\n  - kind: Group\n    name: my-viewer\n    apiGroup: rbac.authorization.k8s.io\n"
+        }
+    },
+    "2": {
+        "title": "Manager Cluster Administrator Access",
+        "category": "RBAC & Privilege Escalation",
+        "target": "Group: my-admin | Role: staging-demo-eks-admin",
+        "purpose": "Provides full cluster administrator superpowers (cluster-admin) to senior DevOps engineers and managers via temporary AWS STS credentials, while enforcing auditable assume-role access patterns in AWS CloudTrail.",
+        "components": [
+            [
+                "kind: ClusterRoleBinding",
+                "Binds administrative permissions cluster-wide to all namespaces."
+            ],
+            [
+                "roleRef.name: cluster-admin",
+                "The built-in Kubernetes superuser role. Grants wildcard permissions ('*' verbs on '*' resources)."
+            ],
+            [
+                "subjects.name: my-admin",
+                "Matches the Kubernetes group mapped in 10-add-manager-role.tf for the assumed role ARN."
+            ],
+            [
+                "AWS STS AssumeRole Integration",
+                "The manager user does not have permanent admin access; they must assume staging-demo-eks-admin to gain cluster control."
+            ]
+        ],
+        "test_cmds": "# 1. Apply Admin ClusterRoleBinding:\nkubectl apply -f 2-example/\n\n# 2. Verify Manager administrator permissions (All should return YES):\nkubectl auth can-i create pods --as manager\nkubectl auth can-i delete namespaces --as manager\nkubectl auth can-i edit secrets --as manager",
+        "expected_output": "yes\nyes\nyes",
+        "mechanics": "The manager assumes IAM role staging-demo-eks-admin. EKS Access Entry attributes the assumed role ARN to group 'my-admin'. The ClusterRoleBinding connects 'my-admin' to the built-in 'cluster-admin' ClusterRole, bypassing all namespace restrictions.",
+        "troubleshooting": "If access is denied, verify that the manager IAM user has sts:AssumeRole permissions on the eks-admin role, and ensure aws_eks_access_entry.manager has principal_arn set to the role ARN (not the user ARN).",
+        "manifests": {
+            "admin-cluster-role-binding.yaml": "---\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: my-admin-binding\nroleRef:\n  kind: ClusterRole\n  name: cluster-admin\n  apiGroup: rbac.authorization.k8s.io\nsubjects:\n  - kind: Group\n    name: my-admin\n    apiGroup: rbac.authorization.k8s.io\n"
+        }
+    },
+    "3": {
+        "title": "Horizontal Pod Autoscaler (HPA)",
+        "category": "Autoscaling & Metrics",
+        "target": "Namespace: 3-example | Metrics Server",
+        "purpose": "Automatically scales application pods up or down between 1 and 5 replicas based on observed CPU (>80%) and memory (>70%) utilization, preventing outages during traffic spikes and saving costs during low-traffic periods.",
+        "components": [
+            [
+                "apiVersion: autoscaling/v2",
+                "Modern autoscaling specification supporting multiple resource and custom metrics simultaneously."
+            ],
+            [
+                "scaleTargetRef.name: myapp",
+                "Binds the HPA to the Deployment named 'myapp'."
+            ],
+            [
+                "minReplicas: 1 & maxReplicas: 5",
+                "Establishes safe operating limits for the pod replica count."
+            ],
+            [
+                "metrics[0].resource.name: cpu (80%)",
+                "Triggers scale-out if average CPU usage exceeds 80% of requested CPU (100m)."
+            ],
+            [
+                "metrics[1].resource.name: memory (70%)",
+                "Triggers scale-out if average RAM usage exceeds 70% of requested RAM (256Mi)."
+            ],
+            [
+                "resources.requests: cpu: 100m, memory: 256Mi",
+                "MANDATORY. HPA cannot compute percentage utilization without explicit container resource requests."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy Namespace, Deployment, Service, and HPA:\nkubectl apply -f 3-example/\n\n# 2. Inspect active HPA metrics:\nkubectl get hpa -n 3-example\n\n# 3. Simulate high CPU load using a temporary busybox pod:\nkubectl run -i --tty load-gen --rm --image=busybox -n 3-example -- /bin/sh -c \"while true; do wget -q -O- http://myapp:8080; done\"\n\n# 4. Watch the replica count increase in another terminal:\nkubectl get hpa -n 3-example -w",
+        "expected_output": "NAME    REFERENCE          TARGETS                  MINPODS   MAXPODS   REPLICAS   AGE\nmyapp   Deployment/myapp   cpu: 85%/80%, mem: 42%/70%   1         5         3          4m",
+        "mechanics": "Metrics Server scrapes the kubelet summary API every 15 seconds. The HPA controller queries metrics.k8s.io and calculates: desiredReplicas = ceil(currentReplicas * (currentUtilization / targetUtilization)). If desiredReplicas differs from current, it updates Deployment.spec.replicas.",
+        "troubleshooting": "If HPA shows '<unknown>/80%', ensure 12-metrics-server.tf is healthy ('kubectl top nodes') and verify that 3-example/1-deployment.yaml defines container resources.requests.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 3-example\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 3-example\nspec:\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 256Mi\n              cpu: 100m\n            limits:\n              memory: 256Mi\n              cpu: 100m\n",
+            "2-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 3-example\nspec:\n  ports:\n    - port: 8080\n      targetPort: http\n  selector:\n    app: myapp\n",
+            "3-hpa.yaml": "---\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: myapp\n  namespace: 3-example\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: myapp\n  minReplicas: 1\n  maxReplicas: 5\n  metrics:\n    - type: Resource\n      resource:\n        name: cpu\n        target:\n          type: Utilization\n          averageUtilization: 80\n    - type: Resource\n      resource:\n        name: memory\n        target:\n          type: Utilization\n          averageUtilization: 70\n"
+        }
+    },
+    "4": {
+        "title": "Cluster Autoscaler (EC2 Node Expansion)",
+        "category": "Infrastructure Autoscaling",
+        "target": "Namespace: 4-example | ASG Scale-out",
+        "purpose": "Tests infrastructure-level autoscaling. When application workloads request more CPU/memory than existing worker nodes can provide, pods remain in 'Pending' state. Cluster Autoscaler detects this condition and automatically expands the AWS EC2 Auto Scaling Group.",
+        "components": [
+            [
+                "replicas: 5",
+                "Launches 5 concurrent pods."
+            ],
+            [
+                "resources.requests: cpu: 500m, memory: 512Mi",
+                "Total CPU required = 5 * 500m = 2.5 CPU cores. This exceeds the spare capacity of a single worker node."
+            ],
+            [
+                "Insufficient CPU Event",
+                "Kube-scheduler marks unplaceable pods as 'Pending' with FailedScheduling events."
+            ],
+            [
+                "autoDiscovery.clusterName = 'staging-demo'",
+                "Cluster Autoscaler continuously watches the cluster and matches AWS ASG tags."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy heavy workload:\nkubectl apply -f 4-example/\n\n# 2. Observe pods stuck in Pending state due to capacity limits:\nkubectl get pods -n 4-example -o wide\n\n# 3. Check Cluster Autoscaler logs detecting unschedulable pods:\nkubectl logs -n kube-system deployment/autoscaler --tail=30\n\n# 4. Watch new EC2 worker nodes join the cluster:\nkubectl get nodes -w",
+        "expected_output": "NAME                     STATUS     ROLES    AGE   VERSION\ni-0123456789abcdef0      Ready      <none>   15m   v1.35.0-eks\ni-0abcdef1234567890      Ready      <none>   15m   v1.35.0-eks\ni-0fedcba9876543210      Ready      <none>   45s   v1.35.0-eks   <-- Newly Launched Node!",
+        "mechanics": "Kube-scheduler fails to place pods and marks them Pending. Cluster Autoscaler performs a simulated scheduling pass, determines that launching another t3.large instance will allow the pods to schedule, and calls AWS autoscaling:SetDesiredCapacity to increment the node count.",
+        "troubleshooting": "If nodes do not scale up, inspect autoscaler logs for 'Failed to scale up: AccessDeniedException' and verify that 14-cluster-autoscaler.tf has active Pod Identity associations.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 4-example\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 4-example\nspec:\n  replicas: 5\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 512Mi\n              cpu: 500m\n            limits:\n              memory: 512Mi\n              cpu: 500m\n"
+        }
+    },
+    "5": {
+        "title": "AWS Network Load Balancer (NLB)",
+        "category": "Layer 4 Load Balancing",
+        "target": "Namespace: 5-example | Ports: 80 & 8080",
+        "purpose": "Exposes applications to the public internet using an ultra-high performance AWS Network Load Balancer (Layer 4) with direct IP target routing, bypassing NodePort and kube-proxy SNAT overhead.",
+        "components": [
+            [
+                "type: LoadBalancer",
+                "Requests an external cloud load balancer from AWS."
+            ],
+            [
+                "service.beta.kubernetes.io/aws-load-balancer-type: external",
+                "Delegates load balancer provisioning to AWS Load Balancer Controller (instead of legacy in-tree controller)."
+            ],
+            [
+                "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip",
+                "CRITICAL. Registers Pod private IPs directly in the NLB Target Group across subnets."
+            ],
+            [
+                "service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing",
+                "Deploys the NLB into public subnets with public IP addresses."
+            ],
+            [
+                "ports: 80 & 8080",
+                "Port 80 maps directly to container port 8080 for seamless browser access."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy NLB service and workload:\nkubectl apply -f 5-example/\n\n# 2. Retrieve external NLB DNS hostname:\nkubectl get svc -n 5-example myapp\n\n# 3. Test HTTP connectivity through the NLB:\ncurl http://<NLB-DNS-NAME>\ncurl http://<NLB-DNS-NAME>/health",
+        "expected_output": "HTTP/1.1 200 OK\nDate: Sat, 21 Nov 2026 18:00:00 GMT\nContent-Type: text/plain; charset=utf-8\nContent-Length: 17\n\nHello from myapp!",
+        "mechanics": "AWS Load Balancer Controller reconciler loop monitors Services with 'aws-load-balancer-type: external'. It calls AWS ELBv2 APIs to provision an NLB in public subnets, creates TCP target groups, and configures target health checks on the pod's /health path.",
+        "troubleshooting": "If the Service stays in '<pending>' external IP, ensure 15-aws-lbc.tf controller is running and that public subnets are tagged with 'kubernetes.io/role/elb = 1'.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 5-example\n\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 5-example\n  labels:\n    app.kubernetes.io/name: myapp\nspec:\n  # Multi-AZ High Availability: increased from 1 to 2 replicas\n  replicas: 2\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n              protocol: TCP\n          resources:\n            requests:\n              memory: 128Mi\n              cpu: 100m\n            limits:\n              memory: 128Mi\n              cpu: 100m\n          # Readiness Probe: ensures AWS NLB IP target only sends traffic after port 8080 is up\n          readinessProbe:\n            httpGet:\n              path: /health\n              port: 8080\n            initialDelaySeconds: 3\n            periodSeconds: 5\n            failureThreshold: 3\n          # Liveness Probe: automatically restarts dead/hung containers\n          livenessProbe:\n            httpGet:\n              path: /health\n              port: 8080\n            initialDelaySeconds: 5\n            periodSeconds: 10\n            failureThreshold: 3\n\n",
+            "2-service.yaml": "---\n# Supported annotations reference:\n# https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/annotations/\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 5-example\n  annotations:\n    # 1. Instructs Kubernetes to use AWS Load Balancer Controller instead of in-tree cloud controller\n    service.beta.kubernetes.io/aws-load-balancer-type: external\n\n    # 2. IP mode routes traffic directly to Pod IPs across the VPC subnets (no NodePort/SNAT overhead)\n    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip\n\n    # 3. Places the Network Load Balancer in public subnets (tagged with kubernetes.io/role/elb = 1)\n    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing\n\n    # 4. Explicit HTTP Health Checks on /health endpoint rather than blind TCP connection checks\n    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: HTTP\n    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: \"8080\"\n    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /health\nspec:\n  type: LoadBalancer\n  ports:\n    # Standard Web Port (port 80) -> allows direct browser access without typing :8080\n    - name: http\n      port: 80\n      targetPort: http # Resolves to container port 8080\n      protocol: TCP\n    # Secondary Direct Port (port 8080) -> preserves compatibility with original tutorial\n    - name: http-alt\n      port: 8080\n      targetPort: http\n      protocol: TCP\n  selector:\n    app: myapp\n\n"
+        }
+    },
+    "6": {
+        "title": "AWS Application Load Balancer (ALB Ingress)",
+        "category": "Layer 7 Ingress & Routing",
+        "target": "Host: ex6.aiguru.website | Port: 80",
+        "purpose": "Demonstrates Layer 7 HTTP ingress using AWS ALB. Provides host-based routing for 'ex6.aiguru.website' and path routing to internal ClusterIP services with automatic health checks.",
+        "components": [
+            [
+                "ingressClassName: alb",
+                "Instructs AWS Load Balancer Controller to satisfy this Ingress resource."
+            ],
+            [
+                "alb.ingress.kubernetes.io/scheme: internet-facing",
+                "Provisions a public ALB across public subnets."
+            ],
+            [
+                "alb.ingress.kubernetes.io/target-type: ip",
+                "Routes traffic directly from the ALB to Pod IP addresses."
+            ],
+            [
+                "alb.ingress.kubernetes.io/healthcheck-path: /health",
+                "Directs ALB target group health check pings to the /health endpoint on container port 8080."
+            ],
+            [
+                "rules[0].host: ex6.aiguru.website",
+                "Directs incoming requests matching this Host header to the myapp service."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy ALB Ingress:\nkubectl apply -f 6-example/\n\n# 2. Get the provisioned ALB DNS name:\nkubectl get ingress -n 6-example myapp\n\n# 3. In your DNS provider (e.g. Route 53 or Cloudflare), create a CNAME:\n#    Host: ex6.aiguru.website -> Target: <ALB-DNS-NAME>\n\n# 4. Test HTTP access:\ncurl -H \"Host: ex6.aiguru.website\" http://<ALB-DNS-NAME>/\ncurl http://ex6.aiguru.website/",
+        "expected_output": "Hello from myapp! (Serving on ex6.aiguru.website)",
+        "mechanics": "The AWS Load Balancer Controller reads the Ingress spec, provisions an Application Load Balancer, creates an HTTP:80 listener, configures host-header routing rules, and registers Pod IPs in target groups.",
+        "troubleshooting": "If curl returns 502 Bad Gateway, verify container logs ('kubectl logs -n 6-example -l app=myapp') to ensure the container is listening on port 8080 and responds with 200 OK on /health.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 6-example\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 6-example\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 128Mi\n              cpu: 100m\n            limits:\n              memory: 128Mi\n              cpu: 100m\n",
+            "2-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 6-example\nspec:\n  type: ClusterIP\n  ports:\n    - port: 8080\n      targetPort: http\n  selector:\n    app: myapp\n",
+            "3-ingress.yaml": "---\n# Supported annotations\n# https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/ingress/annotations/\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 6-example\n  annotations:\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\n    alb.ingress.kubernetes.io/healthcheck-path: /health\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex6.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n"
+        }
+    },
+    "7": {
+        "title": "ALB with HTTPS & AWS Certificate Manager (ACM)",
+        "category": "SSL / TLS Encryption",
+        "target": "Host: ex7.aiguru.website | Port: 443 HTTPS",
+        "purpose": "Enforces HTTPS encryption on AWS ALB using an AWS Certificate Manager (ACM) certificate in eu-north-1, with automatic HTTP (port 80) to HTTPS (port 443) redirection.",
+        "components": [
+            [
+                "alb.ingress.kubernetes.io/certificate-arn",
+                "Specifies the ACM certificate ARN for *.aiguru.website in region eu-north-1."
+            ],
+            [
+                "alb.ingress.kubernetes.io/listen-ports: '[{\"HTTP\": 80}, {\"HTTPS\":443}]'",
+                "Configures dual listeners on the ALB."
+            ],
+            [
+                "alb.ingress.kubernetes.io/ssl-redirect: '443'",
+                "Enforces HTTP 301 Permanent Redirect to HTTPS for all plaintext traffic."
+            ],
+            [
+                "rules[0].host: ex7.aiguru.website",
+                "Host header matching rule for HTTPS traffic."
+            ]
+        ],
+        "test_cmds": "# 1. Replace certificate-arn in 7-example/3-ingress.yaml with your ACM ARN in eu-north-1.\n# 2. Deploy HTTPS Ingress:\nkubectl apply -f 7-example/\n\n# 3. Test HTTP to HTTPS redirection (Should return 301 Moved Permanently):\ncurl -I http://ex7.aiguru.website/\n\n# 4. Test secure HTTPS access:\ncurl -v https://ex7.aiguru.website/",
+        "expected_output": "HTTP/1.1 301 Moved Permanently\nLocation: https://ex7.aiguru.website:443/\n\n* Server certificate:\n*  subject: CN=*.aiguru.website\n*  issuer: Amazon",
+        "mechanics": "The ALB terminates TLS at the edge using the ACM certificate. Decrypted traffic is forwarded to Pod IPs over the private VPC network. Plaintext HTTP requests receive an instant 301 redirect from the ALB.",
+        "troubleshooting": "If the ALB fails to create the HTTPS listener, ensure the ACM certificate status is 'ISSUED' and that it resides in 'eu-north-1' (the same region as the ALB).",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 7-example\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 7-example\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 128Mi\n              cpu: 100m\n            limits:\n              memory: 128Mi\n              cpu: 100m\n",
+            "2-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 7-example\nspec:\n  type: ClusterIP\n  ports:\n    - port: 8080\n      targetPort: http\n  selector:\n    app: myapp\n",
+            "3-ingress.yaml": "---\n# Supported annotations\n# https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/ingress/annotations/\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 7-example\n  annotations:\n    # NOTE: Replace with your ACM certificate ARN for aiguru.website or *.aiguru.website in eu-north-1\n    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-north-1:619544673475:certificate/YOUR_ACM_CERTIFICATE_ID\n    alb.ingress.kubernetes.io/listen-ports: '[{\"HTTP\": 80}, {\"HTTPS\":443}]'\n    alb.ingress.kubernetes.io/ssl-redirect: \"443\"\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\n    alb.ingress.kubernetes.io/healthcheck-path: /health\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex7.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n"
+        }
+    },
+    "8": {
+        "title": "NGINX Ingress Controller Routing",
+        "category": "Reverse Proxy & Ingress",
+        "target": "Host: ex8.aiguru.website | IngressClass: external-nginx",
+        "purpose": "Routes web traffic through the Kubernetes-native Ingress NGINX controller deployed in 16-nginx-ingress.tf behind an AWS Network Load Balancer.",
+        "components": [
+            [
+                "ingressClassName: external-nginx",
+                "Instructs Ingress NGINX to process this routing rule."
+            ],
+            [
+                "rules[0].host: ex8.aiguru.website",
+                "NGINX server_name rule matching the domain name."
+            ],
+            [
+                "paths[0].path: / (Prefix)",
+                "Routes all requests starting with '/' to the backend service."
+            ],
+            [
+                "backend.service.name: myapp & port: 8080",
+                "Internal ClusterIP routing destination."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy NGINX Ingress manifest:\nkubectl apply -f 8-example/\n\n# 2. Get the NGINX Load Balancer DNS hostname:\nkubectl get svc -n ingress external-ingress-nginx-controller\n\n# 3. Create CNAME: ex8.aiguru.website -> <NGINX-NLB-DNS>\n\n# 4. Test connectivity:\ncurl http://ex8.aiguru.website/",
+        "expected_output": "Hello from myapp! (Routed via Ingress-NGINX)",
+        "mechanics": "Internet traffic arrives at the AWS NLB, passes to the NGINX Ingress controller pod, which inspects the Host header and proxies the request to the myapp ClusterIP service.",
+        "troubleshooting": "If curl returns 404 from NGINX, verify that the Host header matches 'ex8.aiguru.website' exactly.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 8-example\n",
+            "1-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 8-example\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 128Mi\n              cpu: 100m\n            limits:\n              memory: 128Mi\n              cpu: 100m\n",
+            "2-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 8-example\nspec:\n  type: ClusterIP\n  ports:\n    - port: 8080\n      targetPort: http\n  selector:\n    app: myapp\n",
+            "3-ingress.yaml": "---\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 8-example\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex8.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n"
+        }
+    },
+    "9": {
+        "title": "Cert-Manager with Let's Encrypt Automated SSL",
+        "category": "Automated TLS & Public PKI",
+        "target": "Host: ex9.aiguru.website | Secret: ex9-aiguru-website-tls",
+        "purpose": "Completely automates SSL certificate lifecycle: solves Let's Encrypt ACME HTTP-01 challenges, provisions free trusted certificates, stores them in Kubernetes Secrets, and handles automated renewals.",
+        "components": [
+            [
+                "kind: ClusterIssuer (http-01-production)",
+                "Connects to Let's Encrypt production ACME server with admin@aiguru.website."
+            ],
+            [
+                "solvers[0].http01.ingressClassName: external-nginx",
+                "Solves challenge tokens via the NGINX Ingress controller."
+            ],
+            [
+                "cert-manager.io/cluster-issuer: http-01-production",
+                "Ingress annotation that triggers automated certificate issuance."
+            ],
+            [
+                "tls.secretName: ex9-aiguru-website-tls",
+                "Target secret holding the issued TLS certificate and private key."
+            ]
+        ],
+        "test_cmds": "# 1. Apply ClusterIssuer:\nkubectl apply -f 9-example/0-cluster-issuer.yaml\n\n# 2. Deploy application and Ingress:\nkubectl apply -f 9-example/\n\n# 3. Watch certificate validation (READY should become True):\nkubectl get certificate -n 9-example -w\n\n# 4. Test in browser or curl:\ncurl -v https://ex9.aiguru.website",
+        "expected_output": "NAME                    READY   SECRET                  AGE\nex9-aiguru-website-tls   True    ex9-aiguru-website-tls   2m\n\n* TLSv1.3 (IN), TLS handshake, Server hello (3):\n* Server certificate:\n*  subject: CN=ex9.aiguru.website\n*  issuer: C=US; O=Let's Encrypt; CN=R3",
+        "mechanics": "Cert-Manager creates an ACME order. Let's Encrypt queries http://ex9.aiguru.website/.well-known/acme-challenge/<token>. NGINX routes this token to Cert-Manager's challenge pod. Once validated, Let's Encrypt signs the certificate and Cert-Manager updates the secret.",
+        "troubleshooting": "If certificate stays READY=False, run 'kubectl describe challenge -n 9-example'. Ensure DNS for ex9.aiguru.website points to the NGINX NLB so Let's Encrypt can reach the challenge pod.",
+        "manifests": {
+            "0-cluster-issuer.yaml": "---\napiVersion: cert-manager.io/v1\nkind: ClusterIssuer\nmetadata:\n  name: http-01-production\nspec:\n  acme:\n    email: admin@aiguru.website\n    server: https://acme-v02.api.letsencrypt.org/directory\n    privateKeySecretRef:\n      name: http-01-production-cluster-issuer\n    solvers:\n      - http01:\n          ingress:\n            ingressClassName: external-nginx\n",
+            "1-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 9-example\n",
+            "2-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 9-example\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          resources:\n            requests:\n              memory: 128Mi\n              cpu: 100m\n            limits:\n              memory: 128Mi\n              cpu: 100m\n",
+            "3-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 9-example\nspec:\n  type: ClusterIP\n  ports:\n    - port: 8080\n      targetPort: http\n  selector:\n    app: myapp\n",
+            "4-ingress.yaml": "---\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 9-example\n  annotations:\n    cert-manager.io/cluster-issuer: http-01-production\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex9.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n  tls:\n    - hosts:\n        - ex9.aiguru.website\n      secretName: ex9-aiguru-website-tls\n"
+        }
+    },
+    "10": {
+        "title": "StatefulSet with Amazon EBS (EBS CSI Driver)",
+        "category": "Stateful Workloads & Block Storage",
+        "target": "StorageClass: gp2 | StatefulSet: myapp-0",
+        "purpose": "Deploys stateful applications (databases, queues) requiring stable network hostnames (myapp-0) and dedicated persistent block storage that survives pod restarts and rescheduling.",
+        "components": [
+            [
+                "kind: StatefulSet",
+                "Manages stateful pods with ordered indexes (myapp-0, myapp-1)."
+            ],
+            [
+                "serviceName: nginx",
+                "Headless service providing direct pod DNS resolution."
+            ],
+            [
+                "volumeClaimTemplates",
+                "Automatically provisions an independent PVC for each replica."
+            ],
+            [
+                "storageClassName: gp2 & accessModes: [ReadWriteOnce]",
+                "Dynamically provisions an Amazon EBS volume formatted with ext4."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy StatefulSet and headless service:\nkubectl apply -f 10-example/\n\n# 2. Verify PVC and PV provisioning:\nkubectl get pvc -n 10-example\nkubectl get pv\n\n# 3. Verify volume is mounted inside container:\nkubectl exec -it myapp-0 -n 10-example -- df -h /data",
+        "expected_output": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme1n1    4.9G   20M  4.6G   1% /data",
+        "mechanics": "The EBS CSI Driver intercepts the PVC, calls AWS EC2 CreateVolume in the node's availability zone, attaches the volume to the EC2 instance, formats with ext4, and mounts it to /data.",
+        "troubleshooting": "If PVC is stuck in Pending, check 'kubectl describe pvc -n 10-example data-myapp-0' to confirm 18-ebs-csi-driver.tf is active.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 10-example\n",
+            "1-statefulset.yaml": "---\napiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: myapp\n  namespace: 10-example\nspec:\n  serviceName: nginx\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          ports:\n            - name: http\n              containerPort: 8080\n          volumeMounts:\n            - name: data\n              mountPath: /data\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        storageClassName: gp2\n        accessModes: [ReadWriteOnce]\n        resources:\n          requests:\n            storage: 5Gi\n",
+            "2-service.yaml": "---\napiVersion: v1\nkind: Service\nmetadata:\n  name: nginx\n  namespace: 10-example\nspec:\n  clusterIP: None\n  selector:\n    app: myapp\n  ports:\n    - name: http\n      port: 8080\n      targetPort: http\n"
+        }
+    },
+    "11": {
+        "title": "Shared Storage with Amazon EFS (ReadWriteMany)",
+        "category": "Shared Network File Storage",
+        "target": "StorageClass: efs | AccessMode: ReadWriteMany",
+        "purpose": "Demonstrates concurrent shared file storage across multiple pods running on different worker nodes using Amazon EFS (NFS v4).",
+        "components": [
+            [
+                "accessModes: [ReadWriteMany]",
+                "Allows multiple pods to mount the filesystem simultaneously with read and write access."
+            ],
+            [
+                "storageClassName: efs",
+                "References the EFS StorageClass created in 20-efs.tf."
+            ],
+            [
+                "myapp-1 & myapp-2",
+                "Two independent pods writing timestamps to the shared file /data/out1.txt."
+            ]
+        ],
+        "test_cmds": "# 1. Deploy EFS PVC and pods:\nkubectl apply -f 11-example/\n\n# 2. Verify both pods are writing to the exact same shared file:\nkubectl exec -it myapp-1 -n 11-example -- cat /data/out1.txt\nkubectl exec -it myapp-2 -n 11-example -- cat /data/out1.txt",
+        "expected_output": "Sat Nov 21 18:30:00 UTC 2026 (Written by myapp-1)\nSat Nov 21 18:30:05 UTC 2026 (Written by myapp-2)\nSat Nov 21 18:30:10 UTC 2026 (Written by myapp-1)",
+        "mechanics": "The EFS CSI Driver mounts the EFS Access Point over NFS (port 2049) via the local subnet mount target. Both pods read and write to the same underlying network filesystem.",
+        "troubleshooting": "If mounting hangs, verify that aws_security_group.efs allows port 2049 from VPC CIDR 10.0.0.0/16.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 11-example\n",
+            "1-pvc.yaml": "---\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: myapp\n  namespace: 11-example\nspec:\n  accessModes:\n    - ReadWriteMany\n  storageClassName: efs\n  resources:\n    requests:\n      storage: 5Gi # Don't matter, it's elastic\n",
+            "2-pods.yaml": "---\napiVersion: v1\nkind: Pod\nmetadata:\n  name: myapp-1\n  namespace: 11-example\nspec:\n  containers:\n    - name: myapp-1\n      image: busybox\n      command: [\"/bin/sh\"]\n      args:\n        [\n          \"-c\",\n          \"while true; do echo $(date -u) >> /data/out1.txt; sleep 5; done\",\n        ]\n      volumeMounts:\n        - name: persistent-storage\n          mountPath: /data\n  volumes:\n    - name: persistent-storage\n      persistentVolumeClaim:\n        claimName: myapp\n---\napiVersion: v1\nkind: Pod\nmetadata:\n  name: myapp-2\n  namespace: 11-example\nspec:\n  containers:\n    - name: myapp-2\n      image: busybox\n      command: [\"/bin/sh\"]\n      args:\n        [\n          \"-c\",\n          \"while true; do echo $(date -u) >> /data/out1.txt; sleep 5; done\",\n        ]\n      volumeMounts:\n        - name: persistent-storage\n          mountPath: /data\n  volumes:\n    - name: persistent-storage\n      persistentVolumeClaim:\n        claimName: myapp\n"
+        }
+    },
+    "12": {
+        "title": "AWS Secrets Store CSI Driver & IRSA",
+        "category": "Secrets & Identity Federation",
+        "target": "Secret: staging/myapp-secret-v4 | Region: eu-north-1",
+        "purpose": "Injects credentials from AWS Secrets Manager directly into pods as mounted files and environment variables without storing plaintext secrets in Git.",
+        "components": [
+            [
+                "kind: SecretProviderClass",
+                "Configures AWS Secrets Manager parameters in region eu-north-1."
+            ],
+            [
+                "jmesPath",
+                "Extracts JSON keys 'username' and 'password' from secret staging/myapp-secret-v4."
+            ],
+            [
+                "secretObjects",
+                "Automatically synchronizes keys into a native Kubernetes Secret (myapp-k8s-secret)."
+            ],
+            [
+                "ServiceAccount IRSA Annotation",
+                "Binds the pod to IAM role staging-demo-myapp-secrets (Account: 619544673475)."
+            ]
+        ],
+        "test_cmds": "# 1. Create secret in AWS Secrets Manager:\naws secretsmanager create-secret --name staging/myapp-secret-v4 --secret-string '{\"username\":\"admin\",\"password\":\"SuperSecretPassword123\"}' --region eu-north-1\n\n# 2. Deploy Kubernetes manifests:\nkubectl apply -f 12-example/\n\n# 3. Verify mounted secret files:\nkubectl exec -it deployment/myapp -n 12-example -- ls -la /mnt/secrets\n\n# 4. Check injected environment variables:\nkubectl exec -it deployment/myapp -n 12-example -- env | grep MY_",
+        "expected_output": "MY_USERNAME=admin\nMY_PASSWORD=SuperSecretPassword123",
+        "mechanics": "The Secrets Store CSI Driver uses the projected service account token to assume the IAM role via IRSA, retrieves the secret from AWS Secrets Manager, mounts it to /mnt/secrets, and creates the Kubernetes Secret.",
+        "troubleshooting": "If the pod fails with AccessDeniedException, ensure 12-example/1-secret-provider-class.yaml specifies region: eu-north-1 and the secret exists in AWS Secrets Manager.",
+        "manifests": {
+            "0-namespace.yaml": "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: 12-example\n",
+            "1-secret-provider-class.yaml": "---\napiVersion: secrets-store.csi.x-k8s.io/v1\nkind: SecretProviderClass\nmetadata:\n  name: myapp-aws-secrets\n  namespace: 12-example\nspec:\n  provider: aws\n  parameters:\n    region: eu-north-1\n    objects: |\n      - objectName: staging/myapp-secret-v4\n        objectType: secretsmanager\n        jmesPath:\n            - path: username\n              objectAlias: myusername\n            - path: password\n              objectAlias: mypassword\n  secretObjects:\n    - secretName: myapp-k8s-secret\n      type: Opaque\n      data:\n        - objectName: myusername\n          key: k8s-myusername\n        - objectName: mypassword\n          key: k8s-mypassword\n",
+            "2-service-account.yaml": "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: myapp\n  namespace: 12-example\n  annotations:\n    eks.amazonaws.com/role-arn: arn:aws:iam::619544673475:role/staging-demo-myapp-secrets\n",
+            "3-deployment.yaml": "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 12-example\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: myapp\n  template:\n    metadata:\n      labels:\n        app: myapp\n    spec:\n      serviceAccountName: myapp\n      containers:\n        - name: myapp\n          image: nginx:1.14.2\n          ports:\n            - containerPort: 80\n          volumeMounts:\n            - name: secrets\n              mountPath: /mnt/secrets\n              readOnly: true\n          env:\n            - name: MY_USERNAME\n              valueFrom:\n                secretKeyRef:\n                  name: myapp-k8s-secret\n                  key: k8s-myusername\n            - name: MY_PASSWORD\n              valueFrom:\n                secretKeyRef:\n                  name: myapp-k8s-secret\n                  key: k8s-mypassword\n      volumes:\n        - name: secrets\n          csi:\n            driver: secrets-store.csi.k8s.io\n            readOnly: true\n            volumeAttributes:\n              secretProviderClass: myapp-aws-secrets\n"
+        }
+    }
+};
+
+    let currentExId = 1;
+    let currentExFile = "";
 
     function switchExTab(id) {
+      currentExId = id;
       document.querySelectorAll('.ex-tab-btn').forEach(btn => {
         btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
         btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
@@ -2570,16 +2952,115 @@ output \"myapp_secrets_role_arn\" {
         activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
         activeBtn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
       }
-      const data = exData[id];
-      if (data) {
-        document.getElementById('ex-title').innerHTML = `<span class="text-cyan-400 font-mono">Example \${id}:</span> \${data.title}`;
-        document.getElementById('ex-desc').textContent = data.desc;
-        document.getElementById('ex-target').textContent = data.target;
-        document.getElementById('ex-filename').textContent = data.file;
-        document.getElementById('ex-code').textContent = data.code.replace(/\\n/g, '\n');
-        document.getElementById('ex-cmds').textContent = data.cmds.replace(/\\n/g, '\n');
-        document.getElementById('ex-mechanics').textContent = data.mech;
+
+      const data = exData[id] || exData[id.toString()];
+      if (!data) return;
+
+      // Header labels
+      const badgeElem = document.getElementById('ex-badge-id');
+      if (badgeElem) badgeElem.textContent = `EX-${id.toString().padStart(2, '0')}`;
+
+      const titleElem = document.getElementById('ex-title');
+      if (titleElem) titleElem.textContent = data.title;
+
+      const catElem = document.getElementById('ex-category');
+      if (catElem) catElem.textContent = data.category || 'Kubernetes Manifest';
+
+      const targetElem = document.getElementById('ex-target');
+      if (targetElem) targetElem.textContent = data.target || '';
+
+      const purposeElem = document.getElementById('ex-purpose');
+      if (purposeElem) purposeElem.textContent = data.purpose;
+
+      // Manifest Files Switcher (Sub-tabs)
+      const fileTabsContainer = document.getElementById('ex-file-tabs');
+      if (fileTabsContainer) {
+        fileTabsContainer.innerHTML = '';
+        const fileNames = Object.keys(data.manifests || {});
+        if (fileNames.length > 0) {
+          fileNames.forEach((fname, idx) => {
+            const btn = document.createElement('button');
+            btn.id = `ex-file-btn-${idx}`;
+            btn.className = `ex-manifest-btn px-2.5 py-1 rounded text-xs transition border ${idx === 0 ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'}`;
+            btn.innerHTML = `<i class="fa-regular fa-file-code mr-1"></i> ${fname}`;
+            btn.onclick = () => selectExManifest(id, fname, idx);
+            fileTabsContainer.appendChild(btn);
+          });
+          selectExManifest(id, fileNames[0], 0);
+        } else {
+          document.getElementById('ex-code').textContent = '# No manifest files available.';
+          document.getElementById('ex-active-file-label').textContent = '';
+        }
       }
+
+      // Key Components Used ("What all is used")
+      const compContainer = document.getElementById('ex-components-list');
+      if (compContainer) {
+        compContainer.innerHTML = '';
+        if (data.components && data.components.length > 0) {
+          data.components.forEach(([term, desc]) => {
+            const card = document.createElement('div');
+            card.className = 'bg-slate-950 p-3.5 rounded-xl border border-slate-800/90 hover:border-slate-700 transition space-y-1';
+            card.innerHTML = `
+              <div class="text-xs font-mono font-bold text-amber-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-angle-right text-amber-500 text-[10px]"></i> ${term}
+              </div>
+              <div class="text-[11px] text-slate-300 leading-relaxed font-sans">
+                ${desc}
+              </div>
+            `;
+            compContainer.appendChild(card);
+          });
+        }
+      }
+
+      // Testing Commands & Expected Output
+      const cmdsElem = document.getElementById('ex-cmds');
+      if (cmdsElem) cmdsElem.textContent = data.test_cmds || '';
+
+      const expectedElem = document.getElementById('ex-expected-output');
+      if (expectedElem) expectedElem.textContent = data.expected_output || '';
+
+      // Internal Mechanics and Troubleshooting
+      const mechElem = document.getElementById('ex-mechanics');
+      if (mechElem) mechElem.textContent = data.mechanics || '';
+
+      const troubleElem = document.getElementById('ex-troubleshooting');
+      if (troubleElem) troubleElem.textContent = data.troubleshooting || '';
+    }
+
+    function selectExManifest(id, filename, btnIdx) {
+      currentExFile = filename;
+      const data = exData[id] || exData[id.toString()];
+      if (!data || !data.manifests) return;
+
+      document.querySelectorAll('.ex-manifest-btn').forEach(btn => {
+        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+
+      const activeFileBtn = document.getElementById(`ex-file-btn-${btnIdx}`);
+      if (activeFileBtn) {
+        activeFileBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        activeFileBtn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      }
+
+      const label = document.getElementById('ex-active-file-label');
+      if (label) label.textContent = filename;
+
+      const codeElem = document.getElementById('ex-code');
+      if (codeElem) codeElem.textContent = data.manifests[filename] || '';
+    }
+
+    function copyExCode() {
+      const codeText = document.getElementById('ex-code').innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const copyBtnText = document.getElementById('copy-ex-text');
+        if (copyBtnText) {
+          copyBtnText.textContent = "Copied!";
+          setTimeout(() => { copyBtnText.textContent = "Copy Manifest"; }, 2000);
+        }
+      });
     }
 
     function copyCode(elementId) {
