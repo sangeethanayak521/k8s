@@ -444,40 +444,70 @@
 
       <!-- File Navigation Tabs Grid -->
       <div class="flex flex-wrap gap-2 text-xs font-mono" id="tf-tabs-container">
-        <!-- Dynamically populated or static tabs -->
-        <button onclick="switchTfTab('0-locals')" id="btn-0-locals" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/50">0-locals.tf</button>
-        <button onclick="switchTfTab('1-providers')" id="btn-1-providers" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">1-providers.tf</button>
-        <button onclick="switchTfTab('2-vpc')" id="btn-2-vpc" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">2-vpc.tf</button>
-        <button onclick="switchTfTab('4-subnets')" id="btn-4-subnets" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">4-subnets.tf</button>
-        <button onclick="switchTfTab('5-nat')" id="btn-5-nat" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">5-nat.tf</button>
-        <button onclick="switchTfTab('7-eks')" id="btn-7-eks" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">7-eks.tf</button>
-        <button onclick="switchTfTab('8-nodes')" id="btn-8-nodes" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">8-nodes.tf</button>
-        <button onclick="switchTfTab('11-helm-provider')" id="btn-11-helm-provider" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">11-helm-provider.tf</button>
-        <button onclick="switchTfTab('13-pod-Identity')" id="btn-13-pod-Identity" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">13-pod-Identity-addon.tf</button>
-        <button onclick="switchTfTab('14-cluster-autoscaler')" id="btn-14-cluster-autoscaler" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">14-cluster-autoscaler.tf</button>
-        <button onclick="switchTfTab('15-aws-lbc')" id="btn-15-aws-lbc" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">15-aws-lbc.tf</button>
-        <button onclick="switchTfTab('16-nginx-ingress')" id="btn-16-nginx-ingress" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">16-nginx-ingress.tf</button>
-        <button onclick="switchTfTab('17-cert-manager')" id="btn-17-cert-manager" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">17-cert-manager.tf</button>
-        <button onclick="switchTfTab('18-ebs-csi-driver')" id="btn-18-ebs-csi-driver" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">18-ebs-csi-driver.tf</button>
-        <button onclick="switchTfTab('20-efs')" id="btn-20-efs" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">20-efs.tf</button>
-        <button onclick="switchTfTab('21-secrets-store')" id="btn-21-secrets-store" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">21-secrets-store-csi-driver.tf</button>
+        <button onclick="switchTfTab('0-locals')" id="btn-0-locals" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-sm shadow-cyan-500/30">0-locals.tf</button>
+        <button onclick="switchTfTab('1-providers')" id="btn-1-providers" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">1-providers.tf</button>
+        <button onclick="switchTfTab('2-vpc')" id="btn-2-vpc" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">2-vpc.tf</button>
+        <button onclick="switchTfTab('3-igw')" id="btn-3-igw" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">3-igw.tf</button>
+        <button onclick="switchTfTab('4-subnets')" id="btn-4-subnets" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">4-subnets.tf</button>
+        <button onclick="switchTfTab('5-nat')" id="btn-5-nat" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">5-nat.tf</button>
+        <button onclick="switchTfTab('6-routes')" id="btn-6-routes" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">6-routes.tf</button>
+        <button onclick="switchTfTab('7-eks')" id="btn-7-eks" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">7-eks.tf</button>
+        <button onclick="switchTfTab('8-nodes')" id="btn-8-nodes" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">8-nodes.tf</button>
+        <button onclick="switchTfTab('9-add-developer-user')" id="btn-9-add-developer-user" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">9-add-developer-user.tf</button>
+        <button onclick="switchTfTab('10-add-manager-role')" id="btn-10-add-manager-role" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">10-add-manager-role.tf</button>
+        <button onclick="switchTfTab('11-helm-provider')" id="btn-11-helm-provider" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">11-helm-provider.tf</button>
+        <button onclick="switchTfTab('12-metrics-server')" id="btn-12-metrics-server" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">12-metrics-server.tf</button>
+        <button onclick="switchTfTab('13-pod-Identity-addon')" id="btn-13-pod-Identity-addon" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">13-pod-Identity-addon.tf</button>
+        <button onclick="switchTfTab('14-cluster-autoscaler')" id="btn-14-cluster-autoscaler" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">14-cluster-autoscaler.tf</button>
+        <button onclick="switchTfTab('15-aws-lbc')" id="btn-15-aws-lbc" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">15-aws-lbc.tf</button>
+        <button onclick="switchTfTab('16-nginx-ingress')" id="btn-16-nginx-ingress" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">16-nginx-ingress.tf</button>
+        <button onclick="switchTfTab('17-cert-manager')" id="btn-17-cert-manager" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">17-cert-manager.tf</button>
+        <button onclick="switchTfTab('18-ebs-csi-driver')" id="btn-18-ebs-csi-driver" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">18-ebs-csi-driver.tf</button>
+        <button onclick="switchTfTab('19-openid-connect-provider')" id="btn-19-openid-connect-provider" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">19-openid-connect-provider.tf</button>
+        <button onclick="switchTfTab('20-efs')" id="btn-20-efs" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">20-efs.tf</button>
+        <button onclick="switchTfTab('21-secrets-store-csi-driver')" id="btn-21-secrets-store-csi-driver" class="tf-tab-btn px-3 py-1.5 rounded-lg border font-mono text-xs transition duration-200 bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700">21-secrets-store-csi-driver.tf</button>
       </div>
 
       <!-- Content Viewer Container -->
-      <div class="glass-card p-6 rounded-2xl" id="tf-content-display">
-        <!-- Content will be swapped by switchTfTab() JS -->
-        <div id="tf-card-body" class="space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h3 class="text-xl font-bold text-white font-mono" id="tf-card-filename">0-locals.tf</h3>
-              <p class="text-xs text-slate-400" id="tf-card-desc">Centralizes global project variables, AWS region, availability zones, and cluster naming constants.</p>
+      <div class="glass-card p-6 sm:p-8 rounded-2xl shadow-xl space-y-6" id="tf-content-display">
+        
+        <!-- Header: File info & Copy Button -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-3">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" id="tf-card-num">00</span>
+              <h3 class="text-2xl font-bold text-white font-mono tracking-tight" id="tf-card-filename">0-locals.tf</h3>
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700" id="tf-card-category">Global Configuration</span>
             </div>
-            <button onclick="copyCode('tf-code-block')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-mono text-cyan-300 rounded border border-slate-700 transition flex items-center gap-1.5">
-              <i class="fa-regular fa-copy"></i> <span id="copy-text">Copy Code</span>
-            </button>
+            <div class="text-xs text-slate-400 font-mono flex flex-wrap items-center gap-2 mt-1">
+              <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-cube text-xs"></i> AWS Resources Created:</span>
+              <span class="text-slate-200" id="tf-card-resources">None (Terraform Local Values)</span>
+            </div>
           </div>
+          <button onclick="copyCode('tf-code-block')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-xs font-mono text-cyan-300 rounded-lg border border-slate-700 transition flex items-center justify-center gap-2 self-start sm:self-auto shadow-md">
+            <i class="fa-regular fa-copy"></i> <span id="copy-text">Copy Script</span>
+          </button>
+        </div>
 
-          <pre class="bg-slate-900/90 p-4 rounded-xl border border-slate-800/80 overflow-x-auto text-xs font-mono text-slate-200 leading-relaxed"><code id="tf-code-block">locals {
+        <!-- Section 1: Detailed Architectural Purpose -->
+        <div class="space-y-2">
+          <h4 class="text-xs uppercase font-bold text-cyan-400 tracking-wider flex items-center gap-1.5 font-mono">
+            <i class="fa-solid fa-circle-question"></i> 1. Detailed Purpose & Architectural Role
+          </h4>
+          <p class="text-sm text-slate-200 leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-800/80" id="tf-card-purpose">
+            Centralizes global environment variables, AWS region, availability zones, and cluster naming constants. Acts as the single source of truth for the entire infrastructure, eliminating hardcoded strings and preventing configuration drift across all 21 downstream Terraform files.
+          </p>
+        </div>
+
+        <!-- Section 2: Complete Terraform Source Code -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
+              <i class="fa-solid fa-code text-cyan-400"></i> 2. Complete Terraform Source Code
+            </h4>
+            <span class="text-[11px] text-slate-500 font-mono">HCL / Terraform v1.0+</span>
+          </div>
+          <pre class="bg-slate-950 p-5 rounded-xl border border-slate-800/90 overflow-x-auto text-xs font-mono text-cyan-200 leading-relaxed shadow-inner"><code id="tf-code-block">locals {
   env         = "staging"
   region      = "eu-north-1"
   zone1       = "eu-north-1a"
@@ -485,24 +515,41 @@
   eks_name    = "demo"
   eks_version = "1.35"
 }</code></pre>
+        </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
-            <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
-              <span class="text-cyan-400 font-bold uppercase tracking-wider block mb-1">Key Parameters</span>
-              <ul class="space-y-1 text-slate-300">
-                <li>• <strong class="text-white">region = "eu-north-1"</strong>: Stockholm region. Low latency and modern AWS compute availability.</li>
-                <li>• <strong class="text-white">eks_name = "demo"</strong>: Combined as `staging-demo` for IAM and cluster identification.</li>
-                <li>• <strong class="text-white">eks_version = "1.35"</strong>: Running Kubernetes 1.35 with modern API Access Entry support.</li>
-              </ul>
-            </div>
-            <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
-              <span class="text-emerald-400 font-bold uppercase tracking-wider block mb-1">Downstream Dependencies</span>
-              <p class="text-slate-300 leading-relaxed">
-                Referenced by every subsequent `.tf` file in the project. Changing `region` here propagates automatically to provider configurations, Route 53, subnets, and Helm charts.
-              </p>
-            </div>
+        <!-- Section 3: What All is Used / Component-by-Component Deep Dive -->
+        <div class="space-y-3">
+          <h4 class="text-xs uppercase font-bold text-amber-400 tracking-wider flex items-center gap-1.5 font-mono">
+            <i class="fa-solid fa-list-check"></i> 3. What All is Used / Parameter & Argument Deep-Dive
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="tf-card-components">
+            <!-- Dynamic Components will be injected here -->
           </div>
         </div>
+
+        <!-- Section 4 & 5: Dependencies & Pitfalls Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+          <!-- Dependencies -->
+          <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
+              <i class="fa-solid fa-link"></i> 4. Dependencies & Infrastructure Connections
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed" id="tf-card-dependencies">
+              Upstream: None. Downstream: Referenced by all 21 Terraform files for region, naming, and tag interpolation.
+            </p>
+          </div>
+
+          <!-- Common Pitfalls -->
+          <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 space-y-2 border-l-4 border-l-rose-500">
+            <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
+              <i class="fa-solid fa-triangle-exclamation"></i> 5. Common Pitfalls & Production Rules
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed" id="tf-card-pitfalls">
+              Common Error: Mismatch between eks_version in locals ('1.30') and existing live cluster ('1.35'). AWS EKS forbids cluster downgrades; attempting to lower the version causes Terraform plan failures.
+            </p>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -819,140 +866,1587 @@ kubectl auth can-i delete pods --as developer</code></pre>
   </footer>
 
   <!-- INTERACTIVE JAVASCRIPT LOGIC -->
-  <script>
-    // Database of all 22 Terraform files
+  <script>    // Exhaustive Database of all 22 Terraform files
     const tfData = {
-      "0-locals": {
-        file: "0-locals.tf",
-        desc: "Centralizes global environment variables, AWS region (eu-north-1), availability zones, and cluster naming constants.",
-        code: `locals {\n  env         = "staging"\n  region      = "eu-north-1"\n  zone1       = "eu-north-1a"\n  zone2       = "eu-north-1b"\n  eks_name    = "demo"\n  eks_version = "1.35"\n}`,
-        params: "• region = 'eu-north-1': Stockholm region\n• eks_name = 'demo': Prefix + suffix gives 'staging-demo'\n• eks_version = '1.35': Latest Kubernetes release",
-        dep: "Referenced by every other .tf file in the project."
-      },
-      "1-providers": {
-        file: "1-providers.tf",
-        desc: "Declares required providers (aws, helm, kubernetes, tls) and locks versions for reproducible infrastructure.",
-        code: `provider "aws" {\n  region  = local.region\n  profile = "my-profile"\n}\n\nterraform {\n  required_version = ">= 1.0"\n  required_providers {\n    aws        = { source = "hashicorp/aws", version = "~> 5.80" }\n    helm       = { source = "hashicorp/helm", version = "~> 2.16" }\n    kubernetes = { source = "hashicorp/kubernetes", version = "~> 2.35" }\n    tls        = { source = "hashicorp/tls", version = "~> 4.0" }\n  }\n}`,
-        params: "• aws ~> 5.80: Enables modern EKS access entries & pod identity\n• helm ~> 2.16: Deploys Metrics Server, Ingress, Cert-Manager\n• kubernetes ~> 2.35: Creates EFS StorageClass",
-        dep: "Initializes the Terraform working directory during 'terraform init'."
-      },
-      "2-vpc": {
-        file: "2-vpc.tf",
-        desc: "Provisions the core isolated Virtual Private Cloud with CIDR 10.0.0.0/16.",
-        code: `resource "aws_vpc" "main" {\n  cidr_block           = "10.0.0.0/16"\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name = "\${local.env}-main"\n  }\n}`,
-        params: "• cidr_block = '10.0.0.0/16': 65,536 private IPs\n• enable_dns_hostnames = true: Mandatory for EKS worker node registration",
-        dep: "Base network foundation required for subnets and gateways."
-      },
-      "4-subnets": {
-        file: "4-subnets.tf",
-        desc: "Partitions the VPC into 2 Private and 2 Public subnets across eu-north-1a and eu-north-1b.",
-        code: `resource "aws_subnet" "private_zone1" {\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = "10.0.0.0/19"\n  availability_zone = local.zone1\n  tags = {\n    "Name"                                                 = "\${local.env}-private-\${local.zone1}"\n    "kubernetes.io/role/internal-elb"                      = "1"\n    "kubernetes.io/cluster/\${local.env}-\${local.eks_name}" = "owned"\n  }\n}\n# (Followed by private_zone2, public_zone1, public_zone2)`,
-        params: "• /19 mask: Provides 8,187 usable IPs per subnet\n• 'kubernetes.io/role/elb' = '1': Auto-discovery for Public Load Balancers\n• 'kubernetes.io/role/internal-elb' = '1': Auto-discovery for Private Load Balancers",
-        dep: "Private subnets host EKS worker nodes; public subnets host ALBs and NAT GW."
-      },
-      "5-nat": {
-        file: "5-nat.tf",
-        desc: "Allocates an Elastic IP and provisions a NAT Gateway in public_zone1 for outbound private node traffic.",
-        code: `resource "aws_eip" "nat" {\n  domain = "vpc"\n  tags = { Name = "\${local.env}-nat" }\n}\n\nresource "aws_nat_gateway" "nat" {\n  allocation_id = aws_eip.nat.id\n  subnet_id     = aws_subnet.public_zone1.id\n  tags          = { Name = "\${local.env}-nat" }\n  depends_on    = [aws_internet_gateway.igw]\n}`,
-        params: "• domain = 'vpc': Modern VPC-scoped Elastic IP\n• subnet_id = public_zone1: Must sit in a public subnet to reach the IGW",
-        dep: "Enables private EC2 worker nodes to pull container images from Docker Hub."
-      },
-      "7-eks": {
-        file: "7-eks.tf",
-        desc: "Creates the Amazon EKS Master Control Plane with IAM cluster role and API Access Entries.",
-        code: `resource "aws_eks_cluster" "eks" {\n  name     = "\${local.env}-\${local.eks_name}"\n  version  = local.eks_version\n  role_arn = aws_iam_role.eks.arn\n\n  vpc_config {\n    endpoint_private_access = false\n    endpoint_public_access  = true\n    subnet_ids              = [aws_subnet.private_zone1.id, aws_subnet.private_zone2.id]\n  }\n\n  access_config {\n    authentication_mode                         = "API"\n    bootstrap_cluster_creator_admin_permissions = true\n  }\n\n  depends_on = [aws_iam_role_policy_attachment.eks]\n}`,
-        params: "• authentication_mode = 'API': Replaces error-prone aws-auth ConfigMap\n• subnet_ids: Only private subnets are passed to create cross-account ENIs",
-        dep: "Creates the Kubernetes API Server and etcd quorum cluster."
-      },
-      "8-nodes": {
-        file: "8-nodes.tf",
-        desc: "Creates the Managed Node Group with t3.large instances and Auto Scaling Group integration.",
-        code: `resource "aws_eks_node_group" "general" {\n  cluster_name    = aws_eks_cluster.eks.name\n  version         = local.eks_version\n  node_group_name = "general"\n  node_role_arn   = aws_iam_role.nodes.arn\n  subnet_ids      = [aws_subnet.private_zone1.id, aws_subnet.private_zone2.id]\n  capacity_type   = "ON_DEMAND"\n  instance_types  = ["t3.large"]\n\n  scaling_config {\n    desired_size = 2\n    max_size     = 10\n    min_size     = 1\n  }\n  lifecycle {\n    ignore_changes = [scaling_config[0].desired_size]\n  }\n}`,
-        params: "• t3.large: 2 vCPUs, 8 GB RAM, supports up to 35 Pods per node\n• ignore_changes: Prevents Terraform from overriding Cluster Autoscaler changes",
-        dep: "Hosts all application and controller pods."
-      },
-      "11-helm-provider": {
-        file: "11-helm-provider.tf",
-        desc: "Initializes Helm and Kubernetes providers using the live cluster API endpoint and authentication tokens.",
-        code: `data "aws_eks_cluster" "eks" {\n  name = "\${local.env}-\${local.eks_name}"\n}\n\ndata "aws_eks_cluster_auth" "eks" {\n  name = "\${local.env}-\${local.eks_name}"\n}\n\nprovider "helm" {\n  kubernetes {\n    host                   = data.aws_eks_cluster.eks.endpoint\n    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n    token                  = data.aws_eks_cluster_auth.eks.token\n  }\n}`,
-        params: "• Static name string: Decouples provider evaluation from pending cluster changes\n• base64decode CA cert: Validates the TLS connection to kube-apiserver",
-        dep: "Allows Terraform to deploy Helm charts (Metrics Server, Ingress, Cert-Manager)."
-      },
-      "13-pod-Identity": {
-        file: "13-pod-Identity-addon.tf",
-        desc: "Installs the modern native EKS Pod Identity Agent DaemonSet on all worker nodes.",
-        code: `resource "aws_eks_addon" "pod_identity" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = "eks-pod-identity-agent"\n  resolve_conflicts_on_create = "OVERWRITE"\n  resolve_conflicts_on_update = "OVERWRITE"\n  depends_on                  = [aws_eks_node_group.general]\n}`,
-        params: "• OVERWRITE: Safely handles upgrades and conflict resolution\n• depends_on: Ensures nodes are ready before installing the DaemonSet",
-        dep: "Used by Cluster Autoscaler, AWS Load Balancer Controller, and EBS CSI driver."
-      },
-      "14-cluster-autoscaler": {
-        file: "14-cluster-autoscaler.tf",
-        desc: "Deploys Kubernetes Cluster Autoscaler to scale worker nodes based on pending pods.",
-        code: `resource "aws_eks_pod_identity_association" "cluster_autoscaler" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "cluster-autoscaler"\n  role_arn        = aws_iam_role.cluster_autoscaler.arn\n}\n\nresource "helm_release" "cluster_autoscaler" {\n  name       = "autoscaler"\n  repository = "https://kubernetes.github.io/autoscaler"\n  chart      = "cluster-autoscaler"\n  namespace  = "kube-system"\n  version    = "9.37.0"\n  timeout    = 600\n}`,
-        params: "• autoDiscovery.clusterName: Automatically tracks the EC2 Auto Scaling Group\n• timeout = 600: Prevents premature timeout during deployment",
-        dep: "Scales node count when pods exceed node CPU/memory limits."
-      },
-      "15-aws-lbc": {
-        file: "15-aws-lbc.tf",
-        desc: "Deploys AWS Load Balancer Controller to manage Application and Network Load Balancers.",
-        code: `resource "aws_eks_pod_identity_association" "aws_lbc" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "aws-load-balancer-controller"\n  role_arn        = aws_iam_role.aws_lbc.arn\n}\n\nresource "helm_release" "aws_lbc" {\n  name       = "aws-load-balancer-controller"\n  repository = "https://aws.github.io/eks-charts"\n  chart      = "aws-load-balancer-controller"\n  namespace  = "kube-system"\n  version    = "1.8.1"\n}`,
-        params: "• Uses IAM policy from iam/AWSLoadBalancerController.json\n• vpcId: Tells controller where to provision ALBs and target groups",
-        dep: "Required for Example 5 (NLB), Example 6 (ALB), and Example 7 (HTTPS ALB)."
-      },
-      "16-nginx-ingress": {
-        file: "16-nginx-ingress.tf",
-        desc: "Deploys Ingress NGINX controller behind an external Network Load Balancer.",
-        code: `resource "helm_release" "external_nginx" {\n  name             = "external"\n  repository       = "https://kubernetes.github.io/ingress-nginx"\n  chart            = "ingress-nginx"\n  namespace        = "ingress"\n  create_namespace = true\n  version          = "4.11.3"\n  values           = [file("\${path.module}/values/nginx-ingress.yaml")]\n  depends_on       = [helm_release.aws_lbc]\n}`,
-        params: "• ingressClassName: external-nginx\n• Service creates an external NLB routing directly to NGINX Pod IPs",
-        dep: "Used for Example 8 and Example 9 (Let's Encrypt TLS)."
-      },
-      "17-cert-manager": {
-        file: "17-cert-manager.tf",
-        desc: "Installs Jetstack Cert-Manager with Custom Resource Definitions (CRDs) for automated SSL.",
-        code: `resource "helm_release" "cert_manager" {\n  name             = "cert-manager"\n  repository       = "https://charts.jetstack.io"\n  chart            = "cert-manager"\n  namespace        = "cert-manager"\n  create_namespace = true\n  version          = "v1.16.2"\n  set { name = "installCRDs"; value = "true" }\n  depends_on       = [helm_release.external_nginx]\n}`,
-        params: "• installCRDs = true: Registers Certificate, Issuer, and ClusterIssuer CRDs",
-        dep: "Powers Example 9 (Let's Encrypt ACME HTTP-01 certificates)."
-      },
-      "18-ebs-csi-driver": {
-        file: "18-ebs-csi-driver.tf",
-        desc: "Deploys AWS EBS CSI Driver managed add-on with Pod Identity for dynamic block storage.",
-        code: `resource "aws_eks_pod_identity_association" "ebs_csi_driver" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "ebs-csi-controller-sa"\n  role_arn        = aws_iam_role.ebs_csi_driver.arn\n}\n\nresource "aws_eks_addon" "ebs_csi_driver" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = "aws-ebs-csi-driver"\n  resolve_conflicts_on_create = "OVERWRITE"\n  resolve_conflicts_on_update = "OVERWRITE"\n}`,
-        params: "• AmazonEBSCSIDriverPolicy attached\n• OVERWRITE prevents conflicts when re-running terraform apply",
-        dep: "Powers Example 10 (StatefulSet with gp2 persistent storage)."
-      },
-      "20-efs": {
-        file: "20-efs.tf",
-        desc: "Provisions an AWS EFS filesystem, mount targets, EFS CSI driver, and ReadWriteMany StorageClass.",
-        code: `resource "aws_efs_file_system" "eks" {\n  creation_token   = "eks"\n  performance_mode = "generalPurpose"\n  throughput_mode  = "bursting"\n  encrypted        = true\n}\n# Creates security group, mount targets, IAM role, Helm release, and StorageClass 'efs'`,
-        params: "• Port 2049 (NFS) allowed from VPC\n• ReadWriteMany capability allows multiple pods to share one file",
-        dep: "Powers Example 11 (Shared persistent file storage across multiple pods)."
-      },
-      "21-secrets-store": {
-        file: "21-secrets-store-csi-driver.tf",
-        desc: "Installs Secrets Store CSI Driver, AWS Provider, and IRSA role for AWS Secrets Manager integration.",
-        code: `resource "helm_release" "secrets_csi_driver" {\n  name       = "secrets-store-csi-driver"\n  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"\n  chart      = "secrets-store-csi-driver"\n  namespace  = "kube-system"\n  version    = "1.4.3"\n  set { name = "syncSecret.enabled"; value = true }\n}`,
-        params: "• syncSecret.enabled = true: Syncs AWS secret into native Kubernetes Secret\n• IRSA role: staging-demo-myapp-secrets",
-        dep: "Powers Example 12 (Mounts secrets from AWS Secrets Manager in eu-north-1)."
+  "0-locals": {
+    "num": "00",
+    "file": "0-locals.tf",
+    "category": "Global Configuration",
+    "aws_resources": "None (Terraform Local Values)",
+    "purpose": "Centralizes global environment variables, AWS region, availability zones, and cluster naming constants. Acts as the single source of truth for the entire infrastructure, eliminating hardcoded strings and preventing configuration drift across all 21 downstream Terraform files.",
+    "code": "locals {
+  env         = \"staging\"
+  region      = \"eu-north-1\"
+  zone1       = \"eu-north-1a\"
+  zone2       = \"eu-north-1b\"
+  eks_name    = \"demo\"
+  eks_version = \"1.35\"
+}",
+    "components_used": [
+      [
+        "locals {}",
+        "Terraform block for defining locally scoped variables that cannot be overridden by CLI flags, ensuring environment immutability."
+      ],
+      [
+        "env = 'staging'",
+        "Defines the deployment tier. Used as a prefix for every AWS resource name and tag (e.g., 'staging-main', 'staging-demo')."
+      ],
+      [
+        "region = 'eu-north-1'",
+        "Specifies the AWS Stockholm region where all VPC subnets, EKS control plane, and EC2 worker nodes are deployed."
+      ],
+      [
+        "zone1 = 'eu-north-1a'",
+        "First Availability Zone used to achieve Multi-AZ redundancy and satisfy EKS high-availability requirements."
+      ],
+      [
+        "zone2 = 'eu-north-1b'",
+        "Second Availability Zone. EKS strictly requires at least two distinct AZs for cluster control plane ENI placement."
+      ],
+      [
+        "eks_name = 'demo'",
+        "Cluster identifier suffix. Combined with local.env to form the full cluster name: 'staging-demo'."
+      ],
+      [
+        "eks_version = '1.35'",
+        "Specifies the target Kubernetes engine release (1.35), unlocking modern EKS API Access Entries and Pod Identity."
+      ]
+    ],
+    "dependencies": "Upstream: None. Downstream: Referenced by all 21 Terraform files (1-providers.tf through 21-secrets-store-csi-driver.tf) for region, naming, and tag interpolation.",
+    "pitfalls": "Common Error: Mismatch between eks_version in locals ('1.30') and existing live cluster ('1.35'). AWS EKS forbids cluster downgrades; attempting to lower the version causes Terraform plan failures. Always keep eks_version equal to or greater than the live cluster version."
+  },
+  "1-providers": {
+    "num": "01",
+    "file": "1-providers.tf",
+    "category": "Provider Configuration",
+    "aws_resources": "None (Terraform Provider Plugins)",
+    "purpose": "Configures and initializes all third-party Terraform plugins required to manage AWS resources, Kubernetes objects, Helm charts, and TLS certificates. Enforces strict provider version locking to guarantee reproducible infrastructure runs across team members and CI/CD pipelines.",
+    "code": "provider \"aws\" {
+  region  = local.region
+  profile = \"my-profile\"
+}
+
+terraform {
+  required_version = \">= 1.0\"
+
+  required_providers {
+    aws = {
+      source  = \"hashicorp/aws\"
+      version = \"~> 5.80\"
+    }
+    helm = {
+      source  = \"hashicorp/helm\"
+      version = \"~> 2.16\"
+    }
+    kubernetes = {
+      source  = \"hashicorp/kubernetes\"
+      version = \"~> 2.35\"
+    }
+    tls = {
+      source  = \"hashicorp/tls\"
+      version = \"~> 4.0\"
+    }
+  }
+}",
+    "components_used": [
+      [
+        "provider 'aws' {}",
+        "Configures authentication and target region for the official AWS Terraform provider."
+      ],
+      [
+        "profile = 'my-profile'",
+        "Specifies the AWS CLI named credential profile used to authenticate API requests with IAM credentials."
+      ],
+      [
+        "required_version = '>= 1.0'",
+        "Enforces a modern Terraform CLI version supporting state consistency and HCL2 syntax."
+      ],
+      [
+        "aws ~> 5.80",
+        "Locks AWS provider to v5.80+, which includes native support for EKS Access Entries and EKS Pod Identity associations."
+      ],
+      [
+        "helm ~> 2.16",
+        "Enables declarative Helm v3 chart installations for Metrics Server, Ingress NGINX, Cert-Manager, and CSI drivers."
+      ],
+      [
+        "kubernetes ~> 2.35",
+        "Allows direct management of native Kubernetes resources (such as StorageClasses and ServiceAccounts)."
+      ],
+      [
+        "tls ~> 4.0",
+        "Used to calculate OIDC issuer root CA SHA-1 thumbprints for IAM OIDC provider federation."
+      ]
+    ],
+    "dependencies": "Upstream: Uses local.region from 0-locals.tf. Downstream: Initialized during 'terraform init'; enables all resource blocks across the project.",
+    "pitfalls": "Common Error: Invalid profile or missing credentials in ~/.aws/credentials. If 'my-profile' is missing, Terraform fails with 'AuthFailure' or 'No valid credential sources found'."
+  },
+  "2-vpc": {
+    "num": "02",
+    "file": "2-vpc.tf",
+    "category": "Core Networking",
+    "aws_resources": "aws_vpc.main",
+    "purpose": "Provisions the dedicated, private Virtual Private Cloud (VPC) network boundary. Provides isolated software-defined networking, private IP space, and internal domain name resolution required for EKS control plane and worker node communication.",
+    "code": "resource \"aws_vpc\" \"main\" {
+  cidr_block = \"10.0.0.0/16\"
+
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = \"${local.env}-main\"
+  }
+}",
+    "components_used": [
+      [
+        "resource 'aws_vpc' 'main'",
+        "Defines the AWS VPC resource named 'staging-main'."
+      ],
+      [
+        "cidr_block = '10.0.0.0/16'",
+        "Allocates 65,536 private IPv4 addresses (10.0.0.0 to 10.0.255.255). Sufficient IP space for large EKS clusters with secondary pod IPs."
+      ],
+      [
+        "enable_dns_support = true",
+        "Enables the Amazon Route 53 Resolver (AmazonProvidedDNS at 10.0.0.2). Mandatory for internal cluster resolution."
+      ],
+      [
+        "enable_dns_hostnames = true",
+        "CRITICAL FOR EKS. Automatically assigns public/private DNS hostnames to EC2 instances. If false, worker nodes cannot register with kube-apiserver."
+      ],
+      [
+        "tags = { Name = 'staging-main' }",
+        "Standardized resource tagging for cost tracking and AWS Console organization."
+      ]
+    ],
+    "dependencies": "Upstream: local.env from 0-locals.tf. Downstream: aws_vpc.main.id is consumed by 3-igw.tf, 4-subnets.tf, 6-routes.tf, 15-aws-lbc.tf, and 20-efs.tf.",
+    "pitfalls": "Common Error: Setting enable_dns_hostnames = false. When disabled, kubelet on worker nodes cannot resolve the internal cluster endpoint, leaving worker nodes in 'NotReady' status forever."
+  },
+  "3-igw": {
+    "num": "03",
+    "file": "3-igw.tf",
+    "category": "Core Networking",
+    "aws_resources": "aws_internet_gateway.igw",
+    "purpose": "Attaches an Internet Gateway (IGW) to the VPC. Provides a horizontally scaled, redundant VPC component that enables direct bidirectional internet access for public subnets (hosting public ALBs, NLBs, and the NAT Gateway).",
+    "code": "resource \"aws_internet_gateway\" \"igw\" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = \"${local.env}-igw\"
+  }
+}",
+    "components_used": [
+      [
+        "resource 'aws_internet_gateway' 'igw'",
+        "Creates the Internet Gateway named 'staging-igw'."
+      ],
+      [
+        "vpc_id = aws_vpc.main.id",
+        "Binds the Internet Gateway directly to our custom VPC."
+      ],
+      [
+        "tags = { Name = 'staging-igw' }",
+        "Applies the staging environment tag."
+      ]
+    ],
+    "dependencies": "Upstream: Requires aws_vpc.main.id from 2-vpc.tf. Downstream: Referenced by 5-nat.tf (depends_on) and 6-routes.tf (target gateway for public route table).",
+    "pitfalls": "Common Error: Forgetting to attach the IGW before creating the NAT Gateway. Terraform resolves this automatically via dependency graphing, but explicit depends_on prevents edge-case race conditions."
+  },
+  "4-subnets": {
+    "num": "04",
+    "file": "4-subnets.tf",
+    "category": "Core Networking",
+    "aws_resources": "aws_subnet.private_zone1, private_zone2, public_zone1, public_zone2",
+    "purpose": "Segments the 10.0.0.0/16 VPC into 4 dedicated subnets (2 Private and 2 Public) across 2 Availability Zones. Applies mandatory AWS Kubernetes discovery tags for external and internal load balancers.",
+    "code": "resource \"aws_subnet\" \"private_zone1\" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = \"10.0.0.0/19\"
+  availability_zone = local.zone1
+
+  tags = {
+    \"Name\"                                                 = \"${local.env}-private-${local.zone1}\"
+    \"kubernetes.io/role/internal-elb\"                      = \"1\"
+    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
+  }
+}
+
+resource \"aws_subnet\" \"private_zone2\" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = \"10.0.32.0/19\"
+  availability_zone = local.zone2
+
+  tags = {
+    \"Name\"                                                 = \"${local.env}-private-${local.zone2}\"
+    \"kubernetes.io/role/internal-elb\"                      = \"1\"
+    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
+  }
+}
+
+resource \"aws_subnet\" \"public_zone1\" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = \"10.0.64.0/19\"
+  availability_zone       = local.zone1
+  map_public_ip_on_launch = true
+
+  tags = {
+    \"Name\"                                                 = \"${local.env}-public-${local.zone1}\"
+    \"kubernetes.io/role/elb\"                               = \"1\"
+    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
+  }
+}
+
+resource \"aws_subnet\" \"public_zone2\" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = \"10.0.96.0/19\"
+  availability_zone       = local.zone2
+  map_public_ip_on_launch = true
+
+  tags = {
+    \"Name\"                                                 = \"${local.env}-public-${local.zone2}\"
+    \"kubernetes.io/role/elb\"                               = \"1\"
+    \"kubernetes.io/cluster/${local.env}-${local.eks_name}\" = \"owned\"
+  }
+}",
+    "components_used": [
+      [
+        "cidr_block = '10.0.x.0/19'",
+        "Allocates 8,187 usable IPs per subnet. Massive capacity prevents VPC CNI secondary pod IP exhaustion."
+      ],
+      [
+        "map_public_ip_on_launch = true",
+        "Set on public subnets only. Automatically gives public IPs to instances launched here."
+      ],
+      [
+        "'kubernetes.io/role/elb' = '1'",
+        "CRITICAL. Instructs AWS Load Balancer Controller to provision internet-facing ALBs and NLBs in these subnets."
+      ],
+      [
+        "'kubernetes.io/role/internal-elb' = '1'",
+        "Instructs the controller to place internal, private load balancers into private subnets."
+      ],
+      [
+        "'kubernetes.io/cluster/staging-demo' = 'owned'",
+        "Identifies cluster ownership for Kubernetes cloud-provider integration."
+      ]
+    ],
+    "dependencies": "Upstream: aws_vpc.main.id, zone1, zone2, env, eks_name. Downstream: Consumed by 5-nat.tf, 6-routes.tf, 7-eks.tf, 8-nodes.tf, and 20-efs.tf.",
+    "pitfalls": "Common Error: Missing 'kubernetes.io/role/elb = 1' tag. When absent, creating an Ingress (ALB) or Service type: LoadBalancer fails with 'could not find any public subnets' error."
+  },
+  "5-nat": {
+    "num": "05",
+    "file": "5-nat.tf",
+    "category": "Core Networking",
+    "aws_resources": "aws_eip.nat, aws_nat_gateway.nat",
+    "purpose": "Allocates a static Elastic IP (EIP) and deploys a managed AWS NAT Gateway inside public_zone1. Enables worker nodes and pods residing in private subnets to reach the public internet securely (for pulling container images and calling external APIs) without accepting incoming internet connections.",
+    "code": "resource \"aws_eip\" \"nat\" {
+  domain = \"vpc\"
+
+  tags = {
+    Name = \"${local.env}-nat\"
+  }
+}
+
+resource \"aws_nat_gateway\" \"nat\" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_zone1.id
+
+  tags = {
+    Name = \"${local.env}-nat\"
+  }
+
+  depends_on = [aws_internet_gateway.igw]
+}",
+    "components_used": [
+      [
+        "resource 'aws_eip' 'nat'",
+        "Allocates a persistent public IPv4 Elastic IP."
+      ],
+      [
+        "domain = 'vpc'",
+        "Specifies modern VPC-scoped Elastic IP address allocation."
+      ],
+      [
+        "resource 'aws_nat_gateway' 'nat'",
+        "Deploys AWS Managed NAT Gateway service."
+      ],
+      [
+        "allocation_id = aws_eip.nat.id",
+        "Binds the static public Elastic IP to the NAT Gateway."
+      ],
+      [
+        "subnet_id = aws_subnet.public_zone1.id",
+        "Places the NAT Gateway in public subnet eu-north-1a with direct route to IGW."
+      ],
+      [
+        "depends_on = [aws_internet_gateway.igw]",
+        "Explicit dependency ensuring the IGW is active before AWS creates the NAT Gateway."
+      ]
+    ],
+    "dependencies": "Upstream: aws_subnet.public_zone1.id, aws_internet_gateway.igw. Downstream: aws_nat_gateway.nat.id is consumed by 6-routes.tf (private route table target).",
+    "pitfalls": "Common Error: Placing NAT Gateway in a private subnet. A NAT Gateway MUST be placed in a public subnet with a default route to an Internet Gateway, otherwise private subnets cannot reach the internet."
+  },
+  "6-routes": {
+    "num": "06",
+    "file": "6-routes.tf",
+    "category": "Core Networking",
+    "aws_resources": "aws_route_table.private, public; aws_route_table_association (4x)",
+    "purpose": "Defines routing tables directing traffic flows within the VPC. Routes private subnet egress to the NAT Gateway and public subnet traffic directly to the Internet Gateway, then binds the 4 subnets to their respective tables.",
+    "code": "resource \"aws_route_table\" \"private\" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = \"0.0.0.0/0\"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags = {
+    Name = \"${local.env}-private\"
+  }
+}
+
+resource \"aws_route_table\" \"public\" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = \"0.0.0.0/0\"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = \"${local.env}-public\"
+  }
+}
+
+resource \"aws_route_table_association\" \"private_zone1\" {
+  subnet_id      = aws_subnet.private_zone1.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource \"aws_route_table_association\" \"private_zone2\" {
+  subnet_id      = aws_subnet.private_zone2.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource \"aws_route_table_association\" \"public_zone1\" {
+  subnet_id      = aws_subnet.public_zone1.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource \"aws_route_table_association\" \"public_zone2\" {
+  subnet_id      = aws_subnet.public_zone2.id
+  route_table_id = aws_route_table.public.id
+}",
+    "components_used": [
+      [
+        "route { cidr_block = '0.0.0.0/0', nat_gateway_id = ... }",
+        "Directs all non-VPC outbound traffic from private subnets through the NAT Gateway."
+      ],
+      [
+        "route { cidr_block = '0.0.0.0/0', gateway_id = ... }",
+        "Directs public subnet traffic directly to the Internet Gateway."
+      ],
+      [
+        "aws_route_table_association",
+        "Explicitly links each subnet to its designated route table, preventing default route table fallback."
+      ]
+    ],
+    "dependencies": "Upstream: aws_vpc.main.id, aws_nat_gateway.nat.id, aws_internet_gateway.igw.id. Downstream: Completes the VPC networking foundation required before launching EKS in 7-eks.tf.",
+    "pitfalls": "Common Error: Associating private subnets with the public route table. If a private subnet routes 0.0.0.0/0 to the IGW without public IPs, instances can neither receive inbound traffic nor establish outbound connections."
+  },
+  "7-eks": {
+    "num": "07",
+    "file": "7-eks.tf",
+    "category": "Compute & Control Plane",
+    "aws_resources": "aws_iam_role.eks, aws_iam_role_policy_attachment.eks, aws_eks_cluster.eks",
+    "purpose": "Creates the managed Kubernetes Control Plane (kube-apiserver, etcd, scheduler, controller-manager) across 3 AWS Availability Zones. Configures IAM service roles and activates modern EKS API-based authentication.",
+    "code": "resource \"aws_iam_role\" \"eks\" {
+  name = \"${local.env}-${local.eks_name}-eks-cluster\"
+
+  assume_role_policy = <<POLICY
+{
+  \"Version\": \"2012-10-17\",
+  \"Statement\": [
+    {
+      \"Effect\": \"Allow\",
+      \"Action\": \"sts:AssumeRole\",
+      \"Principal\": {
+        \"Service\": \"eks.amazonaws.com\"
       }
-    };
+    }
+  ]
+}
+POLICY
+}
+
+resource \"aws_iam_role_policy_attachment\" \"eks\" {
+  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSClusterPolicy\"
+  role       = aws_iam_role.eks.name
+}
+
+resource \"aws_eks_cluster\" \"eks\" {
+  name     = \"${local.env}-${local.eks_name}\"
+  version  = local.eks_version
+  role_arn = aws_iam_role.eks.arn
+
+  vpc_config {
+    endpoint_private_access = false
+    endpoint_public_access  = true
+
+    subnet_ids = [
+      aws_subnet.private_zone1.id,
+      aws_subnet.private_zone2.id
+    ]
+  }
+
+  access_config {
+    authentication_mode                         = \"API\"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.eks]
+}",
+    "components_used": [
+      [
+        "aws_iam_role.eks",
+        "Cluster IAM role assumed by the EKS service ('eks.amazonaws.com') to manage AWS resources (like cross-account ENIs)."
+      ],
+      [
+        "policy_arn = 'AmazonEKSClusterPolicy'",
+        "AWS managed policy providing permissions needed by Kubernetes control plane."
+      ],
+      [
+        "endpoint_public_access = true",
+        "Allows kubectl and Terraform to communicate with the Kubernetes API server from the internet."
+      ],
+      [
+        "subnet_ids = [private_zone1, private_zone2]",
+        "Places control plane managed ENIs strictly inside private subnets for secure cluster routing."
+      ],
+      [
+        "authentication_mode = 'API'",
+        "Modern EKS Access Entries mode. Eliminates the fragile aws-auth ConfigMap in favor of AWS IAM API access management."
+      ],
+      [
+        "bootstrap_cluster_creator_admin_permissions = true",
+        "Automatically grants cluster-admin privileges to the IAM user or role running Terraform."
+      ]
+    ],
+    "dependencies": "Upstream: Subnets, VPC, locals. Downstream: Consumed by 8-nodes.tf, 9-add-developer-user.tf, 10-add-manager-role.tf, and 11-helm-provider.tf.",
+    "pitfalls": "Common Error: Missing IAM policy attachment before cluster creation. The depends_on = [aws_iam_role_policy_attachment.eks] prevents AWS from rejecting cluster creation due to missing permissions."
+  },
+  "8-nodes": {
+    "num": "08",
+    "file": "8-nodes.tf",
+    "category": "Compute & Node Group",
+    "aws_resources": "aws_iam_role.nodes, policy attachments (3x), aws_eks_node_group.general",
+    "purpose": "Provisions the AWS Managed Node Group (EC2 worker instances), attaches the required IAM node policies, and configures Auto Scaling parameters. Deploys instances in private subnets with t3.large instance sizing to support all controllers and application pods.",
+    "code": "resource \"aws_iam_role\" \"nodes\" {
+  name = \"${local.env}-${local.eks_name}-eks-nodes\"
+
+  assume_role_policy = <<POLICY
+{
+  \"Version\": \"2012-10-17\",
+  \"Statement\": [
+    {
+      \"Effect\": \"Allow\",
+      \"Action\": \"sts:AssumeRole\",
+      \"Principal\": {
+        \"Service\": \"ec2.amazonaws.com\"
+      }
+    }
+  ]
+}
+POLICY
+}
+
+resource \"aws_iam_role_policy_attachment\" \"amazon_eks_worker_node_policy\" {
+  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"
+  role       = aws_iam_role.nodes.name
+}
+
+resource \"aws_iam_role_policy_attachment\" \"amazon_eks_cni_policy\" {
+  policy_arn = \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"
+  role       = aws_iam_role.nodes.name
+}
+
+resource \"aws_iam_role_policy_attachment\" \"amazon_ec2_container_registry_read_only\" {
+  policy_arn = \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"
+  role       = aws_iam_role.nodes.name
+}
+
+resource \"aws_eks_node_group\" \"general\" {
+  cluster_name    = aws_eks_cluster.eks.name
+  version         = local.eks_version
+  node_group_name = \"general\"
+  node_role_arn   = aws_iam_role.nodes.arn
+
+  subnet_ids = [
+    aws_subnet.private_zone1.id,
+    aws_subnet.private_zone2.id
+  ]
+
+  capacity_type  = \"ON_DEMAND\"
+  instance_types = [\"t3.large\"]
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 10
+    min_size     = 1
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  labels = {
+    role = \"general\"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+    aws_iam_role_policy_attachment.amazon_eks_cni_policy,
+    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
+  ]
+
+  lifecycle {
+    ignore_changes = [scaling_config[0].desired_size]
+  }
+}",
+    "components_used": [
+      [
+        "instance_types = ['t3.large']",
+        "Crucial sizing: 2 vCPUs, 8 GB RAM, supports 35 pods per node. (Never use t3.small which caps at 11 pods and causes scheduling deadlocks)."
+      ],
+      [
+        "scaling_config { desired=2, min=1, max=10 }",
+        "Maintains 2 worker nodes across both private zones, scaleable up to 10 nodes under heavy load."
+      ],
+      [
+        "AmazonEKSWorkerNodePolicy",
+        "Enables kubelet on EC2 instances to connect to the EKS control plane API."
+      ],
+      [
+        "AmazonEKS_CNI_Policy",
+        "Allows aws-node daemon to allocate secondary ENIs and VPC IP addresses directly to Pods."
+      ],
+      [
+        "AmazonEC2ContainerRegistryReadOnly",
+        "Allows kubelet to pull container images from Amazon ECR registries."
+      ],
+      [
+        "lifecycle { ignore_changes = [scaling_config[0].desired_size] }",
+        "CRITICAL. Prevents Terraform from fighting the Cluster Autoscaler when nodes scale from 2 to 4."
+      ]
+    ],
+    "dependencies": "Upstream: aws_eks_cluster.eks, private subnets. Downstream: All Helm releases and EKS add-ons explicitly depend on aws_eks_node_group.general.",
+    "pitfalls": "Common Error: Downsizing to t3.small. A single node t3.small can only host 11 pods. The 18+ system pods will be stuck in 'Pending' forever due to ENI/IP exhaustion."
+  },
+  "9-add-developer-user": {
+    "num": "09",
+    "file": "9-add-developer-user.tf",
+    "category": "IAM & Security",
+    "aws_resources": "aws_iam_user.developer, aws_iam_policy.developer_eks, aws_iam_user_policy_attachment, aws_eks_access_entry.developer",
+    "purpose": "Creates an IAM user for a developer with least-privilege AWS permissions (DescribeCluster, ListClusters) and maps the user into the Kubernetes 'my-viewer' RBAC group using native EKS Access Entries.",
+    "code": "resource \"aws_iam_user\" \"developer\" {
+  name = \"${local.env}-${local.eks_name}-developer\"
+}
+
+resource \"aws_iam_policy\" \"developer_eks\" {
+  name = \"${local.env}-${local.eks_name}-AmazonEKSDeveloperPolicy\"
+
+  policy = <<POLICY
+{
+    \"Version\": \"2012-10-17\",
+    \"Statement\": [
+        {
+            \"Effect\": \"Allow\",
+            \"Action\": [
+                \"eks:DescribeCluster\",
+                \"eks:ListClusters\"
+            ],
+            \"Resource\": \"*\"
+        }
+    ]
+}
+POLICY
+}
+
+resource \"aws_iam_user_policy_attachment\" \"developer_eks\" {
+  user       = aws_iam_user.developer.name
+  policy_arn = aws_iam_policy.developer_eks.arn
+}
+
+resource \"aws_eks_access_entry\" \"developer\" {
+  cluster_name      = aws_eks_cluster.eks.name
+  principal_arn     = aws_iam_user.developer.arn
+  kubernetes_groups = [\"my-viewer\"]
+}",
+    "components_used": [
+      [
+        "aws_iam_user.developer",
+        "Creates IAM identity 'staging-demo-developer'."
+      ],
+      [
+        "aws_iam_policy.developer_eks",
+        "Grants minimum AWS API rights required for 'aws eks update-kubeconfig' to succeed."
+      ],
+      [
+        "aws_eks_access_entry.developer",
+        "Native EKS Access Entry mapping developer's IAM ARN to the internal Kubernetes group 'my-viewer'."
+      ],
+      [
+        "kubernetes_groups = ['my-viewer']",
+        "Binds the user to 1-example RBAC ClusterRole 'viewer' (Read-only access)."
+      ]
+    ],
+    "dependencies": "Upstream: aws_eks_cluster.eks.name. Downstream: Tested by Example 1 (RBAC Read-only Developer Access).",
+    "pitfalls": "Common Error: Granting full IAM admin permissions to developers. Least privilege ensures developers can view cluster state without modifying infrastructure."
+  },
+  "10-add-manager-role": {
+    "num": "10",
+    "file": "10-add-manager-role.tf",
+    "category": "IAM & Security",
+    "aws_resources": "aws_iam_role.eks_admin, aws_iam_user.manager, policies (2x), attachments (2x), aws_eks_access_entry.manager",
+    "purpose": "Implements enterprise security best practices: creates a manager IAM user who assumes a privileged EKS Admin role using temporary STS credentials, and binds that role to the 'my-admin' Kubernetes group.",
+    "code": "data \"aws_caller_identity\" \"current\" {}
+
+resource \"aws_iam_role\" \"eks_admin\" {
+  name = \"${local.env}-${local.eks_name}-eks-admin\"
+
+  assume_role_policy = <<POLICY
+{
+  \"Version\": \"2012-10-17\",
+  \"Statement\": [
+    {
+      \"Effect\": \"Allow\",
+      \"Action\": \"sts:AssumeRole\",
+      \"Principal\": {
+        \"AWS\": \"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root\"
+      }
+    }
+  ]
+}
+POLICY
+}
+
+resource \"aws_iam_policy\" \"eks_admin\" {
+  name = \"${local.env}-${local.eks_name}-AmazonEKSAdminPolicy\"
+
+  policy = <<POLICY
+{
+    \"Version\": \"2012-10-17\",
+    \"Statement\": [
+        {
+            \"Effect\": \"Allow\",
+            \"Action\": [
+                \"eks:*\"
+            ],
+            \"Resource\": \"*\"
+        },
+        {
+            \"Effect\": \"Allow\",
+            \"Action\": \"iam:PassRole\",
+            \"Resource\": \"*\",
+            \"Condition\": {
+                \"StringEquals\": {
+                    \"iam:PassedToService\": \"eks.amazonaws.com\"
+                }
+            }
+        }
+    ]
+}
+POLICY
+}
+
+resource \"aws_iam_role_policy_attachment\" \"eks_admin\" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = aws_iam_policy.eks_admin.arn
+}
+
+resource \"aws_iam_user\" \"manager\" {
+  name = \"${local.env}-${local.eks_name}-manager\"
+}
+
+resource \"aws_iam_policy\" \"eks_assume_admin\" {
+  name = \"${local.env}-${local.eks_name}-AmazonEKSAssumeAdminPolicy\"
+
+  policy = <<POLICY
+{
+    \"Version\": \"2012-10-17\",
+    \"Statement\": [
+        {
+            \"Effect\": \"Allow\",
+            \"Action\": [
+                \"sts:AssumeRole\"
+            ],
+            \"Resource\": \"${aws_iam_role.eks_admin.arn}\"
+        }
+    ]
+}
+POLICY
+}
+
+resource \"aws_iam_user_policy_attachment\" \"manager\" {
+  user       = aws_iam_user.manager.name
+  policy_arn = aws_iam_policy.eks_assume_admin.arn
+}
+
+resource \"aws_eks_access_entry\" \"manager\" {
+  cluster_name      = aws_eks_cluster.eks.name
+  principal_arn     = aws_iam_role.eks_admin.arn
+  kubernetes_groups = [\"my-admin\"]
+}",
+    "components_used": [
+      [
+        "data 'aws_caller_identity' 'current'",
+        "Dynamically fetches AWS account ID (619544673475) to construct root trust policies."
+      ],
+      [
+        "aws_iam_role.eks_admin",
+        "Privileged IAM role holding full eks:* and iam:PassRole permissions."
+      ],
+      [
+        "aws_iam_user.manager",
+        "Unprivileged IAM user granted permission solely to assume the eks_admin role via STS."
+      ],
+      [
+        "aws_eks_access_entry.manager",
+        "Maps the assumed role ARN to the 'my-admin' group, granting cluster-admin rights in Example 2."
+      ]
+    ],
+    "dependencies": "Upstream: aws_eks_cluster.eks.name. Downstream: Tested by Example 2 (RBAC Manager Administrator Access).",
+    "pitfalls": "Common Error: Binding the user directly instead of the assumed role. In AWS STS, the principal is the assumed role session, so the EKS Access Entry MUST target aws_iam_role.eks_admin.arn."
+  },
+  "11-helm-provider": {
+    "num": "11",
+    "file": "11-helm-provider.tf",
+    "category": "Helm & K8s Auth",
+    "aws_resources": "Data Sources: aws_eks_cluster, aws_eks_cluster_auth",
+    "purpose": "Configures authentication for the Helm and Kubernetes providers. Extracts the API endpoint, cluster Certificate Authority, and temporary bearer token directly from EKS to manage Kubernetes resources inside Terraform.",
+    "code": "data \"aws_eks_cluster\" \"eks\" {
+  name = \"${local.env}-${local.eks_name}\"
+}
+
+data \"aws_eks_cluster_auth\" \"eks\" {
+  name = \"${local.env}-${local.eks_name}\"
+}
+
+provider \"helm\" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.eks.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.eks.token
+  }
+}
+
+provider \"kubernetes\" {
+  host                   = data.aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.eks.token
+}",
+    "components_used": [
+      [
+        "name = '${local.env}-${local.eks_name}'",
+        "CRITICAL FIX. Using static string decouples data sources from pending cluster changes, preventing (known after apply) provider planning errors."
+      ],
+      [
+        "host = data.aws_eks_cluster.eks.endpoint",
+        "The public HTTPS URL of kube-apiserver."
+      ],
+      [
+        "cluster_ca_certificate = base64decode(...)",
+        "Root certificate ensuring encrypted TLS communication with API server."
+      ],
+      [
+        "token = data.aws_eks_cluster_auth.eks.token",
+        "Short-lived 15-minute STS authentication token generated on the fly."
+      ]
+    ],
+    "dependencies": "Upstream: 7-eks.tf cluster endpoint. Downstream: Authenticates all Helm charts in 12, 14, 15, 16, 17, 20, and 21 .tf files.",
+    "pitfalls": "Common Error: Referencing aws_eks_cluster.eks.name inside data source block. During cluster updates, Terraform treats the name as unknown, breaking provider initialization."
+  },
+  "12-metrics-server": {
+    "num": "12",
+    "file": "12-metrics-server.tf",
+    "category": "Add-ons & Metrics",
+    "aws_resources": "helm_release.metrics_server",
+    "purpose": "Deploys the Kubernetes Metrics Server via Helm into the kube-system namespace. Scrapes CPU and memory utilization metrics from node kubelets and exposes them via the metrics.k8s.io API for the Horizontal Pod Autoscaler.",
+    "code": "resource \"helm_release\" \"metrics_server\" {
+  name = \"metrics-server\"
+
+  repository = \"https://kubernetes-sigs.github.io/metrics-server/\"
+  chart      = \"metrics-server\"
+  namespace  = \"kube-system\"
+  version    = \"3.12.2\"
+
+  values = [file(\"${path.module}/values/metrics-server.yaml\")]
+
+  depends_on = [aws_eks_node_group.general]
+}",
+    "components_used": [
+      [
+        "name = 'metrics-server'",
+        "Standard chart release name."
+      ],
+      [
+        "chart = 'metrics-server' (v3.12.2)",
+        "Official Kubernetes SIGs metrics collection daemon."
+      ],
+      [
+        "values/metrics-server.yaml",
+        "Passes kubelet-preferred-address-types=InternalIP and secure-port=10250 args."
+      ],
+      [
+        "depends_on = [aws_eks_node_group.general]",
+        "Ensures worker nodes are running before Helm attempts to install the pod."
+      ]
+    ],
+    "dependencies": "Upstream: Node group, Helm provider. Downstream: Required for Example 3 (Horizontal Pod Autoscaler).",
+    "pitfalls": "Common Error: Missing depends_on. If Helm tries to deploy Metrics Server before nodes are ready, the deployment times out waiting for available capacity."
+  },
+  "13-pod-Identity-addon": {
+    "num": "13",
+    "file": "13-pod-Identity-addon.tf",
+    "category": "Add-ons & IAM",
+    "aws_resources": "aws_eks_addon.pod_identity",
+    "purpose": "Installs the official AWS EKS Pod Identity Agent DaemonSet on all worker nodes. This agent intercepts container token requests and enables Pods to assume IAM roles securely without configuring OIDC thumbprints or public STS internet endpoints.",
+    "code": "resource \"aws_eks_addon\" \"pod_identity\" {
+  cluster_name                = aws_eks_cluster.eks.name
+  addon_name                  = \"eks-pod-identity-agent\"
+  resolve_conflicts_on_create = \"OVERWRITE\"
+  resolve_conflicts_on_update = \"OVERWRITE\"
+
+  depends_on = [aws_eks_node_group.general]
+}",
+    "components_used": [
+      [
+        "addon_name = 'eks-pod-identity-agent'",
+        "Managed AWS add-on that runs a DaemonSet on every worker node."
+      ],
+      [
+        "resolve_conflicts_on_create/update = 'OVERWRITE'",
+        "Ensures clean upgrades without manual Terraform state intervention."
+      ],
+      [
+        "depends_on = [aws_eks_node_group.general]",
+        "Ensures worker nodes exist to schedule the DaemonSet pods."
+      ]
+    ],
+    "dependencies": "Upstream: aws_eks_cluster.eks, aws_eks_node_group.general. Downstream: Enables Pod Identity for 14-cluster-autoscaler.tf, 15-aws-lbc.tf, and 18-ebs-csi-driver.tf.",
+    "pitfalls": "Common Error: Attempting to use aws_eks_pod_identity_association before the Pod Identity Agent add-on is active. Pods will fail to assume IAM roles with 'TokenNotFound' errors."
+  },
+  "14-cluster-autoscaler": {
+    "num": "14",
+    "file": "14-cluster-autoscaler.tf",
+    "category": "Add-ons & Scaling",
+    "aws_resources": "aws_iam_role, aws_iam_policy, aws_iam_role_policy_attachment, aws_eks_pod_identity_association, helm_release",
+    "purpose": "Deploys Kubernetes Cluster Autoscaler with Pod Identity. Monitors for unschedulable (Pending) pods due to resource constraints and automatically calls AWS Auto Scaling APIs to launch additional EC2 worker nodes.",
+    "code": "resource \"aws_iam_role\" \"cluster_autoscaler\" {
+  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"
+
+  assume_role_policy = jsonencode({
+    Version = \"2012-10-17\"
+    Statement = [
+      {
+        Effect = \"Allow\"
+        Action = [
+          \"sts:AssumeRole\",
+          \"sts:TagSession\"
+        ]
+        Principal = {
+          Service = \"pods.eks.amazonaws.com\"
+        }
+      }
+    ]
+  })
+}
+
+resource \"aws_iam_policy\" \"cluster_autoscaler\" {
+  name = \"${aws_eks_cluster.eks.name}-cluster-autoscaler\"
+
+  policy = jsonencode({
+    Version = \"2012-10-17\"
+    Statement = [
+      {
+        Effect = \"Allow\"
+        Action = [
+          \"autoscaling:DescribeAutoScalingGroups\",
+          \"autoscaling:DescribeAutoScalingInstances\",
+          \"autoscaling:DescribeLaunchConfigurations\",
+          \"autoscaling:DescribeScalingActivities\",
+          \"autoscaling:DescribeTags\",
+          \"ec2:DescribeImages\",
+          \"ec2:DescribeInstanceTypes\",
+          \"ec2:DescribeLaunchTemplateVersions\",
+          \"ec2:GetInstanceTypesFromInstanceRequirements\",
+          \"eks:DescribeNodegroup\"
+        ]
+        Resource = \"*\"
+      },
+      {
+        Effect = \"Allow\"
+        Action = [
+          \"autoscaling:SetDesiredCapacity\",
+          \"autoscaling:TerminateInstanceInAutoScalingGroup\"
+        ]
+        Resource = \"*\"
+      },
+    ]
+  })
+}
+
+resource \"aws_iam_role_policy_attachment\" \"cluster_autoscaler\" {
+  policy_arn = aws_iam_policy.cluster_autoscaler.arn
+  role       = aws_iam_role.cluster_autoscaler.name
+}
+
+resource \"aws_eks_pod_identity_association\" \"cluster_autoscaler\" {
+  cluster_name    = aws_eks_cluster.eks.name
+  namespace       = \"kube-system\"
+  service_account = \"cluster-autoscaler\"
+  role_arn        = aws_iam_role.cluster_autoscaler.arn
+}
+
+resource \"helm_release\" \"cluster_autoscaler\" {
+  name       = \"autoscaler\"
+  repository = \"https://kubernetes.github.io/autoscaler\"
+  chart      = \"cluster-autoscaler\"
+  namespace  = \"kube-system\"
+  version    = \"9.37.0\"
+  timeout    = 600
+
+  set {
+    name  = \"rbac.serviceAccount.name\"
+    value = \"cluster-autoscaler\"
+  }
+
+  set {
+    name  = \"autoDiscovery.clusterName\"
+    value = aws_eks_cluster.eks.name
+  }
+
+  set {
+    name  = \"awsRegion\"
+    value = local.region
+  }
+
+  depends_on = [
+    helm_release.metrics_server,
+    aws_eks_addon.pod_identity,
+    aws_eks_pod_identity_association.cluster_autoscaler
+  ]
+}",
+    "components_used": [
+      [
+        "Principal = 'pods.eks.amazonaws.com'",
+        "Native Pod Identity trust policy. Grants permissions without OIDC provider overhead."
+      ],
+      [
+        "autoscaling:SetDesiredCapacity",
+        "Permission allowing autoscaler pod to scale the EC2 Auto Scaling Group up and down."
+      ],
+      [
+        "aws_eks_pod_identity_association",
+        "Binds IAM role to the 'cluster-autoscaler' ServiceAccount in kube-system."
+      ],
+      [
+        "autoDiscovery.clusterName = 'staging-demo'",
+        "Discovers the ASG matching cluster tags automatically."
+      ]
+    ],
+    "dependencies": "Upstream: Pod Identity agent, Metrics Server. Downstream: Manages worker nodes dynamically for Example 4 (Cluster Autoscaler testing).",
+    "pitfalls": "Common Error: Short Helm timeout. Deploying autoscaler without sufficient timeout (600s) can lead to 'context deadline exceeded' if node scheduling is delayed."
+  },
+  "15-aws-lbc": {
+    "num": "15",
+    "file": "15-aws-lbc.tf",
+    "category": "Controllers & Ingress",
+    "aws_resources": "aws_iam_role.aws_lbc, aws_iam_policy, aws_eks_pod_identity_association, helm_release",
+    "purpose": "Deploys AWS Load Balancer Controller with Pod Identity. Satisfies Kubernetes Ingress objects by provisioning AWS Application Load Balancers (ALBs) and Service type: LoadBalancer by provisioning Network Load Balancers (NLBs) with IP targets.",
+    "code": "data \"aws_iam_policy_document\" \"aws_lbc\" {
+  statement {
+    effect = \"Allow\"
+
+    principals {
+      type        = \"Service\"
+      identifiers = [\"pods.eks.amazonaws.com\"]
+    }
+
+    actions = [
+      \"sts:AssumeRole\",
+      \"sts:TagSession\"
+    ]
+  }
+}
+
+resource \"aws_iam_role\" \"aws_lbc\" {
+  name               = \"${aws_eks_cluster.eks.name}-aws-lbc\"
+  assume_role_policy = data.aws_iam_policy_document.aws_lbc.json
+}
+
+resource \"aws_iam_policy\" \"aws_lbc\" {
+  policy = file(\"${path.module}/iam/AWSLoadBalancerController.json\")
+  name   = \"${aws_eks_cluster.eks.name}-AWSLoadBalancerController\"
+}
+
+resource \"aws_iam_role_policy_attachment\" \"aws_lbc\" {
+  policy_arn = aws_iam_policy.aws_lbc.arn
+  role       = aws_iam_role.aws_lbc.name
+}
+
+resource \"aws_eks_pod_identity_association\" \"aws_lbc\" {
+  cluster_name    = aws_eks_cluster.eks.name
+  namespace       = \"kube-system\"
+  service_account = \"aws-load-balancer-controller\"
+  role_arn        = aws_iam_role.aws_lbc.arn
+}
+
+resource \"helm_release\" \"aws_lbc\" {
+  name = \"aws-load-balancer-controller\"
+
+  repository = \"https://aws.github.io/eks-charts\"
+  chart      = \"aws-load-balancer-controller\"
+  namespace  = \"kube-system\"
+  version    = \"1.8.1\"
+
+  set {
+    name  = \"clusterName\"
+    value = aws_eks_cluster.eks.name
+  }
+
+  set {
+    name  = \"serviceAccount.name\"
+    value = \"aws-load-balancer-controller\"
+  }
+
+  set {
+    name  = \"vpcId\"
+    value = aws_vpc.main.id
+  }
+
+  depends_on = [helm_release.cluster_autoscaler]
+}",
+    "components_used": [
+      [
+        "iam/AWSLoadBalancerController.json",
+        "Official AWS IAM policy granting permissions to create, modify, and delete ALBs, NLBs, target groups, and security groups."
+      ],
+      [
+        "vpcId = aws_vpc.main.id",
+        "Tells controller which VPC subnets to search for 'kubernetes.io/role/elb' tags."
+      ],
+      [
+        "aws_eks_pod_identity_association",
+        "Associates IAM role with 'aws-load-balancer-controller' SA in kube-system."
+      ]
+    ],
+    "dependencies": "Upstream: Pod Identity, VPC, Cluster Autoscaler. Downstream: Required for 16-nginx-ingress.tf, Example 5 (NLB), Example 6 (ALB), and Example 7 (HTTPS ALB).",
+    "pitfalls": "Common Error: Missing VPC ID parameter. The controller will log 'failed to find subnets' and fail to provision any load balancers."
+  },
+  "16-nginx-ingress": {
+    "num": "16",
+    "file": "16-nginx-ingress.tf",
+    "category": "Controllers & Ingress",
+    "aws_resources": "helm_release.external_nginx",
+    "purpose": "Deploys Ingress NGINX controller with Helm in the 'ingress' namespace. Uses values/nginx-ingress.yaml to provision an external AWS Network Load Balancer (NLB) that routes public internet traffic directly into the NGINX pods.",
+    "code": "resource \"helm_release\" \"external_nginx\" {
+  name = \"external\"
+
+  repository       = \"https://kubernetes.github.io/ingress-nginx\"
+  chart            = \"ingress-nginx\"
+  namespace        = \"ingress\"
+  create_namespace = true
+  version          = \"4.11.3\"
+
+  values = [file(\"${path.module}/values/nginx-ingress.yaml\")]
+
+  depends_on = [helm_release.aws_lbc]
+}",
+    "components_used": [
+      [
+        "chart = 'ingress-nginx' (v4.11.3)",
+        "Industry-standard reverse proxy and URL-path router for Kubernetes."
+      ],
+      [
+        "namespace = 'ingress'",
+        "Isolates the ingress controller in its own dedicated namespace."
+      ],
+      [
+        "values/nginx-ingress.yaml",
+        "Configures ingressClassResource.name = 'external-nginx' and annotations for AWS NLB with IP targets."
+      ],
+      [
+        "depends_on = [helm_release.aws_lbc]",
+        "Ensures AWS Load Balancer Controller is active to provision the underlying NLB."
+      ]
+    ],
+    "dependencies": "Upstream: AWS Load Balancer Controller. Downstream: Required for 17-cert-manager.tf, Example 8 (NGINX), and Example 9 (Let's Encrypt).",
+    "pitfalls": "Common Error: Deploying NGINX before AWS Load Balancer Controller. The Service type: LoadBalancer will hang in '<pending>' indefinitely because no controller exists to provision the NLB."
+  },
+  "17-cert-manager": {
+    "num": "17",
+    "file": "17-cert-manager.tf",
+    "category": "Controllers & SSL",
+    "aws_resources": "helm_release.cert_manager",
+    "purpose": "Installs Jetstack Cert-Manager with Custom Resource Definitions (CRDs). Automates the issuance, renewal, and management of free TLS certificates from Let's Encrypt using ACME HTTP-01 challenges.",
+    "code": "resource \"helm_release\" \"cert_manager\" {
+  name = \"cert-manager\"
+
+  repository       = \"https://charts.jetstack.io\"
+  chart            = \"cert-manager\"
+  namespace        = \"cert-manager\"
+  create_namespace = true
+  version          = \"v1.16.2\"
+
+  set {
+    name  = \"installCRDs\"
+    value = \"true\"
+  }
+
+  depends_on = [helm_release.external_nginx]
+}",
+    "components_used": [
+      [
+        "chart = 'cert-manager' (v1.16.2)",
+        "Kubernetes certificate controller."
+      ],
+      [
+        "set { name = 'installCRDs', value = 'true' }",
+        "CRITICAL. Installs custom resources: Certificate, Issuer, ClusterIssuer, Order, and Challenge into the cluster."
+      ],
+      [
+        "depends_on = [helm_release.external_nginx]",
+        "Ensures NGINX Ingress controller is ready to handle HTTP-01 challenge routing."
+      ]
+    ],
+    "dependencies": "Upstream: Ingress NGINX. Downstream: Powers Example 9 (Let's Encrypt automated TLS certificate for ex9.aiguru.website).",
+    "pitfalls": "Common Error: Forgetting 'installCRDs = true'. Attempting to apply a ClusterIssuer or Certificate YAML results in 'no matches for kind ClusterIssuer' error."
+  },
+  "18-ebs-csi-driver": {
+    "num": "18",
+    "file": "18-ebs-csi-driver.tf",
+    "category": "Persistent Storage",
+    "aws_resources": "aws_iam_role, policy attachments, aws_eks_pod_identity_association, aws_eks_addon.ebs_csi_driver",
+    "purpose": "Installs the Amazon EBS Container Storage Interface (CSI) Driver managed add-on with Pod Identity. Allows Kubernetes pods (such as StatefulSets) to dynamically provision, attach, and mount AWS EBS block volumes (gp2/gp3).",
+    "code": "data \"aws_iam_policy_document\" \"ebs_csi_driver\" {
+  statement {
+    effect = \"Allow\"
+
+    principals {
+      type        = \"Service\"
+      identifiers = [\"pods.eks.amazonaws.com\"]
+    }
+
+    actions = [
+      \"sts:AssumeRole\",
+      \"sts:TagSession\"
+    ]
+  }
+}
+
+resource \"aws_iam_role\" \"ebs_csi_driver\" {
+  name               = \"${aws_eks_cluster.eks.name}-ebs-csi-driver\"
+  assume_role_policy = data.aws_iam_policy_document.ebs_csi_driver.json
+}
+
+resource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver\" {
+  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy\"
+  role       = aws_iam_role.ebs_csi_driver.name
+}
+
+# Optional: only if you want to encrypt the EBS drives
+resource \"aws_iam_policy\" \"ebs_csi_driver_encryption\" {
+  name = \"${aws_eks_cluster.eks.name}-ebs-csi-driver-encryption\"
+
+  policy = jsonencode({
+    Version = \"2012-10-17\"
+    Statement = [
+      {
+        Effect = \"Allow\"
+        Action = [
+          \"kms:Decrypt\",
+          \"kms:GenerateDataKeyWithoutPlaintext\",
+          \"kms:CreateGrant\"
+        ]
+        Resource = \"*\"
+      }
+    ]
+  })
+}
+
+# Optional: only if you want to encrypt the EBS drives
+resource \"aws_iam_role_policy_attachment\" \"ebs_csi_driver_encryption\" {
+  policy_arn = aws_iam_policy.ebs_csi_driver_encryption.arn
+  role       = aws_iam_role.ebs_csi_driver.name
+}
+
+resource \"aws_eks_pod_identity_association\" \"ebs_csi_driver\" {
+  cluster_name    = aws_eks_cluster.eks.name
+  namespace       = \"kube-system\"
+  service_account = \"ebs-csi-controller-sa\"
+  role_arn        = aws_iam_role.ebs_csi_driver.arn
+}
+
+resource \"aws_eks_addon\" \"ebs_csi_driver\" {
+  cluster_name                = aws_eks_cluster.eks.name
+  addon_name                  = \"aws-ebs-csi-driver\"
+  resolve_conflicts_on_create = \"OVERWRITE\"
+  resolve_conflicts_on_update = \"OVERWRITE\"
+
+  depends_on = [
+    aws_eks_node_group.general,
+    aws_eks_addon.pod_identity,
+    aws_eks_pod_identity_association.ebs_csi_driver
+  ]
+}",
+    "components_used": [
+      [
+        "AmazonEBSCSIDriverPolicy",
+        "AWS managed policy authorizing CSI driver to create EBS volumes and attach them to EC2 instances."
+      ],
+      [
+        "ebs_csi_driver_encryption",
+        "KMS policy allowing creation and attachment of encrypted EBS volumes."
+      ],
+      [
+        "aws_eks_pod_identity_association",
+        "Links role to 'ebs-csi-controller-sa' in kube-system."
+      ],
+      [
+        "addon_name = 'aws-ebs-csi-driver'",
+        "Managed AWS EKS add-on managing volume lifecycle."
+      ]
+    ],
+    "dependencies": "Upstream: Pod Identity, Node group. Downstream: Required for Example 10 (StatefulSet with EBS volume).",
+    "pitfalls": "Common Error: 20-minute timeout during terraform apply. If Pod Identity association is missing or worker nodes lack capacity, the CSI driver controller pod cannot start."
+  },
+  "19-openid-connect-provider": {
+    "num": "19",
+    "file": "19-openid-connect-provider.tf",
+    "category": "IAM & OIDC",
+    "aws_resources": "data.tls_certificate.eks, aws_iam_openid_connect_provider.eks",
+    "purpose": "Creates the IAM OpenID Connect (OIDC) Provider for the EKS cluster. Enables legacy IAM Roles for Service Accounts (IRSA) for tools (such as EFS CSI Driver and Secrets Store CSI Driver) that use web identity token federation.",
+    "code": "data \"tls_certificate\" \"eks\" {
+  url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
+}
+
+resource \"aws_iam_openid_connect_provider\" \"eks\" {
+  client_id_list  = [\"sts.amazonaws.com\"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer
+}",
+    "components_used": [
+      [
+        "data 'tls_certificate' 'eks'",
+        "Fetches the root Certificate Authority fingerprint for the cluster's OIDC issuer URL."
+      ],
+      [
+        "client_id_list = ['sts.amazonaws.com']",
+        "Specifies AWS STS as the authorized audience for OIDC tokens."
+      ],
+      [
+        "aws_iam_openid_connect_provider.eks",
+        "Registers the EKS cluster as a trusted identity provider in AWS IAM."
+      ]
+    ],
+    "dependencies": "Upstream: aws_eks_cluster.eks OIDC issuer URL. Downstream: Consumed by 20-efs.tf and 21-secrets-store-csi-driver.tf trust relationship policies.",
+    "pitfalls": "Common Error: Thumbprint mismatch. Calculating the thumbprint dynamically with data.tls_certificate prevents certificate rotation failures."
+  },
+  "20-efs": {
+    "num": "20",
+    "file": "20-efs.tf",
+    "category": "Shared Storage",
+    "aws_resources": "aws_efs_file_system, aws_security_group, aws_efs_mount_target (2x), IAM role, helm_release, kubernetes_storage_class_v1.efs",
+    "purpose": "Provisions an Amazon Elastic File System (EFS), creates NFS mount targets in private subnets, installs the EFS CSI Driver via Helm, and creates a Kubernetes StorageClass with ReadWriteMany (RWX) multi-pod shared storage.",
+    "code": "resource \"aws_efs_file_system\" \"eks\" {
+  creation_token = \"eks\"
+
+  performance_mode = \"generalPurpose\"
+  throughput_mode  = \"bursting\"
+  encrypted        = true
+}
+
+resource \"aws_security_group\" \"efs\" {
+  name        = \"${aws_eks_cluster.eks.name}-efs\"
+  description = \"Allow NFS inbound traffic for EFS CSI driver\"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = \"NFS inbound from VPC\"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = \"tcp\"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = \"-1\"
+    cidr_blocks      = [\"0.0.0.0/0\"]
+    ipv6_cidr_blocks = [\"::/0\"]
+  }
+
+  tags = {
+    Name = \"${aws_eks_cluster.eks.name}-efs\"
+  }
+}
+
+resource \"aws_efs_mount_target\" \"zone_a\" {
+  file_system_id  = aws_efs_file_system.eks.id
+  subnet_id       = aws_subnet.private_zone1.id
+  security_groups = [aws_security_group.efs.id]
+}
+
+resource \"aws_efs_mount_target\" \"zone_b\" {
+  file_system_id  = aws_efs_file_system.eks.id
+  subnet_id       = aws_subnet.private_zone2.id
+  security_groups = [aws_security_group.efs.id]
+}
+
+data \"aws_iam_policy_document\" \"efs_csi_driver\" {
+  statement {
+    actions = [\"sts:AssumeRoleWithWebIdentity\"]
+    effect  = \"Allow\"
+
+    condition {
+      test     = \"StringEquals\"
+      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"
+      values   = [\"system:serviceaccount:kube-system:efs-csi-controller-sa\"]
+    }
+
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      type        = \"Federated\"
+    }
+  }
+}
+
+resource \"aws_iam_role\" \"efs_csi_driver\" {
+  name               = \"${aws_eks_cluster.eks.name}-efs-csi-driver\"
+  assume_role_policy = data.aws_iam_policy_document.efs_csi_driver.json
+}
+
+resource \"aws_iam_role_policy_attachment\" \"efs_csi_driver\" {
+  policy_arn = \"arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy\"
+  role       = aws_iam_role.efs_csi_driver.name
+}
+
+resource \"helm_release\" \"efs_csi_driver\" {
+  name = \"aws-efs-csi-driver\"
+
+  repository = \"https://kubernetes-sigs.github.io/aws-efs-csi-driver/\"
+  chart      = \"aws-efs-csi-driver\"
+  namespace  = \"kube-system\"
+  version    = \"3.0.5\"
+
+  set {
+    name  = \"controller.serviceAccount.name\"
+    value = \"efs-csi-controller-sa\"
+  }
+
+  set {
+    name  = \"controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn\"
+    value = aws_iam_role.efs_csi_driver.arn
+  }
+
+  depends_on = [
+    aws_efs_mount_target.zone_a,
+    aws_efs_mount_target.zone_b
+  ]
+}
+
+resource \"kubernetes_storage_class_v1\" \"efs\" {
+  metadata {
+    name = \"efs\"
+  }
+
+  storage_provisioner = \"efs.csi.aws.com\"
+
+  parameters = {
+    provisioningMode = \"efs-ap\"
+    fileSystemId     = aws_efs_file_system.eks.id
+    directoryPerms   = \"700\"
+  }
+
+  mount_options = [\"iam\"]
+
+  depends_on = [helm_release.efs_csi_driver]
+}",
+    "components_used": [
+      [
+        "port = 2049 (NFS)",
+        "Opens Network File System port 2049 inbound from VPC CIDR to allow EC2 instances to mount the share."
+      ],
+      [
+        "aws_efs_mount_target (zone_a, zone_b)",
+        "Creates redundant network endpoints in each private subnet so pods mount locally."
+      ],
+      [
+        "kubernetes_storage_class_v1.efs",
+        "Creates the 'efs' StorageClass with provisioningMode = 'efs-ap' (Access Points)."
+      ],
+      [
+        "mount_options = ['iam']",
+        "Enables IAM authentication for NFS connections."
+      ]
+    ],
+    "dependencies": "Upstream: OIDC provider, private subnets, VPC. Downstream: Powers Example 11 (Shared Multi-pod EFS storage).",
+    "pitfalls": "Common Error: Missing mount targets in one AZ. If a pod runs in eu-north-1b but mount target was only created in eu-north-1a, the NFS mount times out with 'connection refused'."
+  },
+  "21-secrets-store-csi-driver": {
+    "num": "21",
+    "file": "21-secrets-store-csi-driver.tf",
+    "category": "Secrets Management",
+    "aws_resources": "helm_release (2x), IAM role, policy, attachment, output",
+    "purpose": "Deploys the Secrets Store CSI Driver and its AWS Provider with IRSA authentication. Allows pods to mount credentials stored in AWS Secrets Manager directly as files and automatically synchronizes them into native Kubernetes Secrets.",
+    "code": "resource \"helm_release\" \"secrets_csi_driver\" {
+  name       = \"secrets-store-csi-driver\"
+  repository = \"https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts\"
+  chart      = \"secrets-store-csi-driver\"
+  namespace  = \"kube-system\"
+  version    = \"1.4.3\"
+  timeout    = 600
+
+  # MUST be set if you use ENV variables
+  set {
+    name  = \"syncSecret.enabled\"
+    value = true
+  }
+
+  depends_on = [helm_release.efs_csi_driver]
+}
+
+resource \"helm_release\" \"secrets_csi_driver_aws_provider\" {
+  name       = \"secrets-store-csi-driver-provider-aws\"
+  repository = \"https://aws.github.io/secrets-store-csi-driver-provider-aws\"
+  chart      = \"secrets-store-csi-driver-provider-aws\"
+  namespace  = \"kube-system\"
+  version    = \"0.3.9\"
+  timeout    = 600
+
+  depends_on = [helm_release.secrets_csi_driver]
+}
+
+data \"aws_iam_policy_document\" \"myapp_secrets\" {
+  statement {
+    actions = [\"sts:AssumeRoleWithWebIdentity\"]
+    effect  = \"Allow\"
+
+    condition {
+      test     = \"StringEquals\"
+      variable = \"${replace(aws_iam_openid_connect_provider.eks.url, \"https://\", \"\")}:sub\"
+      values   = [\"system:serviceaccount:12-example:myapp\"]
+    }
+
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      type        = \"Federated\"
+    }
+  }
+}
+
+resource \"aws_iam_role\" \"myapp_secrets\" {
+  name               = \"${aws_eks_cluster.eks.name}-myapp-secrets\"
+  assume_role_policy = data.aws_iam_policy_document.myapp_secrets.json
+}
+
+resource \"aws_iam_policy\" \"myapp_secrets\" {
+  name = \"${aws_eks_cluster.eks.name}-myapp-secrets\"
+
+  policy = jsonencode({
+    Version = \"2012-10-17\"
+    Statement = [
+      {
+        Effect = \"Allow\"
+        Action = [
+          \"secretsmanager:GetSecretValue\",
+          \"secretsmanager:DescribeSecret\"
+        ]
+        Resource = \"*\" # \"arn:*:secretsmanager:*:*:secret:my-secret-kkargS\"
+      }
+    ]
+  })
+}
+
+resource \"aws_iam_role_policy_attachment\" \"myapp_secrets\" {
+  policy_arn = aws_iam_policy.myapp_secrets.arn
+  role       = aws_iam_role.myapp_secrets.name
+}
+
+output \"myapp_secrets_role_arn\" {
+  value = aws_iam_role.myapp_secrets.arn
+}",
+    "components_used": [
+      [
+        "syncSecret.enabled = true",
+        "CRITICAL. Enables creation of native Kubernetes Secret objects from mounted secrets, allowing them to be injected as ENV variables."
+      ],
+      [
+        "secrets-store-csi-driver-provider-aws",
+        "DaemonSet plugin that interfaces with the AWS Secrets Manager API."
+      ],
+      [
+        "system:serviceaccount:12-example:myapp",
+        "Restricts IRSA token assumption strictly to the 'myapp' ServiceAccount in the '12-example' namespace."
+      ],
+      [
+        "secretsmanager:GetSecretValue",
+        "IAM permission authorizing the pod to fetch plaintext secret values from AWS Secrets Manager."
+      ]
+    ],
+    "dependencies": "Upstream: OIDC provider in 19-openid-connect-provider.tf. Downstream: Outputs myapp_secrets_role_arn used by Example 12 (AWS Secrets Manager integration).",
+    "pitfalls": "Common Error: Forgetting 'syncSecret.enabled = true'. When false, secrets can only be mounted as filesystem files; attempts to reference them via env valueFrom.secretKeyRef will fail because no Kubernetes Secret is generated."
+  }
+};
 
     function switchTfTab(key) {
+      // Update Tab Buttons UI
       document.querySelectorAll('.tf-tab-btn').forEach(btn => {
-        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50', 'shadow-sm', 'shadow-cyan-500/30');
         btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
       });
       const activeBtn = document.getElementById('btn-' + key);
       if (activeBtn) {
-        activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50', 'shadow-sm', 'shadow-cyan-500/30');
         activeBtn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
       }
+
+      // Populate Detailed Content
       const data = tfData[key];
       if (data) {
+        document.getElementById('tf-card-num').textContent = data.num;
         document.getElementById('tf-card-filename').textContent = data.file;
-        document.getElementById('tf-card-desc').textContent = data.desc;
-        document.getElementById('tf-code-block').textContent = data.code.replace(/\\n/g, '\n');
+        document.getElementById('tf-card-category').textContent = data.category;
+        document.getElementById('tf-card-resources').textContent = data.aws_resources;
+        document.getElementById('tf-card-purpose').textContent = data.purpose;
+        document.getElementById('tf-code-block').textContent = data.code;
+        document.getElementById('tf-card-dependencies').textContent = data.dependencies;
+        document.getElementById('tf-card-pitfalls').textContent = data.pitfalls;
+
+        // Render Component Deep-Dive Cards
+        const compContainer = document.getElementById('tf-card-components');
+        compContainer.innerHTML = '';
+        data.components_used.forEach(([term, desc]) => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-950 p-3.5 rounded-xl border border-slate-800/90 hover:border-slate-700 transition space-y-1';
+          card.innerHTML = `
+            <div class="text-xs font-mono font-bold text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-angle-right text-amber-500 text-[10px]"></i> \${term}
+            </div>
+            <div class="text-[11px] text-slate-300 leading-relaxed font-sans">
+              \${desc}
+            </div>
+          `;
+          compContainer.appendChild(card);
+        });
       }
     }
+
+    // Initialize first tab on load
+    window.addEventListener('DOMContentLoaded', () => {
+      switchTfTab('0-locals');
+    });
 
     // Database of all 12 Examples
     const exData = {
