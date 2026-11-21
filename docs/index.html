@@ -3,876 +3,1101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS EKS Enterprise Architecture - Beginner's Visual Guide</title>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <title>Complete Kubernetes and Amazon EKS Training Course - Production Architecture</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @keyframes dash {
-      to {
-        stroke-dashoffset: -40;
-      }
+      to { stroke-dashoffset: -40; }
     }
     @keyframes pulse-glow {
       0%, 100% {
-        filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
+        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
         transform: scale(1);
       }
       50% {
-        filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.95));
-        transform: scale(1.05);
+        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 1));
+        transform: scale(1.04);
       }
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+    @keyframes pulse-amber {
+      0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.7));
+        transform: scale(1);
+      }
+      50% {
+        filter: drop-shadow(0 0 16px rgba(245, 158, 11, 1));
+        transform: scale(1.04);
+      }
     }
-    .flow-line {
+    @keyframes packet-nat {
+      0% { cx: 70; cy: 110; opacity: 1; }
+      25% { cx: 240; cy: 110; opacity: 1; }
+      50% { cx: 430; cy: 110; opacity: 1; }
+      75% { cx: 620; cy: 110; opacity: 1; }
+      100% { cx: 810; cy: 110; opacity: 0; }
+    }
+    @keyframes packet-ingress {
+      0% { cx: 50; cy: 110; opacity: 1; }
+      30% { cx: 240; cy: 110; opacity: 1; }
+      60% { cx: 480; cy: 110; opacity: 1; }
+      100% { cx: 750; cy: 110; opacity: 0; }
+    }
+    @keyframes packet-secrets {
+      0% { cx: 120; cy: 100; opacity: 1; }
+      50% { cx: 380; cy: 100; opacity: 1; }
+      100% { cx: 640; cy: 100; opacity: 0; }
+    }
+    .flow-dash {
       stroke-dasharray: 8, 8;
-      animation: dash 1.5s linear infinite;
+      animation: dash 1.6s linear infinite;
     }
-    .flow-line-reverse {
+    .flow-dash-reverse {
       stroke-dasharray: 8, 8;
-      animation: dash 1.5s linear infinite reverse;
+      animation: dash 1.6s linear infinite reverse;
     }
-    .pulse-node {
-      animation: pulse-glow 2.5s ease-in-out infinite;
+    .pulse-box {
+      animation: pulse-glow 3s ease-in-out infinite;
       transform-origin: center;
     }
-    .floating-badge {
-      animation: float 3s ease-in-out infinite;
+    .pulse-box-amber {
+      animation: pulse-amber 3s ease-in-out infinite;
+      transform-origin: center;
     }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+    .anim-packet-nat {
+      animation: packet-nat 3s ease-in-out infinite;
     }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
+    .anim-packet-ingress {
+      animation: packet-ingress 3.2s ease-in-out infinite;
     }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
+    .anim-packet-secrets {
+      animation: packet-secrets 2.8s ease-in-out infinite;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-    .glass-panel {
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glass-card {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .glass-card {
-      background: rgba(30, 41, 59, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(51, 65, 85, 0.4);
     }
     .glass-card:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.5);
     }
   </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-200 antialiased font-sans selection:bg-cyan-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
 
-  <!-- Top Navigation Header -->
-  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+  <!-- TOP NAV -->
+  <header class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-          </svg>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+          <i class="fa-solid fa-dharmachakra text-slate-950 text-xl animate-spin" style="animation-duration: 20s;"></i>
         </div>
         <div>
-          <span class="text-lg font-bold bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">EKS Staging Architecture</span>
-          <span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800/60">v1.31 Production Ready</span>
+          <span class="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400">EKS Masterclass</span>
+          <span class="text-xs text-slate-400 ml-2 border border-slate-700 px-2 py-0.5 rounded-full hidden sm:inline-block">sangeethanayak521/k8s</span>
         </div>
       </div>
-      <nav class="hidden md:flex items-center space-x-6 text-sm">
-        <a href="#overview" class="text-slate-300 hover:text-cyan-400 transition-colors">Overview</a>
-        <a href="#diagrams" class="text-slate-300 hover:text-cyan-400 transition-colors">Animated Architecture</a>
-        <a href="#step-by-step" class="text-slate-300 hover:text-cyan-400 transition-colors">Step-by-Step Files</a>
-        <a href="#interactive-features" class="text-slate-300 hover:text-cyan-400 transition-colors">Core Concepts</a>
-        <a href="#quick-commands" class="px-3.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-all font-medium">CLI Cheatsheet</a>
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <a href="#fundamentals" class="text-slate-300 hover:text-cyan-400 transition">Fundamentals</a>
+        <a href="#eks-architecture" class="text-slate-300 hover:text-cyan-400 transition">EKS Core</a>
+        <a href="#terraform" class="text-slate-300 hover:text-cyan-400 transition">Terraform Code</a>
+        <a href="#networking" class="text-slate-300 hover:text-cyan-400 transition">Networking</a>
+        <a href="#addons" class="text-slate-300 hover:text-cyan-400 transition">Add-ons</a>
+        <a href="#examples" class="text-slate-300 hover:text-cyan-400 transition">12 Examples</a>
+        <a href="#domain-ssl" class="text-slate-300 hover:text-cyan-400 transition">Domain & SSL</a>
+        <a href="#troubleshooting" class="text-slate-300 hover:text-cyan-400 transition">Troubleshooting</a>
       </nav>
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-full font-mono flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Cluster LIVE
+        </span>
+        <a href="https://github.com/sangeethanayak521/k8s" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-2">
+          <i class="fa-brands fa-github text-sm"></i> GitHub
+        </a>
+      </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="relative overflow-hidden py-16 lg:py-24 border-b border-slate-800">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.18),rgba(255,255,255,0))]"></div>
+  <!-- HERO SECTION -->
+  <section class="relative pt-16 pb-20 overflow-hidden border-b border-slate-800/80">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.15),rgba(255,255,255,0))]"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/80 mb-6">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-xs font-medium text-slate-300">Complete Beginner Guide & Explainer</span>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-medium mb-6">
+        <i class="fa-solid fa-graduation-cap"></i> Complete Production Course: Beginner to Cloud Architect
       </div>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
-        Master AWS Elastic Kubernetes Service (<span class="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">EKS</span>) From Scratch
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        Amazon EKS & Kubernetes<br>
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400">Complete Technical Training</span>
       </h1>
-      <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-        A plain-English walkthrough of all 22 Terraform configuration files, explaining exactly how every piece of networking, compute, security, ingress, and cloud storage fits together.
+      <p class="max-w-3xl mx-auto text-lg text-slate-400 mb-10 leading-relaxed">
+        An interactive, visual, file-by-file training course covering the complete architecture of our production EKS cluster. Learn AWS VPC networking, Kubernetes internals, 22 Terraform files, 10 controllers, and all 12 practical deployments.
       </p>
 
-      <!-- Key Metrics Badges -->
-      <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
-        <div class="glass-card rounded-xl p-4 text-center">
-          <div class="text-2xl font-bold text-cyan-400">22 Files</div>
-          <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Modular Terraform</div>
-        </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <div class="text-2xl font-bold text-emerald-400">Multi-AZ</div>
-          <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">High Availability</div>
-        </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <div class="text-2xl font-bold text-purple-400">Pod Identity</div>
-          <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Modern AWS Auth</div>
-        </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <div class="text-2xl font-bold text-amber-400">Dual Storage</div>
-          <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">EBS + EFS CSI</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Section: Animated Architecture Flow Diagrams -->
-  <section id="diagrams" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10">
-      <div class="inline-flex items-center gap-1.5 text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        Live Animated Diagrams
-      </div>
-      <h2 class="text-3xl font-bold text-white">Visual Architecture & Traffic Flows</h2>
-      <p class="text-slate-400 mt-2 max-w-2xl mx-auto">Click through the tabs below to watch how incoming web traffic, worker node auto-scaling, and secure pod credentials flow in real-time.</p>
-    </div>
-
-    <!-- Diagram Switcher Tabs -->
-    <div class="flex flex-wrap justify-center gap-2 mb-8" id="diagramTabs">
-      <button onclick="switchDiagram('traffic')" id="tab-traffic" class="px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 bg-cyan-500 text-white shadow-lg shadow-cyan-500/25">
-        1. End-to-End Traffic Flow
-      </button>
-      <button onclick="switchDiagram('network')" id="tab-network" class="px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        2. VPC & Subnet Layout
-      </button>
-      <button onclick="switchDiagram('pod-identity')" id="tab-pod-identity" class="px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        3. EKS Pod Identity Mechanism
-      </button>
-      <button onclick="switchDiagram('storage')" id="tab-storage" class="px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 bg-slate-800 text-slate-300 hover:bg-slate-700">
-        4. Storage Systems (EBS vs EFS)
-      </button>
-    </div>
-
-    <!-- DIAGRAM 1: End-to-End Traffic Flow -->
-    <div id="diagram-traffic" class="glass-card rounded-2xl p-6 sm:p-8">
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700/60">
-        <div>
-          <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-cyan-400 inline-block animate-ping"></span>
-            Public Request Ingestion Pipeline
-          </h3>
-          <p class="text-sm text-slate-400">How an end-user request travels from the browser into your private Kubernetes pods</p>
-        </div>
-        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-900/50 text-cyan-300 border border-cyan-700/50">Animated SVGs</span>
-      </div>
-
-      <!-- SVG Canvas -->
-      <div class="w-full overflow-x-auto">
-        <svg viewBox="0 0 1000 320" class="w-full min-w-[760px] h-auto font-sans" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="userGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#38bdf8" />
-              <stop offset="100%" stop-color="#0284c7" />
-            </linearGradient>
-            <linearGradient id="nlbGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#818cf8" />
-              <stop offset="100%" stop-color="#4f46e5" />
-            </linearGradient>
-            <linearGradient id="nginxGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#34d399" />
-              <stop offset="100%" stop-color="#059669" />
-            </linearGradient>
-            <linearGradient id="podGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#f472b6" />
-              <stop offset="100%" stop-color="#db2777" />
-            </linearGradient>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          <!-- Background Zones -->
-          <rect x="230" y="20" width="750" height="280" rx="16" fill="#0f172a" stroke="#1e293b" stroke-width="2" stroke-dasharray="6,6" />
-          <text x="250" y="50" fill="#64748b" font-size="12" font-weight="700" letter-spacing="1">AWS VPC (10.0.0.0/16)</text>
-
-          <rect x="490" y="60" width="470" height="220" rx="12" fill="#131e36" stroke="#2563eb" stroke-opacity="0.3" stroke-width="1.5" />
-          <text x="510" y="85" fill="#60a5fa" font-size="11" font-weight="600">Private Subnets (EKS Managed Nodes - No Public IPs)</text>
-
-          <!-- Animated Connection Path -->
-          <path d="M 120 160 L 290 160" fill="none" stroke="#38bdf8" stroke-width="3" class="flow-line" filter="url(#glow)" />
-          <path d="M 390 160 L 530 160" fill="none" stroke="#818cf8" stroke-width="3" class="flow-line" filter="url(#glow)" />
-          <path d="M 650 160 L 760 160" fill="none" stroke="#34d399" stroke-width="3" class="flow-line" filter="url(#glow)" />
-
-          <!-- Branch to second pod -->
-          <path d="M 650 160 Q 710 160 760 230" fill="none" stroke="#34d399" stroke-width="2.5" class="flow-line" />
-
-          <!-- 1. User Client -->
-          <g transform="translate(40, 110)">
-            <rect width="100" height="100" rx="16" fill="url(#userGrad)" />
-            <text x="50" y="45" fill="white" font-size="24" text-anchor="middle">🌐</text>
-            <text x="50" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">End User</text>
-            <text x="50" y="86" fill="#e0f2fe" font-size="9" text-anchor="middle">HTTPS Request</text>
-          </g>
-
-          <!-- 2. AWS Network Load Balancer (NLB) -->
-          <g transform="translate(270, 105)">
-            <rect width="130" height="110" rx="14" fill="#1e293b" stroke="#818cf8" stroke-width="2" />
-            <rect x="15" y="12" width="100" height="26" rx="6" fill="url(#nlbGrad)" />
-            <text x="65" y="29" fill="white" font-size="11" font-weight="700" text-anchor="middle">AWS NLB</text>
-            <text x="65" y="60" fill="#94a3b8" font-size="10" text-anchor="middle">Internet-Facing</text>
-            <text x="65" y="76" fill="#94a3b8" font-size="9" text-anchor="middle">Created by AWS LBC</text>
-            <text x="65" y="94" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">IP Target Mode</text>
-          </g>
-
-          <!-- 3. Ingress NGINX Pod -->
-          <g transform="translate(520, 105)">
-            <rect width="140" height="110" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="2" />
-            <rect x="15" y="12" width="110" height="26" rx="6" fill="url(#nginxGrad)" />
-            <text x="70" y="29" fill="white" font-size="11" font-weight="700" text-anchor="middle">NGINX Ingress</text>
-            <text x="70" y="58" fill="#94a3b8" font-size="10" text-anchor="middle">Reverse Proxy</text>
-            <text x="70" y="74" fill="#94a3b8" font-size="9" text-anchor="middle">Path Routing: /api, /</text>
-            <text x="70" y="92" fill="#34d399" font-size="9" font-weight="600" text-anchor="middle">cert-manager TLS</text>
-          </g>
-
-          <!-- 4. Application Pod 1 -->
-          <g transform="translate(760, 90)">
-            <rect width="150" height="80" rx="12" fill="#1e293b" stroke="#f472b6" stroke-width="2" />
-            <rect x="12" y="10" width="126" height="24" rx="6" fill="url(#podGrad)" />
-            <text x="75" y="26" fill="white" font-size="11" font-weight="700" text-anchor="middle">Backend Pod #1</text>
-            <text x="75" y="52" fill="#cbd5e1" font-size="10" text-anchor="middle">10.0.12.44 (Pod IP)</text>
-            <text x="75" y="68" fill="#ec4899" font-size="9" font-weight="600" text-anchor="middle">EFS & EBS Mounted</text>
-          </g>
-
-          <!-- 5. Application Pod 2 -->
-          <g transform="translate(760, 190)">
-            <rect width="150" height="80" rx="12" fill="#1e293b" stroke="#f472b6" stroke-width="2" />
-            <rect x="12" y="10" width="126" height="24" rx="6" fill="url(#podGrad)" />
-            <text x="75" y="26" fill="white" font-size="11" font-weight="700" text-anchor="middle">Backend Pod #2</text>
-            <text x="75" y="52" fill="#cbd5e1" font-size="10" text-anchor="middle">10.0.45.89 (Pod IP)</text>
-            <text x="75" y="68" fill="#ec4899" font-size="9" font-weight="600" text-anchor="middle">Auto-scaled Instance</text>
-          </g>
-        </svg>
-      </div>
-
-      <!-- Flow Legend Explanation -->
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-          <div class="font-bold text-cyan-400 mb-1">Step 1: Inbound Call</div>
-          <p class="text-slate-400">User accesses your domain via HTTPS. DNS points to the AWS Network Load Balancer.</p>
-        </div>
-        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-          <div class="font-bold text-indigo-400 mb-1">Step 2: NLB Routing</div>
-          <p class="text-slate-400">NLB forwards high-speed TCP traffic directly to NGINX Ingress controller pods via IP targets.</p>
-        </div>
-        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-          <div class="font-bold text-emerald-400 mb-1">Step 3: SSL & Path Match</div>
-          <p class="text-slate-400">NGINX terminates SSL (secured by cert-manager) and inspects hostname and URL path rules.</p>
-        </div>
-        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-          <div class="font-bold text-pink-400 mb-1">Step 4: Pod Execution</div>
-          <p class="text-slate-400">Traffic hits your application container in private subnets with full zero-trust isolation.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- DIAGRAM 2: Network & Subnet Layout -->
-    <div id="diagram-network" class="glass-card rounded-2xl p-6 sm:p-8 hidden">
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700/60">
-        <div>
-          <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block animate-ping"></span>
-            Multi-AZ Subnet & NAT Routing Architecture
-          </h3>
-          <p class="text-sm text-slate-400">Visualizing high-availability across us-east-2a and us-east-2b</p>
-        </div>
-        <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">High Availability</span>
-      </div>
-
-      <div class="w-full overflow-x-auto">
-        <svg viewBox="0 0 1000 360" class="w-full min-w-[760px] h-auto font-sans" xmlns="http://www.w3.org/2000/svg">
-          <!-- VPC Boundary -->
-          <rect x="20" y="20" width="960" height="320" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
-          <text x="40" y="50" fill="#38bdf8" font-size="14" font-weight="700">AWS VPC: staging-main (10.0.0.0/16)</text>
-
-          <!-- AZ 1 Column -->
-          <rect x="40" y="70" width="440" height="250" rx="12" fill="#131e36" stroke="#1e293b" />
-          <text x="60" y="95" fill="#93c5fd" font-size="12" font-weight="700">Availability Zone: us-east-2a</text>
-
-          <!-- Public Subnet AZ1 -->
-          <rect x="60" y="110" width="400" height="85" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5" />
-          <text x="75" y="132" fill="#34d399" font-size="11" font-weight="700">Public Subnet: 10.0.64.0/19</text>
-          <text x="75" y="150" fill="#94a3b8" font-size="10">Tag: kubernetes.io/role/elb = 1 (Public Load Balancers)</text>
-          <!-- NAT Box -->
-          <rect x="330" y="125" width="115" height="55" rx="6" fill="#065f46" />
-          <text x="387" y="147" fill="#a7f3d0" font-size="10" font-weight="700" text-anchor="middle">NAT Gateway</text>
-          <text x="387" y="165" fill="#d1fae5" font-size="9" text-anchor="middle">+ Elastic IP</text>
-
-          <!-- Private Subnet AZ1 -->
-          <rect x="60" y="210" width="400" height="95" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="1.5" />
-          <text x="75" y="232" fill="#818cf8" font-size="11" font-weight="700">Private Subnet: 10.0.0.0/19</text>
-          <text x="75" y="250" fill="#94a3b8" font-size="10">Tag: kubernetes.io/role/internal-elb = 1</text>
-          <text x="75" y="270" fill="#cbd5e1" font-size="10">Worker Nodes (t3.large) + Private Pods</text>
-
-          <!-- Outbound NAT Flow line from Private AZ1 to NAT in Public AZ1 -->
-          <path d="M 380 210 L 380 185" fill="none" stroke="#34d399" stroke-width="2.5" class="flow-line-reverse" />
-
-          <!-- AZ 2 Column -->
-          <rect x="520" y="70" width="440" height="250" rx="12" fill="#131e36" stroke="#1e293b" />
-          <text x="540" y="95" fill="#93c5fd" font-size="12" font-weight="700">Availability Zone: us-east-2b</text>
-
-          <!-- Public Subnet AZ2 -->
-          <rect x="540" y="110" width="400" height="85" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5" />
-          <text x="555" y="132" fill="#34d399" font-size="11" font-weight="700">Public Subnet: 10.0.96.0/19</text>
-          <text x="555" y="150" fill="#94a3b8" font-size="10">Tag: kubernetes.io/role/elb = 1 (Public Load Balancers)</text>
-          <text x="555" y="170" fill="#94a3b8" font-size="9">Standby Multi-AZ Ingress routing target</text>
-
-          <!-- Private Subnet AZ2 -->
-          <rect x="540" y="210" width="400" height="95" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="1.5" />
-          <text x="555" y="232" fill="#818cf8" font-size="11" font-weight="700">Private Subnet: 10.0.32.0/19</text>
-          <text x="555" y="250" fill="#94a3b8" font-size="10">Tag: kubernetes.io/role/internal-elb = 1</text>
-          <text x="555" y="270" fill="#cbd5e1" font-size="10">Worker Nodes (t3.large) + Private Pods</text>
-
-          <!-- Cross-AZ NAT egress line -->
-          <path d="M 600 210 L 600 170 L 450 155" fill="none" stroke="#34d399" stroke-width="2" class="flow-line-reverse" />
-        </svg>
-      </div>
-
-      <div class="mt-4 p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
-        <span class="font-bold text-amber-400">💡 Why this setup protects you:</span> Your application servers run completely in the <span class="text-indigo-400 font-semibold">Private Subnets</span>. They do not have public IP addresses, making them immune to direct attacks from the internet. When worker nodes need to download container images or OS security patches, their traffic is safely routed outbound through the <span class="text-emerald-400 font-semibold">NAT Gateway</span> in Public Zone A!
-      </div>
-    </div>
-
-    <!-- DIAGRAM 3: Pod Identity Mechanism -->
-    <div id="diagram-pod-identity" class="glass-card rounded-2xl p-6 sm:p-8 hidden">
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700/60">
-        <div>
-          <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-purple-400 inline-block animate-ping"></span>
-            EKS Pod Identity (The Modern AWS Security Model)
-          </h3>
-          <p class="text-sm text-slate-400">Eliminating long-lived AWS keys using the EKS Pod Identity Daemonset</p>
-        </div>
-        <span class="text-xs px-2.5 py-1 rounded-md bg-purple-950 text-purple-400 border border-purple-800">No OIDC Overhead</span>
-      </div>
-
-      <div class="w-full overflow-x-auto">
-        <svg viewBox="0 0 1000 280" class="w-full min-w-[760px] h-auto font-sans" xmlns="http://www.w3.org/2000/svg">
-          <!-- Flow Line 1 -->
-          <path d="M 200 140 L 370 140" fill="none" stroke="#a855f7" stroke-width="3" class="flow-line" />
-          <!-- Flow Line 2 -->
-          <path d="M 570 140 L 740 140" fill="none" stroke="#38bdf8" stroke-width="3" class="flow-line" />
-
-          <!-- Step 1: Pod -->
-          <g transform="translate(40, 70)">
-            <rect width="160" height="140" rx="14" fill="#1e293b" stroke="#a855f7" stroke-width="2" />
-            <rect x="15" y="15" width="130" height="30" rx="6" fill="#7e22ce" />
-            <text x="80" y="35" fill="white" font-size="11" font-weight="700" text-anchor="middle">Kubernetes Pod</text>
-            <text x="80" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">Cluster Autoscaler</text>
-            <text x="80" y="88" fill="#cbd5e1" font-size="10" text-anchor="middle">or EBS CSI Driver</text>
-            <text x="80" y="115" fill="#c084fc" font-size="9" font-weight="600" text-anchor="middle">ServiceAccount Linked</text>
-            <text x="80" y="130" fill="#94a3b8" font-size="8" text-anchor="middle">Asks for AWS Token</text>
-          </g>
-
-          <!-- Step 2: Pod Identity Agent -->
-          <g transform="translate(370, 70)">
-            <rect width="200" height="140" rx="14" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-            <rect x="15" y="15" width="170" height="30" rx="6" fill="#0284c7" />
-            <text x="100" y="35" fill="white" font-size="11" font-weight="700" text-anchor="middle">Pod Identity Agent</text>
-            <text x="100" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">DaemonSet on Worker Node</text>
-            <text x="100" y="90" fill="#94a3b8" font-size="9" text-anchor="middle">Intercepts link-local calls</text>
-            <text x="100" y="110" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">Calls EKS Auth API</text>
-            <text x="100" y="128" fill="#e2e8f0" font-size="9" text-anchor="middle">pods.eks.amazonaws.com</text>
-          </g>
-
-          <!-- Step 3: AWS IAM Role & STS -->
-          <g transform="translate(740, 70)">
-            <rect width="210" height="140" rx="14" fill="#1e293b" stroke="#10b981" stroke-width="2" />
-            <rect x="15" y="15" width="180" height="30" rx="6" fill="#059669" />
-            <text x="105" y="35" fill="white" font-size="11" font-weight="700" text-anchor="middle">AWS IAM & STS</text>
-            <text x="105" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">Validates Cluster & SA</text>
-            <text x="105" y="90" fill="#34d399" font-size="9" font-weight="600" text-anchor="middle">Returns Temp Credentials</text>
-            <text x="105" y="110" fill="#94a3b8" font-size="9" text-anchor="middle">Valid for 1 Hour</text>
-            <text x="105" y="128" fill="#94a3b8" font-size="8" text-anchor="middle">Auto-Rotated Automatically</text>
-          </g>
-        </svg>
-      </div>
-
-      <div class="mt-4 p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed">
-        <span class="font-bold text-purple-400">🚀 Why EKS Pod Identity is superior to older methods:</span> In traditional setups, you had to manage OpenID Connect (OIDC) identity providers and annotate every ServiceAccount with exact ARNs. With AWS EKS Pod Identity (configured in <code class="text-cyan-400">13-pod-Identity-addon.tf</code>), AWS provides a native node agent that dispenses temporary credentials with zero OIDC federation overhead!
-      </div>
-    </div>
-
-    <!-- DIAGRAM 4: Storage Systems -->
-    <div id="diagram-storage" class="glass-card rounded-2xl p-6 sm:p-8 hidden">
-      <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700/60">
-        <div>
-          <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-amber-400 inline-block animate-ping"></span>
-            Persistent Storage Matrix: EBS vs EFS CSI
-          </h3>
-          <p class="text-sm text-slate-400">Choosing the right persistence model for your containerized databases and shared files</p>
-        </div>
-        <span class="text-xs px-2.5 py-1 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Stateful Workloads</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        <!-- EBS Card -->
-        <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-700/70">
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-950 text-blue-400 border border-blue-800">AWS EBS CSI Driver</span>
-            <span class="text-xs text-slate-400 font-mono">18-ebs-csi-driver.tf</span>
-          </div>
-          <h4 class="text-lg font-bold text-white mb-2">Block Storage (Single-AZ Fast Disk)</h4>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Fastest performance for databases like PostgreSQL, MySQL, and Redis. Uses <strong class="text-cyan-400">ReadWriteOnce (RWO)</strong> access mode.
-          </p>
-          <div class="space-y-2 text-xs">
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Ultra-low latency SSD block device</span>
-            </div>
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Volume encryption enabled with AWS KMS</span>
-            </div>
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-              <span>Bound to a single Availability Zone at a time</span>
-            </div>
+      <!-- Key Project Specifications Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 max-w-5xl mx-auto text-left">
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">AWS Region</div>
+          <div class="text-sm font-semibold text-cyan-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-globe text-xs"></i> eu-north-1
           </div>
         </div>
-
-        <!-- EFS Card -->
-        <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-700/70">
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-950 text-amber-400 border border-amber-800">AWS EFS CSI Driver</span>
-            <span class="text-xs text-slate-400 font-mono">20-efs.tf</span>
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">Cluster Name</div>
+          <div class="text-sm font-semibold text-sky-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-server text-xs"></i> staging-demo
           </div>
-          <h4 class="text-lg font-bold text-white mb-2">Network File Share (Multi-AZ Shared)</h4>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Shared file system that multiple pods can read and write simultaneously. Uses <strong class="text-amber-400">ReadWriteMany (RWX)</strong> across different AZs.
-          </p>
-          <div class="space-y-2 text-xs">
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Mount targets placed in both us-east-2a and us-east-2b</span>
-            </div>
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>NFS Port 2049 secured with custom Security Group</span>
-            </div>
-            <div class="flex items-center gap-2 text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Dynamic folder provisioning via EFS Access Points</span>
-            </div>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">EKS Version</div>
+          <div class="text-sm font-semibold text-emerald-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-code-branch text-xs"></i> v1.35
+          </div>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">AWS Account</div>
+          <div class="text-sm font-semibold text-amber-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-shield-halved text-xs"></i> 619544673475
+          </div>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">Domain</div>
+          <div class="text-sm font-semibold text-purple-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-network-wired text-xs"></i> aiguru.website
+          </div>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
+          <div class="text-xs text-slate-500 uppercase font-mono">Node Group</div>
+          <div class="text-sm font-semibold text-rose-400 flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-microchip text-xs"></i> t3.large (2 nodes)
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Complete Step-by-Step File Implementation Guide -->
-  <section id="step-by-step" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800">
-    <div class="text-center mb-12">
-      <div class="inline-flex items-center gap-1.5 text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        Deep-Dive File Catalog
-      </div>
-      <h2 class="text-3xl font-bold text-white">Every File Explained for Beginners</h2>
-      <p class="text-slate-400 mt-2 max-w-2xl mx-auto">
-        Organized in the exact execution sequence that Terraform uses to provision your cloud infrastructure.
-      </p>
-    </div>
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
 
-    <!-- Phase 1: Foundations -->
-    <div class="mb-14">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-blue-600/30 text-blue-400 flex items-center justify-center font-bold text-sm border border-blue-500/40">1</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 1: Foundation & Variables</h3>
-          <p class="text-xs text-slate-400">Global configurations, cloud provider plugins, and environment constants</p>
+    <!-- PART 1: PROJECT BLUEPRINT -->
+    <section id="blueprint" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 1</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Project Blueprint & Execution Order</h2>
+        <p class="text-slate-400 text-sm mt-1">Understanding the resource dependency chain and automated creation order in Terraform.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-2xl lg:col-span-1 space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-diagram-project text-cyan-400"></i> Resource Layers
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Terraform creates infrastructure in strict dependency tiers. Attempting to deploy a Helm chart before worker nodes join the cluster will cause a 20-minute timeout failure.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">1. VPC & Networking</span>
+              <span class="text-cyan-400 font-semibold">2-vpc to 6-routes</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">2. EKS Control Plane</span>
+              <span class="text-sky-400 font-semibold">7-eks.tf</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">3. Worker Node Group</span>
+              <span class="text-blue-400 font-semibold">8-nodes.tf</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">4. RBAC & Access Entries</span>
+              <span class="text-indigo-400 font-semibold">9 & 10 .tf</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">5. Pod Identity Agent</span>
+              <span class="text-purple-400 font-semibold">13-pod-Identity</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+              <span class="font-mono text-slate-300">6. Helm Ingress & CSI</span>
+              <span class="text-pink-400 font-semibold">14 to 21 .tf</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Animated Creation Order Flowchart -->
+        <div class="glass-card p-6 rounded-2xl lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-cyan-400"></i> Automated Dependency Graph
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">Live Execution Pipeline</span>
+          </div>
+          
+          <div class="w-full overflow-x-auto py-4">
+            <svg viewBox="0 0 760 170" class="w-full min-w-[700px] h-auto text-xs font-mono">
+              <!-- Connecting Flow Lines -->
+              <path d="M 100 85 L 210 85" stroke="#38bdf8" stroke-width="2.5" class="flow-dash" />
+              <path d="M 210 85 L 340 85" stroke="#38bdf8" stroke-width="2.5" class="flow-dash" />
+              <path d="M 340 85 L 470 85" stroke="#38bdf8" stroke-width="2.5" class="flow-dash" />
+              <path d="M 470 85 L 600 85" stroke="#38bdf8" stroke-width="2.5" class="flow-dash" />
+
+              <!-- Step 1 -->
+              <g transform="translate(10, 45)">
+                <rect width="100" height="80" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" class="pulse-box"/>
+                <text x="50" y="32" fill="#38bdf8" font-weight="bold" text-anchor="middle">Step 1</text>
+                <text x="50" y="52" fill="#e2e8f0" font-size="11" text-anchor="middle">VPC & NAT</text>
+                <text x="50" y="66" fill="#94a3b8" font-size="9" text-anchor="middle">10.0.0.0/16</text>
+              </g>
+
+              <!-- Step 2 -->
+              <g transform="translate(160, 45)">
+                <rect width="110" height="80" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5"/>
+                <text x="55" y="32" fill="#0ea5e9" font-weight="bold" text-anchor="middle">Step 2</text>
+                <text x="55" y="52" fill="#e2e8f0" font-size="11" text-anchor="middle">EKS Master</text>
+                <text x="55" y="66" fill="#94a3b8" font-size="9" text-anchor="middle">Control Plane</text>
+              </g>
+
+              <!-- Step 3 -->
+              <g transform="translate(300, 45)">
+                <rect width="110" height="80" rx="10" fill="#0f172a" stroke="#6366f1" stroke-width="1.5"/>
+                <text x="55" y="32" fill="#6366f1" font-weight="bold" text-anchor="middle">Step 3</text>
+                <text x="55" y="52" fill="#e2e8f0" font-size="11" text-anchor="middle">Node Group</text>
+                <text x="55" y="66" fill="#94a3b8" font-size="9" text-anchor="middle">t3.large (2x)</text>
+              </g>
+
+              <!-- Step 4 -->
+              <g transform="translate(440, 45)">
+                <rect width="120" height="80" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.5"/>
+                <text x="60" y="32" fill="#a855f7" font-weight="bold" text-anchor="middle">Step 4</text>
+                <text x="60" y="52" fill="#e2e8f0" font-size="11" text-anchor="middle">Pod Identity</text>
+                <text x="60" y="66" fill="#94a3b8" font-size="9" text-anchor="middle">Agent DaemonSet</text>
+              </g>
+
+              <!-- Step 5 -->
+              <g transform="translate(590, 45)">
+                <rect width="130" height="80" rx="10" fill="#0f172a" stroke="#ec4899" stroke-width="1.5"/>
+                <text x="65" y="32" fill="#ec4899" font-weight="bold" text-anchor="middle">Step 5</text>
+                <text x="65" y="52" fill="#e2e8f0" font-size="11" text-anchor="middle">Helm Add-ons</text>
+                <text x="65" y="66" fill="#94a3b8" font-size="9" text-anchor="middle">ALB, NGINX, CSI</text>
+              </g>
+            </svg>
+          </div>
+          <div class="text-xs text-slate-400 bg-slate-900/60 p-3 rounded-lg border border-slate-800">
+            <span class="text-cyan-400 font-bold"><i class="fa-solid fa-circle-info"></i> Critical Architectural Rule:</span> `depends_on = [aws_eks_node_group.general]` is enforced across all Helm and EKS add-on resources to ensure worker nodes exist and are registered with the API server before deploying Kubernetes pods.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 2: KUBERNETES FUNDAMENTALS -->
+    <section id="fundamentals" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 2</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Kubernetes Fundamentals for Beginners</h2>
+        <p class="text-slate-400 text-sm mt-1">Core concepts explained simply with real-world analogies.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card 1: Pod -->
+        <div class="glass-card p-5 rounded-xl space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <i class="fa-solid fa-cube text-lg"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Pod (The Container Wrapper)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The smallest deployable unit. Think of a Pod as a pea pod holding one or more tightly coupled container peas. Containers in a Pod share the exact same network IP and storage volumes.
+          </p>
+          <span class="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/50 block w-fit">myapp Pod (Port 8080)</span>
+        </div>
+
+        <!-- Card 2: Deployment -->
+        <div class="glass-card p-5 rounded-xl space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <i class="fa-solid fa-copy text-lg"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Deployment (Self-Healing)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            A manager that tells Kubernetes: "Ensure 2 copies of my container are always running." If one container dies or a server crashes, the Deployment immediately launches a new one.
+          </p>
+          <span class="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/50 block w-fit">replicas: 2</span>
+        </div>
+
+        <!-- Card 3: Service -->
+        <div class="glass-card p-5 rounded-xl space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <i class="fa-solid fa-signs-post text-lg"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Service (Stable Gateway)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Pods get new IP addresses whenever restarted. A Service provides a single, permanent IP address and DNS name (`myapp.default.svc`) that load balances traffic across all backend Pods.
+          </p>
+          <span class="text-[10px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800/50 block w-fit">ClusterIP / LoadBalancer</span>
+        </div>
+
+        <!-- Card 4: Ingress -->
+        <div class="glass-card p-5 rounded-xl space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+            <i class="fa-solid fa-route text-lg"></i>
+          </div>
+          <h3 class="font-bold text-white text-base">Ingress (Traffic Director)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The smart door attendant. Routes incoming domain names (like `ex6.aiguru.website` or `ex9.aiguru.website`) and URL paths to the appropriate internal Kubernetes Service.
+          </p>
+          <span class="text-[10px] font-mono text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800/50 block w-fit">alb / external-nginx</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 3: EKS ARCHITECTURE & ANIMATED COMM FLOW -->
+    <section id="eks-architecture" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 3</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Amazon EKS Control Plane & Worker Architecture</h2>
+        <p class="text-slate-400 text-sm mt-1">How AWS manages the Kubernetes master nodes and securely bridges into your private VPC.</p>
+      </div>
+
+      <!-- ANIMATED SVG: CONTROL PLANE TO WORKER NODE ENI FLOW -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-arrows-split-up-and-left text-cyan-400"></i> Cross-Account ENI Communication Bridge
+            </h3>
+            <p class="text-xs text-slate-400">Live animated packet exchange between AWS Managed Control Plane and Customer Private Subnets.</p>
+          </div>
+          <span class="px-2.5 py-1 bg-cyan-950/80 border border-cyan-800 text-cyan-300 font-mono text-xs rounded-full w-fit">
+            Subnets: 10.0.0.0/19 & 10.0.32.0/19
+          </span>
+        </div>
+
+        <div class="w-full overflow-x-auto py-2">
+          <svg viewBox="0 0 900 240" class="w-full min-w-[800px] h-auto text-xs font-mono">
+            <!-- AWS Managed VPC Box -->
+            <rect x="20" y="20" width="300" height="200" rx="12" fill="#090d16" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <text x="35" y="42" fill="#38bdf8" font-weight="bold" font-size="12">AWS-MANAGED CONTROL PLANE</text>
+            <text x="35" y="58" fill="#64748b" font-size="10">Hidden VPC | Redundant across 3 AZs</text>
+
+            <rect x="40" y="75" width="120" height="60" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" class="pulse-box"/>
+            <text x="100" y="100" fill="#f8fafc" font-weight="bold" text-anchor="middle">kube-apiserver</text>
+            <text x="100" y="118" fill="#94a3b8" font-size="9" text-anchor="middle">Port 443 HTTPS</text>
+
+            <rect x="180" y="75" width="120" height="60" rx="8" fill="#1e293b" stroke="#0ea5e9" stroke-width="1.2"/>
+            <text x="240" y="100" fill="#f8fafc" font-weight="bold" text-anchor="middle">etcd Cluster</text>
+            <text x="240" y="118" fill="#94a3b8" font-size="9" text-anchor="middle">Distributed DB</text>
+
+            <rect x="40" y="150" width="260" height="50" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1"/>
+            <text x="170" y="172" fill="#f8fafc" font-size="11" text-anchor="middle">Scheduler & Controller Manager</text>
+            <text x="170" y="188" fill="#94a3b8" font-size="9" text-anchor="middle">Active state reconciliation</text>
+
+            <!-- Customer Private Subnet Box -->
+            <rect x="460" y="20" width="420" height="200" rx="12" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
+            <text x="475" y="42" fill="#34d399" font-weight="bold" font-size="12">CUSTOMER PRIVATE SUBNET (10.0.0.0/19)</text>
+            <text x="475" y="58" fill="#64748b" font-size="10">EC2 Worker Nodes | Zero Public IPs</text>
+
+            <!-- Managed ENIs inside Customer VPC -->
+            <rect x="480" y="75" width="110" height="125" rx="8" fill="#132322" stroke="#10b981" stroke-width="1.2"/>
+            <text x="535" y="98" fill="#34d399" font-weight="bold" text-anchor="middle">Managed ENI</text>
+            <text x="535" y="115" fill="#a7f3d0" font-size="9" text-anchor="middle">Cross-Account</text>
+            <text x="535" y="130" fill="#6ee7b7" font-size="8" text-anchor="middle">Direct VPC link</text>
+            <circle cx="535" cy="160" r="14" fill="#047857" class="pulse-box"/>
+            <text x="535" y="164" fill="#fff" font-size="9" text-anchor="middle">ENI</text>
+
+            <!-- Worker Node Box -->
+            <rect x="620" y="75" width="240" height="125" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/>
+            <text x="740" y="98" fill="#f8fafc" font-weight="bold" text-anchor="middle">Worker Node (t3.large)</text>
+            
+            <rect x="635" y="115" width="100" height="40" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text x="685" y="135" fill="#38bdf8" font-size="10" text-anchor="middle">kubelet agent</text>
+            <text x="685" y="148" fill="#64748b" font-size="8" text-anchor="middle">Node daemon</text>
+
+            <rect x="745" y="115" width="100" height="40" rx="4" fill="#0f172a" stroke="#a855f7" stroke-width="1"/>
+            <text x="795" y="135" fill="#c084fc" font-size="10" text-anchor="middle">App Pods</text>
+            <text x="795" y="148" fill="#64748b" font-size="8" text-anchor="middle">IP: 10.0.x.x</text>
+
+            <rect x="635" y="162" width="210" height="25" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+            <text x="740" y="178" fill="#34d399" font-size="9" text-anchor="middle">AWS VPC CNI (aws-node)</text>
+
+            <!-- Inter-VPC Tunnel Animation Lines -->
+            <path d="M 160 105 L 480 105" stroke="#38bdf8" stroke-width="2.5" class="flow-dash"/>
+            <path d="M 480 145 L 160 145" stroke="#34d399" stroke-width="2.5" class="flow-dash-reverse"/>
+            <path d="M 590 135 L 620 135" stroke="#38bdf8" stroke-width="2" class="flow-dash"/>
+
+            <!-- Moving Packet Circles -->
+            <circle cx="280" cy="105" r="5" fill="#38bdf8"/>
+            <circle cx="360" cy="145" r="5" fill="#34d399"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 4: INTERACTIVE TERRAFORM IMPLEMENTATION -->
+    <section id="terraform" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 4</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Complete Terraform Codebase (22 Files)</h2>
+        <p class="text-slate-400 text-sm mt-1">Click any file below to inspect its exact implementation, purpose, parameters, and created AWS resources.</p>
+      </div>
+
+      <!-- File Navigation Tabs Grid -->
+      <div class="flex flex-wrap gap-2 text-xs font-mono" id="tf-tabs-container">
+        <!-- Dynamically populated or static tabs -->
+        <button onclick="switchTfTab('0-locals')" id="btn-0-locals" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/50">0-locals.tf</button>
+        <button onclick="switchTfTab('1-providers')" id="btn-1-providers" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">1-providers.tf</button>
+        <button onclick="switchTfTab('2-vpc')" id="btn-2-vpc" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">2-vpc.tf</button>
+        <button onclick="switchTfTab('4-subnets')" id="btn-4-subnets" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">4-subnets.tf</button>
+        <button onclick="switchTfTab('5-nat')" id="btn-5-nat" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">5-nat.tf</button>
+        <button onclick="switchTfTab('7-eks')" id="btn-7-eks" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">7-eks.tf</button>
+        <button onclick="switchTfTab('8-nodes')" id="btn-8-nodes" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">8-nodes.tf</button>
+        <button onclick="switchTfTab('11-helm-provider')" id="btn-11-helm-provider" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">11-helm-provider.tf</button>
+        <button onclick="switchTfTab('13-pod-Identity')" id="btn-13-pod-Identity" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">13-pod-Identity-addon.tf</button>
+        <button onclick="switchTfTab('14-cluster-autoscaler')" id="btn-14-cluster-autoscaler" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">14-cluster-autoscaler.tf</button>
+        <button onclick="switchTfTab('15-aws-lbc')" id="btn-15-aws-lbc" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">15-aws-lbc.tf</button>
+        <button onclick="switchTfTab('16-nginx-ingress')" id="btn-16-nginx-ingress" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">16-nginx-ingress.tf</button>
+        <button onclick="switchTfTab('17-cert-manager')" id="btn-17-cert-manager" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">17-cert-manager.tf</button>
+        <button onclick="switchTfTab('18-ebs-csi-driver')" id="btn-18-ebs-csi-driver" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">18-ebs-csi-driver.tf</button>
+        <button onclick="switchTfTab('20-efs')" id="btn-20-efs" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">20-efs.tf</button>
+        <button onclick="switchTfTab('21-secrets-store')" id="btn-21-secrets-store" class="tf-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">21-secrets-store-csi-driver.tf</button>
+      </div>
+
+      <!-- Content Viewer Container -->
+      <div class="glass-card p-6 rounded-2xl" id="tf-content-display">
+        <!-- Content will be swapped by switchTfTab() JS -->
+        <div id="tf-card-body" class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h3 class="text-xl font-bold text-white font-mono" id="tf-card-filename">0-locals.tf</h3>
+              <p class="text-xs text-slate-400" id="tf-card-desc">Centralizes global project variables, AWS region, availability zones, and cluster naming constants.</p>
+            </div>
+            <button onclick="copyCode('tf-code-block')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-mono text-cyan-300 rounded border border-slate-700 transition flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> <span id="copy-text">Copy Code</span>
+            </button>
+          </div>
+
+          <pre class="bg-slate-900/90 p-4 rounded-xl border border-slate-800/80 overflow-x-auto text-xs font-mono text-slate-200 leading-relaxed"><code id="tf-code-block">locals {
+  env         = "staging"
+  region      = "eu-north-1"
+  zone1       = "eu-north-1a"
+  zone2       = "eu-north-1b"
+  eks_name    = "demo"
+  eks_version = "1.35"
+}</code></pre>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
+            <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+              <span class="text-cyan-400 font-bold uppercase tracking-wider block mb-1">Key Parameters</span>
+              <ul class="space-y-1 text-slate-300">
+                <li>• <strong class="text-white">region = "eu-north-1"</strong>: Stockholm region. Low latency and modern AWS compute availability.</li>
+                <li>• <strong class="text-white">eks_name = "demo"</strong>: Combined as `staging-demo` for IAM and cluster identification.</li>
+                <li>• <strong class="text-white">eks_version = "1.35"</strong>: Running Kubernetes 1.35 with modern API Access Entry support.</li>
+              </ul>
+            </div>
+            <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+              <span class="text-emerald-400 font-bold uppercase tracking-wider block mb-1">Downstream Dependencies</span>
+              <p class="text-slate-300 leading-relaxed">
+                Referenced by every subsequent `.tf` file in the project. Changing `region` here propagates automatically to provider configurations, Route 53, subnets, and Helm charts.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 5: NETWORKING & ANIMATED NAT GATEWAY FLOW -->
+    <section id="networking" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 5</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">AWS Networking Architecture & Egress Flow</h2>
+        <p class="text-slate-400 text-sm mt-1">Detailed packet tracing when a private worker node contacts external APIs via the NAT Gateway.</p>
+      </div>
+
+      <!-- ANIMATED NAT GATEWAY SVG -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-arrow-right-arrow-left text-amber-400"></i> Outbound Packet Flow via NAT Gateway
+            </h3>
+            <p class="text-xs text-slate-400">Visualizing Source Network Address Translation (SNAT) from Private Node to Public Internet.</p>
+          </div>
+          <span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-xs rounded-full w-fit">
+            Elastic IP Attached: domain = "vpc"
+          </span>
+        </div>
+
+        <div class="w-full overflow-x-auto py-2">
+          <svg viewBox="0 0 920 220" class="w-full min-w-[850px] h-auto text-xs font-mono">
+            <!-- Background Zone Boxes -->
+            <rect x="20" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
+            <text x="35" y="42" fill="#34d399" font-weight="bold">1. PRIVATE SUBNET</text>
+            <text x="35" y="58" fill="#64748b" font-size="10">10.0.0.0/19 | eu-north-1a</text>
+
+            <rect x="260" y="20" width="180" height="180" rx="10" fill="#090d16" stroke="#6366f1" stroke-width="1.5"/>
+            <text x="275" y="42" fill="#818cf8" font-weight="bold">2. ROUTE TABLE</text>
+            <text x="275" y="58" fill="#64748b" font-size="10">0.0.0.0/0 -> nat-xxx</text>
+
+            <rect x="460" y="20" width="200" height="180" rx="10" fill="#090d16" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="475" y="42" fill="#fbbf24" font-weight="bold">3. PUBLIC SUBNET</text>
+            <text x="475" y="58" fill="#64748b" font-size="10">10.0.64.0/19 | NAT Gateway</text>
+
+            <rect x="680" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#0ea5e9" stroke-width="1.5"/>
+            <text x="695" y="42" fill="#38bdf8" font-weight="bold">4. INTERNET GATEWAY</text>
+            <text x="695" y="58" fill="#64748b" font-size="10">Public Internet (0.0.0.0/0)</text>
+
+            <!-- Node 1 Component -->
+            <rect x="40" y="80" width="170" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+            <text x="125" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">Worker Pod</text>
+            <text x="125" y="122" fill="#34d399" font-size="9" text-anchor="middle">Src IP: 10.0.12.45</text>
+
+            <!-- Route Component -->
+            <rect x="280" y="80" width="140" height="60" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+            <text x="350" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-private</text>
+            <text x="350" y="122" fill="#a5b4fc" font-size="9" text-anchor="middle">Target: nat-gateway</text>
+
+            <!-- NAT Component -->
+            <rect x="480" y="80" width="160" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1" class="pulse-box-amber"/>
+            <text x="560" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">NAT Gateway</text>
+            <text x="560" y="122" fill="#fbbf24" font-size="9" text-anchor="middle">SNAT to Elastic IP</text>
+
+            <!-- IGW Component -->
+            <rect x="700" y="80" width="180" height="60" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="1"/>
+            <text x="790" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-igw</text>
+            <text x="790" y="122" fill="#7dd3fc" font-size="9" text-anchor="middle">Docker Hub / GitHub</text>
+
+            <!-- Path lines -->
+            <path d="M 210 110 L 280 110" stroke="#10b981" stroke-width="2.5" class="flow-dash"/>
+            <path d="M 420 110 L 480 110" stroke="#f59e0b" stroke-width="2.5" class="flow-dash"/>
+            <path d="M 640 110 L 700 110" stroke="#0ea5e9" stroke-width="2.5" class="flow-dash"/>
+
+            <!-- Moving Packet Animation -->
+            <circle cx="70" cy="110" r="7" fill="#f59e0b" class="anim-packet-nat"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 8 & 9: ALL 12 PRACTICAL EXAMPLES -->
+    <section id="examples" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 9</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">All 12 Practical Deployment Examples</h2>
+        <p class="text-slate-400 text-sm mt-1">Interactive guide to every example in the repository with exact YAML manifests and testing commands.</p>
+      </div>
+
+      <!-- Example Tabs Selector -->
+      <div class="flex flex-wrap gap-2 text-xs font-mono" id="ex-tabs-container">
+        <button onclick="switchExTab(1)" id="btn-ex-1" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/50">1-RBAC Viewer</button>
+        <button onclick="switchExTab(2)" id="btn-ex-2" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">2-RBAC Admin</button>
+        <button onclick="switchExTab(3)" id="btn-ex-3" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">3-HPA</button>
+        <button onclick="switchExTab(4)" id="btn-ex-4" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">4-Cluster Autoscaler</button>
+        <button onclick="switchExTab(5)" id="btn-ex-5" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">5-AWS NLB</button>
+        <button onclick="switchExTab(6)" id="btn-ex-6" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">6-AWS ALB (HTTP)</button>
+        <button onclick="switchExTab(7)" id="btn-ex-7" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">7-ALB HTTPS (ACM)</button>
+        <button onclick="switchExTab(8)" id="btn-ex-8" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">8-NGINX Ingress</button>
+        <button onclick="switchExTab(9)" id="btn-ex-9" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">9-Cert-Manager TLS</button>
+        <button onclick="switchExTab(10)" id="btn-ex-10" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">10-StatefulSet EBS</button>
+        <button onclick="switchExTab(11)" id="btn-ex-11" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">11-Shared EFS</button>
+        <button onclick="switchExTab(12)" id="btn-ex-12" class="ex-tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">12-Secrets Store</button>
+      </div>
+
+      <!-- Example Detail Card Container -->
+      <div class="glass-card p-6 rounded-2xl space-y-6" id="ex-content-display">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2" id="ex-title">
+              <span class="text-cyan-400 font-mono">Example 1:</span> Developer RBAC Read-Only Access
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" id="ex-desc">Restricts the developer IAM identity to view-only access across deployments, pods, and services.</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 w-fit" id="ex-target">
+            Group: my-viewer
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Left: Manifest Code -->
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-regular fa-file-code text-cyan-400"></i> Manifest: <span id="ex-filename" class="text-white">0-viewer-cluster-role.yaml</span>
+            </span>
+            <pre class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 overflow-x-auto text-xs font-mono text-slate-200 leading-relaxed"><code id="ex-code">apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: viewer
+rules:
+  - apiGroups: ["*"]
+    resources: ["deployments", "configmaps", "pods", "secrets", "services"]
+    verbs: ["get", "list", "watch"]</code></pre>
+          </div>
+
+          <!-- Right: Testing Commands & Internal Mechanics -->
+          <div class="space-y-4 text-xs">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-cyan-400 font-bold uppercase tracking-wider block">Terminal Testing Commands</span>
+              <pre class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400 font-mono leading-relaxed"><code id="ex-cmds"># Apply manifests:
+kubectl apply -f 1-example/
+
+# Test developer permissions (Should return YES):
+kubectl auth can-i get pods --as developer
+
+# Test deletion permission (Should return NO):
+kubectl auth can-i delete pods --as developer</code></pre>
+            </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-purple-400 font-bold uppercase tracking-wider block">Internal Mechanics</span>
+              <p class="text-slate-300 leading-relaxed" id="ex-mechanics">
+                When the developer attempts to execute a command, `kube-apiserver` checks the caller's STS identity. EKS Access Entry maps the user to the `my-viewer` group. Kubernetes RBAC validates that the requested verb exists in the `viewer` ClusterRole.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 10: DOMAIN, DNS & SSL ARCHITECTURE -->
+    <section id="domain-ssl" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 10</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Domain, DNS & SSL Architecture (`aiguru.website`)</h2>
+        <p class="text-slate-400 text-sm mt-1">Comparing AWS ALB + ACM versus Ingress NGINX + Cert-Manager with Let's Encrypt.</p>
+      </div>
+
+      <!-- ANIMATED INGRESS & SSL FLOW SVG -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-lock text-purple-400"></i> HTTPS Ingress & ACME Challenge Flow
+            </h3>
+            <p class="text-xs text-slate-400">How `ex9.aiguru.website` automatically validates and provisions Let's Encrypt SSL certificates.</p>
+          </div>
+          <span class="px-2.5 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-400 font-mono text-xs rounded-full w-fit">
+            ACME HTTP-01 Protocol
+          </span>
+        </div>
+
+        <div class="w-full overflow-x-auto py-2">
+          <svg viewBox="0 0 920 220" class="w-full min-w-[850px] h-auto text-xs font-mono">
+            <!-- Client Box -->
+            <rect x="20" y="30" width="180" height="160" rx="10" fill="#090d16" stroke="#38bdf8" stroke-width="1.5"/>
+            <text x="35" y="52" fill="#38bdf8" font-weight="bold">USER BROWSER</text>
+            <text x="35" y="68" fill="#64748b" font-size="10">https://ex9.aiguru.website</text>
+            <circle cx="110" cy="115" r="24" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" class="pulse-box"/>
+            <text x="110" y="120" fill="#38bdf8" text-anchor="middle" font-size="16"><tspan font-family="sans-serif">&#127760;</tspan></text>
+
+            <!-- DNS Provider Box -->
+            <rect x="250" y="30" width="180" height="160" rx="10" fill="#090d16" stroke="#a855f7" stroke-width="1.5"/>
+            <text x="265" y="52" fill="#c084fc" font-weight="bold">PUBLIC DNS</text>
+            <text x="265" y="68" fill="#64748b" font-size="10">CNAME -> NLB DNS</text>
+            <rect x="270" y="90" width="140" height="50" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1"/>
+            <text x="340" y="112" fill="#f8fafc" text-anchor="middle" font-weight="bold">aiguru.website</text>
+            <text x="340" y="128" fill="#c084fc" text-anchor="middle" font-size="9">Target: k8s-nlb.aws</text>
+
+            <!-- Load Balancer Box -->
+            <rect x="480" y="30" width="190" height="160" rx="10" fill="#090d16" stroke="#ec4899" stroke-width="1.5"/>
+            <text x="495" y="52" fill="#f472b6" font-weight="bold">INGRESS NGINX NLB</text>
+            <text x="495" y="68" fill="#64748b" font-size="10">TCP:443 Passthrough</text>
+            <rect x="500" y="90" width="150" height="50" rx="6" fill="#1e293b" stroke="#ec4899" stroke-width="1"/>
+            <text x="575" y="112" fill="#f8fafc" text-anchor="middle" font-weight="bold">external-nginx</text>
+            <text x="575" y="128" fill="#f472b6" text-anchor="middle" font-size="9">Target-Type: IP</text>
+
+            <!-- Cert-Manager & Pods Box -->
+            <rect x="710" y="30" width="190" height="160" rx="10" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
+            <text x="725" y="52" fill="#34d399" font-weight="bold">CERT-MANAGER & PODS</text>
+            <text x="725" y="68" fill="#64748b" font-size="10">ACME Challenge Validated</text>
+            <rect x="730" y="90" width="150" height="50" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+            <text x="805" y="112" fill="#f8fafc" text-anchor="middle" font-weight="bold">myapp-195:v2</text>
+            <text x="805" y="128" fill="#34d399" text-anchor="middle" font-size="9">TLS Secret Synced</text>
+
+            <!-- Flow Paths -->
+            <path d="M 200 115 L 250 115" stroke="#38bdf8" stroke-width="2.5" class="flow-dash"/>
+            <path d="M 430 115 L 480 115" stroke="#a855f7" stroke-width="2.5" class="flow-dash"/>
+            <path d="M 670 115 L 710 115" stroke="#10b981" stroke-width="2.5" class="flow-dash"/>
+
+            <!-- Animated Ingress Packet -->
+            <circle cx="50" cy="115" r="7" fill="#38bdf8" class="anim-packet-ingress"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 12: TROUBLESHOOTING GUIDE -->
+    <section id="troubleshooting" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 12</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Production Troubleshooting Field Guide</h2>
+        <p class="text-slate-400 text-sm mt-1">Diagnosis and solutions for common Kubernetes and AWS EKS failures.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- 0-locals.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-cyan-400 font-bold text-sm">0-locals.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Global Constants</span>
+        <!-- Error 1 -->
+        <div class="glass-card p-5 rounded-xl space-y-3 border-l-4 border-l-rose-500">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-white text-sm">Pods stuck in `Pending` State</h4>
+            <span class="text-[10px] font-mono bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded border border-rose-500/20">Scheduling Failure</span>
           </div>
-          <h4 class="text-base font-semibold text-white mb-2">Cluster Settings & Region Definitions</h4>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Defines the foundational names and regions used throughout all other files: environment (<code class="text-cyan-300">staging</code>), AWS region (<code class="text-cyan-300">us-east-2</code>), availability zones (<code class="text-cyan-300">us-east-2a, us-east-2b</code>), cluster name (<code class="text-cyan-300">demo</code>), and Kubernetes version (<code class="text-cyan-300">1.31</code>).
+          <p class="text-xs text-slate-300">
+            <strong>Cause:</strong> Insufficient CPU/Memory on worker nodes, or EC2 ENI IP address exhaustion (e.g. running `t3.small` with 18 system pods).
           </p>
-          <div class="p-3 rounded-lg bg-slate-950 font-mono text-[11px] text-slate-300 overflow-x-auto">
-            locals {<br>
-            &nbsp;&nbsp;env = "staging"<br>
-            &nbsp;&nbsp;region = "us-east-2"<br>
-            &nbsp;&nbsp;eks_name = "demo"<br>
-            &nbsp;&nbsp;eks_version = "1.31"<br>
-            }
+          <div class="bg-slate-900 p-2.5 rounded font-mono text-[11px] text-slate-300 border border-slate-800">
+            kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt;<br>
+            <span class="text-slate-500"># Look for: "0/2 nodes are available: 2 Insufficient cpu."</span>
           </div>
+          <p class="text-xs text-emerald-400">
+            <strong>Fix:</strong> Upgrade instance type in `8-nodes.tf` to `t3.large` (supports 35 pods) and scale node group: `desired_size = 2`.
+          </p>
         </div>
 
-        <!-- 1-providers.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-cyan-400 font-bold text-sm">1-providers.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Terraform Plugins</span>
+        <!-- Error 2 -->
+        <div class="glass-card p-5 rounded-xl space-y-3 border-l-4 border-l-amber-500">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-white text-sm">Add-on / Helm 20m Timeout in Terraform</h4>
+            <span class="text-[10px] font-mono bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">Dependency Deadlock</span>
           </div>
-          <h4 class="text-base font-semibold text-white mb-2">Cloud Providers & Profile Registration</h4>
-          <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-            Declares which API plugins Terraform must download (AWS, Helm, Kubernetes, TLS) and instructs the AWS provider to use your configured AWS CLI profile: <code class="text-cyan-300">profile = "my-profile"</code>.
+          <p class="text-xs text-slate-300">
+            <strong>Cause:</strong> Helm attempted to install charts before worker nodes joined the cluster, or nodes in private subnets could not reach Docker Hub because NAT Gateway routing was missing.
           </p>
-          <div class="p-3 rounded-lg bg-slate-950 font-mono text-[11px] text-slate-300 overflow-x-auto">
-            provider "aws" {<br>
-            &nbsp;&nbsp;region  = local.region<br>
-            &nbsp;&nbsp;profile = "my-profile"<br>
-            }
+          <div class="bg-slate-900 p-2.5 rounded font-mono text-[11px] text-slate-300 border border-slate-800">
+            depends_on = [aws_eks_node_group.general, aws_eks_addon.pod_identity]
           </div>
+          <p class="text-xs text-emerald-400">
+            <strong>Fix:</strong> Add explicit `depends_on` clauses linking add-ons to the node group, and ensure private subnets route to `aws_nat_gateway.nat`.
+          </p>
+        </div>
+
+        <!-- Error 3 -->
+        <div class="glass-card p-5 rounded-xl space-y-3 border-l-4 border-l-purple-500">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-white text-sm">Let's Encrypt Certificate Stays `False`</h4>
+            <span class="text-[10px] font-mono bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded border border-purple-500/20">ACME Challenge Failure</span>
+          </div>
+          <p class="text-xs text-slate-300">
+            <strong>Cause:</strong> `ex9.aiguru.website` does not resolve to the external NGINX NLB IP, or port 80 is blocked by security groups.
+          </p>
+          <div class="bg-slate-900 p-2.5 rounded font-mono text-[11px] text-slate-300 border border-slate-800">
+            kubectl describe challenge -n 9-example<br>
+            kubectl describe certificate ex9-aiguru-website-tls -n 9-example
+          </div>
+          <p class="text-xs text-emerald-400">
+            <strong>Fix:</strong> Add a CNAME record in your DNS manager pointing `ex9` to the exact Load Balancer hostname returned by `kubectl get svc -n ingress external-ingress-nginx-controller`.
+          </p>
+        </div>
+
+        <!-- Error 4 -->
+        <div class="glass-card p-5 rounded-xl space-y-3 border-l-4 border-l-sky-500">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-white text-sm">Secrets Store CSI Driver: Mount Failure</h4>
+            <span class="text-[10px] font-mono bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">IRSA Trust Error</span>
+          </div>
+          <p class="text-xs text-slate-300">
+            <strong>Cause:</strong> AWS region mismatch (`us-east-2` vs `eu-north-1`) in `SecretProviderClass`, or IAM Role ARN in ServiceAccount belongs to another AWS account.
+          </p>
+          <div class="bg-slate-900 p-2.5 rounded font-mono text-[11px] text-slate-300 border border-slate-800">
+            kubectl describe pod -n 12-example &lt;pod-name&gt;<br>
+            <span class="text-slate-500"># Look for: "failed to get secret: AccessDeniedException"</span>
+          </div>
+          <p class="text-xs text-emerald-400">
+            <strong>Fix:</strong> Ensure `region: eu-north-1` in `1-secret-provider-class.yaml` and verify service account annotation matches your account: `arn:aws:iam::619544673475:role/staging-demo-myapp-secrets`.
+          </p>
         </div>
       </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-10 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="text-slate-400 font-medium">Enterprise Kubernetes & Amazon EKS Practical Training Masterclass</p>
+      <p>Based on repository <a href="https://github.com/sangeethanayak521/k8s" target="_blank" class="text-cyan-400 hover:underline">sangeethanayak521/k8s</a> | AWS Region: <span class="font-mono text-slate-300">eu-north-1</span> | Domain: <span class="font-mono text-slate-300">aiguru.website</span></p>
+      <p class="text-[11px] text-slate-600 mt-4">&copy; 2026 DevOps Training Institute. All rights reserved.</p>
     </div>
-
-    <!-- Phase 2: Networking -->
-    <div class="mb-14">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-emerald-600/30 text-emerald-400 flex items-center justify-center font-bold text-sm border border-emerald-500/40">2</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 2: High-Availability Cloud Networking (VPC)</h3>
-          <p class="text-xs text-slate-400">Creating the private, isolated data center inside Amazon Web Services</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 2-vpc.tf & 3-igw.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-emerald-400 font-bold text-sm">2-vpc.tf & 3-igw.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">VPC & Gateway</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">Isolated Network & Internet Door</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Creates the Virtual Private Cloud (<code class="text-emerald-300">10.0.0.0/16</code>) providing over 65,000 private IP addresses. The Internet Gateway (<code class="text-emerald-300">aws_internet_gateway</code>) serves as the border router allowing internet traffic to enter the public subnets.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Beginner Analogy:</strong> The VPC is a secure gated community, and the Internet Gateway is the security gatehouse at the entrance.
-          </div>
-        </div>
-
-        <!-- 4-subnets.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-emerald-400 font-bold text-sm">4-subnets.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Multi-AZ Subnets</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">Public & Private Partitions</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Divides the VPC into 4 subnets across 2 physical data centers (Zones A & B). Tagged with special Kubernetes labels so EKS automatically knows where to place public load balancers (<code class="text-emerald-300">role/elb</code>) vs internal load balancers (<code class="text-emerald-300">role/internal-elb</code>).
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Key Benefit:</strong> If Amazon's Zone A suffers a physical power outage, Zone B continues running with zero downtime!
-          </div>
-        </div>
-
-        <!-- 5-nat.tf & 6-routes.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-emerald-400 font-bold text-sm">5-nat.tf & 6-routes.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">NAT & Route Tables</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">One-Way Outbound Egress</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Deploys a NAT Gateway with an Elastic IP in the public subnet. Route tables ensure private worker nodes can reach GitHub, Docker Hub, and AWS APIs outbound, while blocking hackers from initiating inbound connections.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Beginner Analogy:</strong> Like a one-way security turnstile—servers can exit to fetch files, but outsiders cannot walk back in.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 3: EKS Core -->
-    <div class="mb-14">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-cyan-600/30 text-cyan-400 flex items-center justify-center font-bold text-sm border border-cyan-500/40">3</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 3: EKS Control Plane & Worker Nodes</h3>
-          <p class="text-xs text-slate-400">Deploying the master brains and the EC2 compute fleet</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 7-eks.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-cyan-400 font-bold text-sm">7-eks.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Control Plane</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">Managed Kubernetes Master</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Provisions AWS EKS v1.31 control plane running etcd and the Kubernetes API server. Enables modern <code class="text-cyan-300">authentication_mode = "API"</code>, which switches from the legacy aws-auth configmap to native EKS Access Entries.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Reliability:</strong> AWS manages master high availability, auto-scaling, backups, and security patching 24/7.
-          </div>
-        </div>
-
-        <!-- 8-nodes.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-cyan-400 font-bold text-sm">8-nodes.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Managed Node Group</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">EC2 Worker Compute Fleet</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Spins up <code class="text-cyan-300">t3.large</code> EC2 instances in private subnets. Attached with IAM policies for CNI networking, container registry pulling (ECR), and worker node operations. Configured with <code class="text-cyan-300">ignore_changes = [scaling_config[0].desired_size]</code> so the Cluster Autoscaler can scale nodes freely without Terraform conflicts!
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Capacity:</strong> Min 0, Desired 1, Max 10 nodes on demand.
-          </div>
-        </div>
-
-        <!-- 11-helm-provider.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="font-mono text-cyan-400 font-bold text-sm">11-helm-provider.tf</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Terraform Bridge</span>
-          </div>
-          <h4 class="text-base font-semibold text-white mb-1">Dynamic Auth Bridge</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Fetches live cluster endpoints, CA root certificates, and authentication tokens directly from the newly created EKS cluster, allowing Terraform's Helm and Kubernetes providers to install addons automatically.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded">
-            <strong>Zero Manual Steps:</strong> Everything from AWS infrastructure to Helm charts installs in one command!
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 4: Identity, RBAC & Security -->
-    <div class="mb-14">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-purple-600/30 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/40">4</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 4: Identity, Access Management & RBAC</h3>
-          <p class="text-xs text-slate-400">Zero-trust permissions, temporary role assumption, and developer access</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 9-add-developer-user.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-purple-400 font-bold text-sm mb-1">9-add-developer-user.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">Read-Only Developer Access</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Creates an IAM user <code class="text-purple-300">staging-demo-developer</code> with permissions only to list/describe clusters, mapped to Kubernetes group <code class="text-purple-300">my-viewer</code>.
-          </p>
-          <span class="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">Least Privilege</span>
-        </div>
-
-        <!-- 10-add-manager-role.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-purple-400 font-bold text-sm mb-1">10-add-manager-role.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">Admin Role Assumption</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Implements AWS best practice: user <code class="text-purple-300">manager</code> cannot access the cluster directly; they must assume role <code class="text-purple-300">eks-admin</code> with temporary STS tokens.
-          </p>
-          <span class="text-[10px] uppercase font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded">Temporary STS Creds</span>
-        </div>
-
-        <!-- 13-pod-Identity-addon.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-purple-400 font-bold text-sm mb-1">13-pod-Identity-addon.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">EKS Pod Identity Agent</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Installs the official <code class="text-purple-300">eks-pod-identity-agent</code> daemonset on every node to directly issue temporary AWS IAM roles to specific Kubernetes pods.
-          </p>
-          <span class="text-[10px] uppercase font-bold text-purple-400 bg-purple-950 px-2 py-0.5 rounded">Modern IRSA Alternative</span>
-        </div>
-
-        <!-- 19-openid-connect-provider.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-purple-400 font-bold text-sm mb-1">19-openid-connect-provider.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">IAM OIDC Federation</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Creates an IAM OpenID Connect provider from the EKS issuer URL, enabling legacy web-identity token exchange for tools that rely on OIDC tokens (like EFS CSI and Secrets Store).
-          </p>
-          <span class="text-[10px] uppercase font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded">Federated Trust</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 5: Cluster Addons & Ingress -->
-    <div class="mb-14">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-pink-600/30 text-pink-400 flex items-center justify-center font-bold text-sm border border-pink-500/40">5</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 5: Autoscaling, Ingress & TLS Certificates</h3>
-          <p class="text-xs text-slate-400">High-performance traffic management and automated capacity scaling</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 12-metrics-server.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-pink-400 font-bold text-sm mb-1">12-metrics-server.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">Resource Telemetry</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Deploys Kubernetes Metrics Server v3.12.2. Collects CPU and memory usage from kubelets every 15 seconds, powering <code class="text-pink-300">kubectl top</code> and Horizontal Pod Autoscaling (HPA).
-          </p>
-        </div>
-
-        <!-- 14-cluster-autoscaler.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-pink-400 font-bold text-sm mb-1">14-cluster-autoscaler.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">Cluster Autoscaler</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Automatically scales EC2 worker nodes up when pods are stuck in Pending status, and shrinks nodes when machines are idle to save cloud costs. Uses Pod Identity for AWS API authorization.
-          </p>
-        </div>
-
-        <!-- 15-aws-lbc.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-pink-400 font-bold text-sm mb-1">15-aws-lbc.tf</div>
-          <h4 class="text-sm font-semibold text-white mb-2">AWS Load Balancer Controller</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            The bridge between Kubernetes and AWS networking. Reads Ingress/Service manifests and creates real AWS Application Load Balancers (ALB) and Network Load Balancers (NLB) in your VPC.
-          </p>
-        </div>
-
-        <!-- 16-nginx-ingress.tf & 17-cert-manager.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-pink-400 font-bold text-sm mb-1">16-nginx & 17-cert-mgr</div>
-          <h4 class="text-sm font-semibold text-white mb-2">Ingress + Automated SSL</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Ingress-NGINX receives requests from an internet-facing NLB in IP mode. Jetstack <code class="text-pink-300">cert-manager</code> automatically provisions and auto-renews free Let's Encrypt TLS/SSL certificates!
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 6: Persistence & Secrets -->
-    <div>
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-8 h-8 rounded-lg bg-amber-600/30 text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-500/40">6</div>
-        <div>
-          <h3 class="text-xl font-bold text-white">Phase 6: Enterprise Storage & Secrets Management</h3>
-          <p class="text-xs text-slate-400">Preserving stateful database data and securely mounting production API keys</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 18-ebs-csi-driver.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-amber-400 font-bold text-sm mb-1">18-ebs-csi-driver.tf</div>
-          <h4 class="text-base font-semibold text-white mb-2">EBS CSI Driver (Block Storage)</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            EKS Addon enabling pods to dynamically create, attach, and mount encrypted Amazon EBS SSD disks. Includes KMS encryption rights so sensitive database tables on disk are encrypted at rest.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded font-mono">
-            Mode: ReadWriteOnce (RWO)<br>
-            Ideal for: Postgres, MongoDB, Redis
-          </div>
-        </div>
-
-        <!-- 20-efs.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-amber-400 font-bold text-sm mb-1">20-efs.tf</div>
-          <h4 class="text-base font-semibold text-white mb-2">EFS File System (Shared Storage)</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Provisions an AWS Elastic File System (EFS) with mount targets in both availability zones, creates NFS security groups (port 2049), and installs the EFS CSI Helm driver with a custom <code class="text-amber-300">efs</code> StorageClass.
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded font-mono">
-            Mode: ReadWriteMany (RWX)<br>
-            Ideal for: CMS media, logs, multi-replica apps
-          </div>
-        </div>
-
-        <!-- 21-secrets-store-csi-driver.tf -->
-        <div class="glass-card rounded-xl p-5">
-          <div class="font-mono text-amber-400 font-bold text-sm mb-1">21-secrets-store-csi-driver.tf</div>
-          <h4 class="text-base font-semibold text-white mb-2">Secrets Store CSI + AWS Provider</h4>
-          <p class="text-xs text-slate-300 leading-relaxed mb-3">
-            Mounts credentials stored in AWS Secrets Manager directly into pod filesystems as virtual files or syncs them to native Kubernetes Secrets (<code class="text-amber-300">syncSecret.enabled = true</code>) without writing plaintext passwords in git!
-          </p>
-          <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded font-mono">
-            Security: 0 Hardcoded Passwords<br>
-            Auto-rotates secrets from AWS Secrets Manager
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Quick Command Cheatsheet -->
-  <section id="quick-commands" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800">
-    <div class="glass-card rounded-2xl p-6 sm:p-8">
-      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-700/60">
-        <div>
-          <h3 class="text-2xl font-bold text-white">Beginner Operator Cheatsheet</h3>
-          <p class="text-sm text-slate-400">Commands to verify, inspect, and connect to your deployed cluster</p>
-        </div>
-        <span class="text-xs px-3 py-1 rounded-md bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono">Bash / PowerShell</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-mono">
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="text-slate-400 mb-2 font-sans font-semibold">1. Connect your local kubectl to the EKS cluster:</div>
-          <div class="text-cyan-400 select-all">aws eks update-kubeconfig --region us-east-2 --name staging-demo --profile my-profile</div>
-        </div>
-
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="text-slate-400 mb-2 font-sans font-semibold">2. Verify all worker nodes are Ready:</div>
-          <div class="text-cyan-400 select-all">kubectl get nodes -o wide</div>
-        </div>
-
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="text-slate-400 mb-2 font-sans font-semibold">3. Check all running system pods & addons:</div>
-          <div class="text-cyan-400 select-all">kubectl get pods -A</div>
-        </div>
-
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-          <div class="text-slate-400 mb-2 font-sans font-semibold">4. Get the Public URL of your NGINX Load Balancer:</div>
-          <div class="text-cyan-400 select-all">kubectl get svc -n ingress external-ingress-nginx-controller</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="py-8 border-t border-slate-800 text-center text-xs text-slate-500">
-    <p>AWS EKS Architecture Guide &bull; Generated for Kubernetes 1.31 &amp; Terraform AWS Provider 5.80</p>
   </footer>
 
+  <!-- INTERACTIVE JAVASCRIPT LOGIC -->
   <script>
-    function switchDiagram(type) {
-      const diagrams = ['traffic', 'network', 'pod-identity', 'storage'];
-      diagrams.forEach(d => {
-        const el = document.getElementById('diagram-' + d);
-        const tab = document.getElementById('tab-' + d);
-        if (d === type) {
-          el.classList.remove('hidden');
-          tab.classList.remove('bg-slate-800', 'text-slate-300');
-          tab.classList.add('bg-cyan-500', 'text-white', 'shadow-lg', 'shadow-cyan-500/25');
-        } else {
-          el.classList.add('hidden');
-          tab.classList.remove('bg-cyan-500', 'text-white', 'shadow-lg', 'shadow-cyan-500/25');
-          tab.classList.add('bg-slate-800', 'text-slate-300');
+    // Database of all 22 Terraform files
+    const tfData = {
+      "0-locals": {
+        file: "0-locals.tf",
+        desc: "Centralizes global environment variables, AWS region (eu-north-1), availability zones, and cluster naming constants.",
+        code: `locals {\n  env         = "staging"\n  region      = "eu-north-1"\n  zone1       = "eu-north-1a"\n  zone2       = "eu-north-1b"\n  eks_name    = "demo"\n  eks_version = "1.35"\n}`,
+        params: "• region = 'eu-north-1': Stockholm region\n• eks_name = 'demo': Prefix + suffix gives 'staging-demo'\n• eks_version = '1.35': Latest Kubernetes release",
+        dep: "Referenced by every other .tf file in the project."
+      },
+      "1-providers": {
+        file: "1-providers.tf",
+        desc: "Declares required providers (aws, helm, kubernetes, tls) and locks versions for reproducible infrastructure.",
+        code: `provider "aws" {\n  region  = local.region\n  profile = "my-profile"\n}\n\nterraform {\n  required_version = ">= 1.0"\n  required_providers {\n    aws        = { source = "hashicorp/aws", version = "~> 5.80" }\n    helm       = { source = "hashicorp/helm", version = "~> 2.16" }\n    kubernetes = { source = "hashicorp/kubernetes", version = "~> 2.35" }\n    tls        = { source = "hashicorp/tls", version = "~> 4.0" }\n  }\n}`,
+        params: "• aws ~> 5.80: Enables modern EKS access entries & pod identity\n• helm ~> 2.16: Deploys Metrics Server, Ingress, Cert-Manager\n• kubernetes ~> 2.35: Creates EFS StorageClass",
+        dep: "Initializes the Terraform working directory during 'terraform init'."
+      },
+      "2-vpc": {
+        file: "2-vpc.tf",
+        desc: "Provisions the core isolated Virtual Private Cloud with CIDR 10.0.0.0/16.",
+        code: `resource "aws_vpc" "main" {\n  cidr_block           = "10.0.0.0/16"\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name = "\${local.env}-main"\n  }\n}`,
+        params: "• cidr_block = '10.0.0.0/16': 65,536 private IPs\n• enable_dns_hostnames = true: Mandatory for EKS worker node registration",
+        dep: "Base network foundation required for subnets and gateways."
+      },
+      "4-subnets": {
+        file: "4-subnets.tf",
+        desc: "Partitions the VPC into 2 Private and 2 Public subnets across eu-north-1a and eu-north-1b.",
+        code: `resource "aws_subnet" "private_zone1" {\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = "10.0.0.0/19"\n  availability_zone = local.zone1\n  tags = {\n    "Name"                                                 = "\${local.env}-private-\${local.zone1}"\n    "kubernetes.io/role/internal-elb"                      = "1"\n    "kubernetes.io/cluster/\${local.env}-\${local.eks_name}" = "owned"\n  }\n}\n# (Followed by private_zone2, public_zone1, public_zone2)`,
+        params: "• /19 mask: Provides 8,187 usable IPs per subnet\n• 'kubernetes.io/role/elb' = '1': Auto-discovery for Public Load Balancers\n• 'kubernetes.io/role/internal-elb' = '1': Auto-discovery for Private Load Balancers",
+        dep: "Private subnets host EKS worker nodes; public subnets host ALBs and NAT GW."
+      },
+      "5-nat": {
+        file: "5-nat.tf",
+        desc: "Allocates an Elastic IP and provisions a NAT Gateway in public_zone1 for outbound private node traffic.",
+        code: `resource "aws_eip" "nat" {\n  domain = "vpc"\n  tags = { Name = "\${local.env}-nat" }\n}\n\nresource "aws_nat_gateway" "nat" {\n  allocation_id = aws_eip.nat.id\n  subnet_id     = aws_subnet.public_zone1.id\n  tags          = { Name = "\${local.env}-nat" }\n  depends_on    = [aws_internet_gateway.igw]\n}`,
+        params: "• domain = 'vpc': Modern VPC-scoped Elastic IP\n• subnet_id = public_zone1: Must sit in a public subnet to reach the IGW",
+        dep: "Enables private EC2 worker nodes to pull container images from Docker Hub."
+      },
+      "7-eks": {
+        file: "7-eks.tf",
+        desc: "Creates the Amazon EKS Master Control Plane with IAM cluster role and API Access Entries.",
+        code: `resource "aws_eks_cluster" "eks" {\n  name     = "\${local.env}-\${local.eks_name}"\n  version  = local.eks_version\n  role_arn = aws_iam_role.eks.arn\n\n  vpc_config {\n    endpoint_private_access = false\n    endpoint_public_access  = true\n    subnet_ids              = [aws_subnet.private_zone1.id, aws_subnet.private_zone2.id]\n  }\n\n  access_config {\n    authentication_mode                         = "API"\n    bootstrap_cluster_creator_admin_permissions = true\n  }\n\n  depends_on = [aws_iam_role_policy_attachment.eks]\n}`,
+        params: "• authentication_mode = 'API': Replaces error-prone aws-auth ConfigMap\n• subnet_ids: Only private subnets are passed to create cross-account ENIs",
+        dep: "Creates the Kubernetes API Server and etcd quorum cluster."
+      },
+      "8-nodes": {
+        file: "8-nodes.tf",
+        desc: "Creates the Managed Node Group with t3.large instances and Auto Scaling Group integration.",
+        code: `resource "aws_eks_node_group" "general" {\n  cluster_name    = aws_eks_cluster.eks.name\n  version         = local.eks_version\n  node_group_name = "general"\n  node_role_arn   = aws_iam_role.nodes.arn\n  subnet_ids      = [aws_subnet.private_zone1.id, aws_subnet.private_zone2.id]\n  capacity_type   = "ON_DEMAND"\n  instance_types  = ["t3.large"]\n\n  scaling_config {\n    desired_size = 2\n    max_size     = 10\n    min_size     = 1\n  }\n  lifecycle {\n    ignore_changes = [scaling_config[0].desired_size]\n  }\n}`,
+        params: "• t3.large: 2 vCPUs, 8 GB RAM, supports up to 35 Pods per node\n• ignore_changes: Prevents Terraform from overriding Cluster Autoscaler changes",
+        dep: "Hosts all application and controller pods."
+      },
+      "11-helm-provider": {
+        file: "11-helm-provider.tf",
+        desc: "Initializes Helm and Kubernetes providers using the live cluster API endpoint and authentication tokens.",
+        code: `data "aws_eks_cluster" "eks" {\n  name = "\${local.env}-\${local.eks_name}"\n}\n\ndata "aws_eks_cluster_auth" "eks" {\n  name = "\${local.env}-\${local.eks_name}"\n}\n\nprovider "helm" {\n  kubernetes {\n    host                   = data.aws_eks_cluster.eks.endpoint\n    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n    token                  = data.aws_eks_cluster_auth.eks.token\n  }\n}`,
+        params: "• Static name string: Decouples provider evaluation from pending cluster changes\n• base64decode CA cert: Validates the TLS connection to kube-apiserver",
+        dep: "Allows Terraform to deploy Helm charts (Metrics Server, Ingress, Cert-Manager)."
+      },
+      "13-pod-Identity": {
+        file: "13-pod-Identity-addon.tf",
+        desc: "Installs the modern native EKS Pod Identity Agent DaemonSet on all worker nodes.",
+        code: `resource "aws_eks_addon" "pod_identity" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = "eks-pod-identity-agent"\n  resolve_conflicts_on_create = "OVERWRITE"\n  resolve_conflicts_on_update = "OVERWRITE"\n  depends_on                  = [aws_eks_node_group.general]\n}`,
+        params: "• OVERWRITE: Safely handles upgrades and conflict resolution\n• depends_on: Ensures nodes are ready before installing the DaemonSet",
+        dep: "Used by Cluster Autoscaler, AWS Load Balancer Controller, and EBS CSI driver."
+      },
+      "14-cluster-autoscaler": {
+        file: "14-cluster-autoscaler.tf",
+        desc: "Deploys Kubernetes Cluster Autoscaler to scale worker nodes based on pending pods.",
+        code: `resource "aws_eks_pod_identity_association" "cluster_autoscaler" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "cluster-autoscaler"\n  role_arn        = aws_iam_role.cluster_autoscaler.arn\n}\n\nresource "helm_release" "cluster_autoscaler" {\n  name       = "autoscaler"\n  repository = "https://kubernetes.github.io/autoscaler"\n  chart      = "cluster-autoscaler"\n  namespace  = "kube-system"\n  version    = "9.37.0"\n  timeout    = 600\n}`,
+        params: "• autoDiscovery.clusterName: Automatically tracks the EC2 Auto Scaling Group\n• timeout = 600: Prevents premature timeout during deployment",
+        dep: "Scales node count when pods exceed node CPU/memory limits."
+      },
+      "15-aws-lbc": {
+        file: "15-aws-lbc.tf",
+        desc: "Deploys AWS Load Balancer Controller to manage Application and Network Load Balancers.",
+        code: `resource "aws_eks_pod_identity_association" "aws_lbc" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "aws-load-balancer-controller"\n  role_arn        = aws_iam_role.aws_lbc.arn\n}\n\nresource "helm_release" "aws_lbc" {\n  name       = "aws-load-balancer-controller"\n  repository = "https://aws.github.io/eks-charts"\n  chart      = "aws-load-balancer-controller"\n  namespace  = "kube-system"\n  version    = "1.8.1"\n}`,
+        params: "• Uses IAM policy from iam/AWSLoadBalancerController.json\n• vpcId: Tells controller where to provision ALBs and target groups",
+        dep: "Required for Example 5 (NLB), Example 6 (ALB), and Example 7 (HTTPS ALB)."
+      },
+      "16-nginx-ingress": {
+        file: "16-nginx-ingress.tf",
+        desc: "Deploys Ingress NGINX controller behind an external Network Load Balancer.",
+        code: `resource "helm_release" "external_nginx" {\n  name             = "external"\n  repository       = "https://kubernetes.github.io/ingress-nginx"\n  chart            = "ingress-nginx"\n  namespace        = "ingress"\n  create_namespace = true\n  version          = "4.11.3"\n  values           = [file("\${path.module}/values/nginx-ingress.yaml")]\n  depends_on       = [helm_release.aws_lbc]\n}`,
+        params: "• ingressClassName: external-nginx\n• Service creates an external NLB routing directly to NGINX Pod IPs",
+        dep: "Used for Example 8 and Example 9 (Let's Encrypt TLS)."
+      },
+      "17-cert-manager": {
+        file: "17-cert-manager.tf",
+        desc: "Installs Jetstack Cert-Manager with Custom Resource Definitions (CRDs) for automated SSL.",
+        code: `resource "helm_release" "cert_manager" {\n  name             = "cert-manager"\n  repository       = "https://charts.jetstack.io"\n  chart            = "cert-manager"\n  namespace        = "cert-manager"\n  create_namespace = true\n  version          = "v1.16.2"\n  set { name = "installCRDs"; value = "true" }\n  depends_on       = [helm_release.external_nginx]\n}`,
+        params: "• installCRDs = true: Registers Certificate, Issuer, and ClusterIssuer CRDs",
+        dep: "Powers Example 9 (Let's Encrypt ACME HTTP-01 certificates)."
+      },
+      "18-ebs-csi-driver": {
+        file: "18-ebs-csi-driver.tf",
+        desc: "Deploys AWS EBS CSI Driver managed add-on with Pod Identity for dynamic block storage.",
+        code: `resource "aws_eks_pod_identity_association" "ebs_csi_driver" {\n  cluster_name    = aws_eks_cluster.eks.name\n  namespace       = "kube-system"\n  service_account = "ebs-csi-controller-sa"\n  role_arn        = aws_iam_role.ebs_csi_driver.arn\n}\n\nresource "aws_eks_addon" "ebs_csi_driver" {\n  cluster_name                = aws_eks_cluster.eks.name\n  addon_name                  = "aws-ebs-csi-driver"\n  resolve_conflicts_on_create = "OVERWRITE"\n  resolve_conflicts_on_update = "OVERWRITE"\n}`,
+        params: "• AmazonEBSCSIDriverPolicy attached\n• OVERWRITE prevents conflicts when re-running terraform apply",
+        dep: "Powers Example 10 (StatefulSet with gp2 persistent storage)."
+      },
+      "20-efs": {
+        file: "20-efs.tf",
+        desc: "Provisions an AWS EFS filesystem, mount targets, EFS CSI driver, and ReadWriteMany StorageClass.",
+        code: `resource "aws_efs_file_system" "eks" {\n  creation_token   = "eks"\n  performance_mode = "generalPurpose"\n  throughput_mode  = "bursting"\n  encrypted        = true\n}\n# Creates security group, mount targets, IAM role, Helm release, and StorageClass 'efs'`,
+        params: "• Port 2049 (NFS) allowed from VPC\n• ReadWriteMany capability allows multiple pods to share one file",
+        dep: "Powers Example 11 (Shared persistent file storage across multiple pods)."
+      },
+      "21-secrets-store": {
+        file: "21-secrets-store-csi-driver.tf",
+        desc: "Installs Secrets Store CSI Driver, AWS Provider, and IRSA role for AWS Secrets Manager integration.",
+        code: `resource "helm_release" "secrets_csi_driver" {\n  name       = "secrets-store-csi-driver"\n  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"\n  chart      = "secrets-store-csi-driver"\n  namespace  = "kube-system"\n  version    = "1.4.3"\n  set { name = "syncSecret.enabled"; value = true }\n}`,
+        params: "• syncSecret.enabled = true: Syncs AWS secret into native Kubernetes Secret\n• IRSA role: staging-demo-myapp-secrets",
+        dep: "Powers Example 12 (Mounts secrets from AWS Secrets Manager in eu-north-1)."
+      }
+    };
+
+    function switchTfTab(key) {
+      document.querySelectorAll('.tf-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+      const activeBtn = document.getElementById('btn-' + key);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        activeBtn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      }
+      const data = tfData[key];
+      if (data) {
+        document.getElementById('tf-card-filename').textContent = data.file;
+        document.getElementById('tf-card-desc').textContent = data.desc;
+        document.getElementById('tf-code-block').textContent = data.code.replace(/\\n/g, '\n');
+      }
+    }
+
+    // Database of all 12 Examples
+    const exData = {
+      1: {
+        title: "Developer RBAC Read-Only Access",
+        desc: "Restricts the developer IAM identity to view-only access across deployments, pods, and services.",
+        target: "Group: my-viewer",
+        file: "0-viewer-cluster-role.yaml",
+        code: `apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: viewer\nrules:\n  - apiGroups: ["*"]\n    resources: ["deployments", "configmaps", "pods", "secrets", "services"]\n    verbs: ["get", "list", "watch"]`,
+        cmds: "# Apply manifests:\nkubectl apply -f 1-example/\n\n# Verify Developer permissions (Should return YES):\nkubectl auth can-i get pods --as developer\n\n# Verify deletion is blocked (Should return NO):\nkubectl auth can-i delete pods --as developer",
+        mech: "When the developer runs a kubectl command, kube-apiserver checks the caller's STS identity. EKS Access Entry maps the user to the 'my-viewer' group. Kubernetes RBAC validates that the requested verb exists in the 'viewer' ClusterRole."
+      },
+      2: {
+        title: "Manager Cluster Administrator Access",
+        desc: "Grants full administrative access (cluster-admin) to the manager role via IAM assume role.",
+        target: "Group: my-admin",
+        file: "admin-cluster-role-binding.yaml",
+        code: `apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: my-admin-binding\nroleRef:\n  kind: ClusterRole\n  name: cluster-admin\n  apiGroup: rbac.authorization.k8s.io\nsubjects:\n  - kind: Group\n    name: my-admin\n    apiGroup: rbac.authorization.k8s.io`,
+        cmds: "# Apply manifests:\nkubectl apply -f 2-example/\n\n# Verify manager can create pods (YES):\nkubectl auth can-i create pods --as manager\n\n# Verify manager can delete namespaces (YES):\nkubectl auth can-i delete namespaces --as manager",
+        mech: "Manager assumes IAM role 'staging-demo-eks-admin', which maps to group 'my-admin' via EKS Access Entry. The ClusterRoleBinding grants cluster-admin superpowers."
+      },
+      3: {
+        title: "Horizontal Pod Autoscaler (HPA)",
+        desc: "Autoscales application replicas between 1 and 5 based on CPU (>80%) and Memory (>70%) metrics.",
+        target: "Namespace: 3-example",
+        file: "3-hpa.yaml",
+        code: `apiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: myapp\n  namespace: 3-example\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: myapp\n  minReplicas: 1\n  maxReplicas: 5\n  metrics:\n    - type: Resource\n      resource:\n        name: cpu\n        target:\n          type: Utilization\n          averageUtilization: 80`,
+        cmds: "# Deploy HPA and test deployment:\nkubectl apply -f 3-example/\n\n# Watch autoscaling in real time:\nkubectl get hpa -n 3-example -w\n\n# Inspect resource consumption:\nkubectl top pods -n 3-example",
+        mech: "Metrics Server scrapes kubelet summary API every 15 seconds. HPA calculates desired replicas = ceil(currentReplicas * (currentUtilization / targetUtilization))."
+      },
+      4: {
+        title: "Cluster Autoscaler (EC2 Scale Out)",
+        desc: "Launches 5 replicas requesting 500m CPU each (2.5 cores total) to trigger AWS EC2 node expansion.",
+        target: "Namespace: 4-example",
+        file: "1-deployment.yaml",
+        code: `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: myapp\n  namespace: 4-example\nspec:\n  replicas: 5\n  template:\n    spec:\n      containers:\n        - name: myapp\n          image: aputra/myapp-195:v2\n          resources:\n            requests:\n              cpu: 500m\n              memory: 512Mi`,
+        cmds: "# Deploy heavy workload:\nkubectl apply -f 4-example/\n\n# Observe pending pods waiting for capacity:\nkubectl get pods -n 4-example -o wide\n\n# Watch new EC2 worker nodes join the cluster:\nkubectl get nodes -w",
+        mech: "Kube-scheduler marks pods 'Pending' due to Insufficient CPU. Cluster Autoscaler notices pending pods, calls AWS Auto Scaling API, and increments ASG desired capacity."
+      },
+      5: {
+        title: "AWS Network Load Balancer (NLB)",
+        desc: "Provisions an ultra-fast Layer 4 AWS Network Load Balancer using IP target mode.",
+        target: "Namespace: 5-example",
+        file: "2-service.yaml",
+        code: `apiVersion: v1\nkind: Service\nmetadata:\n  name: myapp\n  namespace: 5-example\n  annotations:\n    service.beta.kubernetes.io/aws-load-balancer-type: external\n    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip\n    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing\nspec:\n  type: LoadBalancer\n  ports:\n    - port: 80\n      targetPort: http\n    - port: 8080\n      targetPort: http`,
+        cmds: "# Deploy NLB service:\nkubectl apply -f 5-example/\n\n# Get external NLB DNS address:\nkubectl get svc -n 5-example myapp\n\n# Test via curl:\ncurl http://<NLB-DNS-NAME>",
+        mech: "AWS Load Balancer Controller detects annotations and provisions an NLB in public subnets. Target groups register Pod IPs directly (bypassing NodePort)."
+      },
+      6: {
+        title: "AWS Application Load Balancer (ALB Ingress)",
+        desc: "Routes HTTP traffic for ex6.aiguru.website through an AWS ALB to container port 8080.",
+        target: "Host: ex6.aiguru.website",
+        file: "3-ingress.yaml",
+        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 6-example\n  annotations:\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\n    alb.ingress.kubernetes.io/healthcheck-path: /health\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex6.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080`,
+        cmds: "# Deploy ALB Ingress:\nkubectl apply -f 6-example/\n\n# Get ALB DNS name:\nkubectl get ingress -n 6-example myapp\n\n# Test (after pointing CNAME ex6 to ALB DNS):\ncurl http://ex6.aiguru.website/",
+        mech: "AWS Load Balancer Controller provisions a Layer 7 ALB in public subnets with host-based routing rule for ex6.aiguru.website."
+      },
+      7: {
+        title: "ALB with HTTPS & AWS Certificate Manager (ACM)",
+        desc: "Enforces SSL redirection (HTTP:80 -> HTTPS:443) and terminates TLS using an ACM certificate.",
+        target: "Host: ex7.aiguru.website",
+        file: "3-ingress.yaml",
+        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 7-example\n  annotations:\n    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-north-1:619544673475:certificate/<CERT_ID>\n    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'\n    alb.ingress.kubernetes.io/ssl-redirect: "443"\n    alb.ingress.kubernetes.io/scheme: internet-facing\n    alb.ingress.kubernetes.io/target-type: ip\nspec:\n  ingressClassName: alb\n  rules:\n    - host: ex7.aiguru.website`,
+        cmds: "# Replace certificate ARN with your ACM cert in eu-north-1, then apply:\nkubectl apply -f 7-example/\n\n# Verify ingress:\nkubectl get ingress -n 7-example\n\n# Test HTTPS:\ncurl -k https://ex7.aiguru.website/",
+        mech: "ALB listener binds ACM certificate. Incoming HTTP requests receive a 301 redirect to HTTPS. Traffic between ALB and Pod IP remains private within VPC."
+      },
+      8: {
+        title: "NGINX Ingress Controller Routing",
+        desc: "Routes traffic for ex8.aiguru.website through the Ingress NGINX controller behind an AWS NLB.",
+        target: "Host: ex8.aiguru.website",
+        file: "3-ingress.yaml",
+        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 8-example\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex8.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080`,
+        cmds: "# Deploy NGINX ingress manifest:\nkubectl apply -f 8-example/\n\n# Get NGINX Load Balancer DNS:\nkubectl get svc -n ingress external-ingress-nginx-controller\n\n# Test via curl:\ncurl http://ex8.aiguru.website/",
+        mech: "Requests hit the AWS NLB, which passes TCP traffic directly into the NGINX Ingress controller pod. NGINX reads the Host header and proxies to the myapp service."
+      },
+      9: {
+        title: "Cert-Manager with Let's Encrypt Automated SSL",
+        desc: "Zero-touch SSL issuance: solves ACME HTTP-01 challenges and provisions free trusted certificates for ex9.aiguru.website.",
+        target: "Host: ex9.aiguru.website",
+        file: "4-ingress.yaml",
+        code: `apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: myapp\n  namespace: 9-example\n  annotations:\n    cert-manager.io/cluster-issuer: http-01-production\nspec:\n  ingressClassName: external-nginx\n  rules:\n    - host: ex9.aiguru.website\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend:\n              service:\n                name: myapp\n                port:\n                  number: 8080\n  tls:\n    - hosts:\n        - ex9.aiguru.website\n      secretName: ex9-aiguru-website-tls`,
+        cmds: "# Apply ClusterIssuer and application:\nkubectl apply -f 9-example/0-cluster-issuer.yaml\nkubectl apply -f 9-example/\n\n# Watch certificate validation (READY should become True):\nkubectl get certificate -n 9-example -w\n\n# Open secure URL in browser:\nhttps://ex9.aiguru.website",
+        mech: "Cert-Manager creates an ACME order. Let's Encrypt queries http://ex9.aiguru.website/.well-known/acme-challenge/. Once validated, signed TLS secret is created automatically."
+      },
+      10: {
+        title: "StatefulSet with Amazon EBS (EBS CSI Driver)",
+        desc: "Dynamically provisions an AWS EBS volume (GP2) and attaches it to a StatefulSet pod at /data.",
+        target: "StorageClass: gp2",
+        file: "1-statefulset.yaml",
+        code: `apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: myapp\n  namespace: 10-example\nspec:\n  serviceName: nginx\n  replicas: 1\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        storageClassName: gp2\n        accessModes: [ReadWriteOnce]\n        resources:\n          requests:\n            storage: 5Gi`,
+        cmds: "# Deploy StatefulSet and headless service:\nkubectl apply -f 10-example/\n\n# Verify PVC and PV:\nkubectl get pvc -n 10-example\nkubectl get pv\n\n# Verify volume is mounted inside container:\nkubectl exec -it myapp-0 -n 10-example -- df -h /data",
+        mech: "AWS EBS CSI Driver detects volumeClaimTemplate, calls AWS EC2 CreateVolume in the node's availability zone, attaches EBS block device to the EC2 instance, and mounts ext4 filesystem."
+      },
+      11: {
+        title: "Shared Storage with Amazon EFS (ReadWriteMany)",
+        desc: "Two distinct pods mount the exact same EFS network share simultaneously and write to a shared file.",
+        target: "StorageClass: efs",
+        file: "1-pvc.yaml",
+        code: `apiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: myapp\n  namespace: 11-example\nspec:\n  accessModes:\n    - ReadWriteMany\n  storageClassName: efs\n  resources:\n    requests:\n      storage: 5Gi`,
+        cmds: "# Deploy EFS PVC and two reader/writer pods:\nkubectl apply -f 11-example/\n\n# Verify both pods see the same shared timestamps:\nkubectl exec -it myapp-1 -n 11-example -- cat /data/out1.txt\nkubectl exec -it myapp-2 -n 11-example -- cat /data/out1.txt",
+        mech: "AWS EFS CSI Driver connects over NFS (port 2049) to the EFS mount target in the local subnet. Multiple pods on different worker nodes can safely read and write simultaneously."
+      },
+      12: {
+        title: "AWS Secrets Store CSI Driver & IRSA",
+        desc: "Securely injects credentials from AWS Secrets Manager in eu-north-1 into container files and environment variables.",
+        target: "Secret: staging/myapp-secret-v4",
+        file: "1-secret-provider-class.yaml",
+        code: `apiVersion: secrets-store.csi.x-k8s.io/v1\nkind: SecretProviderClass\nmetadata:\n  name: myapp-aws-secrets\n  namespace: 12-example\nspec:\n  provider: aws\n  parameters:\n    region: eu-north-1\n    objects: |\n      - objectName: staging/myapp-secret-v4\n        objectType: secretsmanager\n        jmesPath:\n            - path: username\n              objectAlias: myusername\n            - path: password\n              objectAlias: mypassword\n  secretObjects:\n    - secretName: myapp-k8s-secret\n      type: Opaque\n      data:\n        - objectName: myusername\n          key: k8s-myusername\n        - objectName: mypassword\n          key: k8s-mypassword`,
+        cmds: "# 1. Create secret in AWS Secrets Manager:\naws secretsmanager create-secret --name staging/myapp-secret-v4 --secret-string '{\"username\":\"admin\",\"password\":\"SuperSecretPassword123\"}' --region eu-north-1\n\n# 2. Deploy Kubernetes manifests:\nkubectl apply -f 12-example/\n\n# 3. Verify mounted secret file inside container:\nkubectl exec -it deployment/myapp -n 12-example -- ls -la /mnt/secrets\n\n# 4. Check injected environment variables:\nkubectl exec -it deployment/myapp -n 12-example -- env | grep MY_",
+        mech: "During pod creation, Secrets Store CSI Driver invokes the AWS Provider. The provider uses IRSA token exchange to authenticate with Secrets Manager, pulls the secret, mounts it at /mnt/secrets, and creates a Kubernetes Secret."
+      }
+    };
+
+    function switchExTab(id) {
+      document.querySelectorAll('.ex-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+      const activeBtn = document.getElementById('btn-ex-' + id);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        activeBtn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      }
+      const data = exData[id];
+      if (data) {
+        document.getElementById('ex-title').innerHTML = `<span class="text-cyan-400 font-mono">Example \${id}:</span> \${data.title}`;
+        document.getElementById('ex-desc').textContent = data.desc;
+        document.getElementById('ex-target').textContent = data.target;
+        document.getElementById('ex-filename').textContent = data.file;
+        document.getElementById('ex-code').textContent = data.code.replace(/\\n/g, '\n');
+        document.getElementById('ex-cmds').textContent = data.cmds.replace(/\\n/g, '\n');
+        document.getElementById('ex-mechanics').textContent = data.mech;
+      }
+    }
+
+    function copyCode(elementId) {
+      const codeText = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const copyBtnText = document.getElementById('copy-text');
+        if (copyBtnText) {
+          copyBtnText.textContent = "Copied!";
+          setTimeout(() => { copyBtnText.textContent = "Copy Code"; }, 2000);
         }
       });
     }
   </script>
 </body>
 </html>
-
