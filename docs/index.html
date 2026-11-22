@@ -553,75 +553,502 @@
       </div>
     </section>
 
-    <!-- PART 5: NETWORKING & ANIMATED NAT GATEWAY FLOW -->
-    <section id="networking" class="space-y-6">
+        <!-- PART 5: COMPLETE AWS NETWORKING ARCHITECTURE (INBOUND & OUTBOUND) -->
+    <section id="networking" class="space-y-8">
+      <!-- Section Header -->
       <div class="border-b border-slate-800 pb-4">
-        <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 5</span>
-        <h2 class="text-2xl sm:text-3xl font-bold text-white">AWS Networking Architecture & Egress Flow</h2>
-        <p class="text-slate-400 text-sm mt-1">Detailed packet tracing when a private worker node contacts external APIs via the NAT Gateway.</p>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Part 5</span>
+          <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase tracking-wide">
+            Core Infrastructure & Traffic Engineering
+          </span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">AWS Networking Architecture: Inbound & Outbound Flows</h2>
+        <p class="text-slate-400 text-sm mt-1">Complete end-to-end packet tracing: How public internet requests reach private EKS pods across 5 load balancer/ingress options with multi-layer security (Inbound), and how private worker nodes access the internet via the NAT Gateway (Outbound).</p>
       </div>
 
-      <!-- ANIMATED NAT GATEWAY SVG -->
-      <div class="glass-card p-6 rounded-2xl space-y-4">
+      <!-- ========================================================================= -->
+      <!-- 5.1 COMPREHENSIVE INBOUND (INGRESS) ARCHITECTURE & TRAFFIC FLOW -->
+      <!-- ========================================================================= -->
+      <div class="space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-arrow-right-arrow-left text-amber-400"></i> Outbound Packet Flow via NAT Gateway
+            <h3 class="text-xl font-bold text-white flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-xs border border-cyan-500/40">5.1</span>
+              Inbound (Ingress) Architecture & Traffic Flow (Internet &rarr; Pods)
             </h3>
-            <p class="text-xs text-slate-400">Visualizing Source Network Address Translation (SNAT) from Private Node to Public Internet.</p>
+            <p class="text-xs text-slate-400 mt-1">Tracing an external web request through DNS, firewalls, public load balancers, SSL termination, and private VPC CNI pod delivery.</p>
           </div>
-          <span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-xs rounded-full w-fit">
-            Elastic IP Attached: domain = "vpc"
+          <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-300 font-mono text-xs rounded-full w-fit">
+            5 Inbound Options Supported
           </span>
         </div>
 
-        <div class="w-full overflow-x-auto py-2">
-          <svg viewBox="0 0 920 220" class="w-full min-w-[850px] h-auto text-xs font-mono">
-            <!-- Background Zone Boxes -->
-            <rect x="20" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
-            <text x="35" y="42" fill="#34d399" font-weight="bold">1. PRIVATE SUBNET</text>
-            <text x="35" y="58" fill="#64748b" font-size="10">10.0.0.0/19 | eu-north-1a</text>
+        <!-- ANIMATED INBOUND TRAFFIC FLOW SVG -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-network-wired text-cyan-400"></i> End-to-End Inbound Journey: From Browser to Private Pod
+              </h4>
+              <p class="text-xs text-slate-400">Visualizing DNS, AWS Edge Security, Public Subnets (ELB Tier), and Private Subnet (Worker Node & Pod ENI Tier).</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-mono">
+              <span class="flex items-center gap-1.5 text-cyan-400"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span> ALB Flow (Ex 6 & 7)</span>
+              <span class="flex items-center gap-1.5 text-purple-400"><span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse"></span> NLB / NGINX Flow (Ex 5, 8, 9)</span>
+            </div>
+          </div>
 
-            <rect x="260" y="20" width="180" height="180" rx="10" fill="#090d16" stroke="#6366f1" stroke-width="1.5"/>
-            <text x="275" y="42" fill="#818cf8" font-weight="bold">2. ROUTE TABLE</text>
-            <text x="275" y="58" fill="#64748b" font-size="10">0.0.0.0/0 -> nat-xxx</text>
+          <div class="w-full overflow-x-auto py-2">
+            <svg viewBox="0 0 1020 380" class="w-full min-w-[950px] h-auto text-xs font-mono">
+              <!-- Tier 1: Public Internet & DNS -->
+              <rect x="20" y="25" width="160" height="330" rx="10" fill="#090d16" stroke="#38bdf8" stroke-width="1.5"/>
+              <text x="32" y="48" fill="#38bdf8" font-weight="bold" font-size="11">1. PUBLIC INTERNET</text>
+              <text x="32" y="65" fill="#64748b" font-size="9">Users & Browsers</text>
+              
+              <!-- Browser Client -->
+              <rect x="30" y="80" width="140" height="65" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1" class="pulse-box"/>
+              <text x="100" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle" font-size="10">Web Client / Curl</text>
+              <text x="100" y="122" fill="#38bdf8" text-anchor="middle" font-size="8.5">https://*.aiguru.website</text>
+              <text x="100" y="136" fill="#64748b" text-anchor="middle" font-size="8">Public IP: 203.0.113.10</text>
 
-            <rect x="460" y="20" width="200" height="180" rx="10" fill="#090d16" stroke="#f59e0b" stroke-width="1.5"/>
-            <text x="475" y="42" fill="#fbbf24" font-weight="bold">3. PUBLIC SUBNET</text>
-            <text x="475" y="58" fill="#64748b" font-size="10">10.0.64.0/19 | NAT Gateway</text>
+              <!-- DNS Box -->
+              <rect x="30" y="165" width="140" height="175" rx="6" fill="#1e1b4b" stroke="#a855f7" stroke-width="1"/>
+              <text x="100" y="188" fill="#c084fc" font-weight="bold" text-anchor="middle" font-size="10">DNS RESOLUTION</text>
+              <text x="40" y="210" fill="#f59e0b" font-size="8.5" font-weight="bold">A. GoDaddy Registrar</text>
+              <text x="40" y="224" fill="#94a3b8" font-size="8">NS: ns-*.awsdns-*.org</text>
+              <path d="M 40 235 L 160 235" stroke="#475569" stroke-width="0.5"/>
+              <text x="40" y="252" fill="#38bdf8" font-size="8.5" font-weight="bold">B. AWS Route 53</text>
+              <text x="40" y="266" fill="#94a3b8" font-size="8">Public Zone: aiguru.website</text>
+              <text x="40" y="280" fill="#a7f3d0" font-size="8">ex6, ex7 -> CNAME ALB</text>
+              <text x="40" y="294" fill="#c084fc" font-size="8">ex8, ex9 -> CNAME NLB</text>
+              <text x="100" y="325" fill="#38bdf8" text-anchor="middle" font-size="8" font-weight="bold">Resolves to ELB Public IPs</text>
 
-            <rect x="680" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#0ea5e9" stroke-width="1.5"/>
-            <text x="695" y="42" fill="#38bdf8" font-weight="bold">4. INTERNET GATEWAY</text>
-            <text x="695" y="58" fill="#64748b" font-size="10">Public Internet (0.0.0.0/0)</text>
+              <!-- Tier 2: AWS Perimeter & Security -->
+              <rect x="210" y="25" width="180" height="330" rx="10" fill="#090d16" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="222" y="48" fill="#fbbf24" font-weight="bold" font-size="11">2. AWS PERIMETER & VPC</text>
+              <text x="222" y="65" fill="#64748b" font-size="9">VPC: vpc-037ac5dd (10.0.0.0/16)</text>
 
-            <!-- Node 1 Component -->
-            <rect x="40" y="80" width="170" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
-            <text x="125" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">Worker Pod</text>
-            <text x="125" y="122" fill="#34d399" font-size="9" text-anchor="middle">Src IP: 10.0.12.45</text>
+              <!-- AWS Shield / Edge -->
+              <rect x="220" y="80" width="160" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+              <text x="300" y="103" fill="#fbbf24" font-weight="bold" text-anchor="middle" font-size="10">AWS Shield Standard</text>
+              <text x="300" y="120" fill="#94a3b8" text-anchor="middle" font-size="8.5">L3/L4 DDoS Mitigation</text>
+              <text x="300" y="133" fill="#64748b" text-anchor="middle" font-size="8">SYN Flood / UDP Defense</text>
 
-            <!-- Route Component -->
-            <rect x="280" y="80" width="140" height="60" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
-            <text x="350" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-private</text>
-            <text x="350" y="122" fill="#a5b4fc" font-size="9" text-anchor="middle">Target: nat-gateway</text>
+              <!-- Internet Gateway -->
+              <rect x="220" y="155" width="160" height="85" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2"/>
+              <text x="300" y="178" fill="#38bdf8" font-weight="bold" text-anchor="middle" font-size="10">Internet Gateway (IGW)</text>
+              <text x="300" y="195" fill="#94a3b8" text-anchor="middle" font-size="8.5">staging-igw (3-igw.tf)</text>
+              <text x="300" y="210" fill="#38bdf8" text-anchor="middle" font-size="8">Bidirectional 1:1 NAT</text>
+              <text x="300" y="226" fill="#64748b" text-anchor="middle" font-size="8">Public Route: 0.0.0.0/0 -> igw</text>
 
-            <!-- NAT Component -->
-            <rect x="480" y="80" width="160" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1" class="pulse-box-amber"/>
-            <text x="560" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">NAT Gateway</text>
-            <text x="560" y="122" fill="#fbbf24" font-size="9" text-anchor="middle">SNAT to Elastic IP</text>
+              <!-- Security Groups Box -->
+              <rect x="220" y="255" width="160" height="85" rx="6" fill="#1e293b" stroke="#ec4899" stroke-width="1"/>
+              <text x="300" y="278" fill="#f472b6" font-weight="bold" text-anchor="middle" font-size="10">Firewall & Security Groups</text>
+              <text x="230" y="298" fill="#34d399" font-size="8"><tspan fill="#f472b6">&#10003;</tspan> Allow TCP:80 (0.0.0.0/0)</text>
+              <text x="230" y="313" fill="#34d399" font-size="8"><tspan fill="#f472b6">&#10003;</tspan> Allow TCP:443 (0.0.0.0/0)</text>
+              <text x="230" y="328" fill="#f87171" font-size="8"><tspan fill="#f87171">&#10007;</tspan> Block All Other Inbound</text>
 
-            <!-- IGW Component -->
-            <rect x="700" y="80" width="180" height="60" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="1"/>
-            <text x="790" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-igw</text>
-            <text x="790" y="122" fill="#7dd3fc" font-size="9" text-anchor="middle">Docker Hub / GitHub</text>
+              <!-- Tier 3: Public Subnets (Load Balancer Tier) -->
+              <rect x="420" y="25" width="280" height="330" rx="10" fill="#090d16" stroke="#0ea5e9" stroke-width="1.5"/>
+              <text x="432" y="48" fill="#38bdf8" font-weight="bold" font-size="11">3. PUBLIC SUBNETS (ELB TIER)</text>
+              <text x="432" y="65" fill="#64748b" font-size="9">10.0.64.0/19 (1a) & 10.0.96.0/19 (1b) | Tag: elb=1</text>
 
-            <!-- Path lines -->
-            <path d="M 210 110 L 280 110" stroke="#10b981" stroke-width="2.5" class="flow-dash"/>
-            <path d="M 420 110 L 480 110" stroke="#f59e0b" stroke-width="2.5" class="flow-dash"/>
-            <path d="M 640 110 L 700 110" stroke="#0ea5e9" stroke-width="2.5" class="flow-dash"/>
+              <!-- Upper: AWS ALB (Ex 6 & 7) -->
+              <rect x="432" y="80" width="256" height="125" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+              <div class="flex items-center justify-between">
+                <text x="445" y="102" fill="#38bdf8" font-weight="bold" font-size="10">AWS APPLICATION LOAD BALANCER</text>
+                <text x="675" y="102" fill="#38bdf8" font-size="8" text-anchor="end">Layer 7</text>
+              </div>
+              <text x="445" y="120" fill="#94a3b8" font-size="8.5">Ex 6: Port 80 (HTTP) -> Host: ex6.aiguru.website</text>
+              <text x="445" y="135" fill="#f472b6" font-size="8.5">Ex 7: Port 443 (HTTPS) -> ACM Cert (*.aiguru.website)</text>
+              <text x="445" y="150" fill="#fbbf24" font-size="8.5">SSL Redirect: HTTP:80 -> HTTPS:443 (301 Moved)</text>
+              <rect x="442" y="160" width="236" height="35" rx="4" fill="#1e293b"/>
+              <text x="560" y="175" fill="#34d399" text-anchor="middle" font-size="8" font-weight="bold">Target Group (Target-Type: IP)</text>
+              <text x="560" y="188" fill="#94a3b8" text-anchor="middle" font-size="7.5">Health Checks: HTTP GET /health on Port 8080</text>
 
-            <!-- Moving Packet Animation -->
-            <circle cx="70" cy="110" r="7" fill="#f59e0b" class="anim-packet-nat"/>
-          </svg>
+              <!-- Lower: AWS NLB + NGINX (Ex 5, 8, 9) -->
+              <rect x="432" y="215" width="256" height="125" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="1.2"/>
+              <text x="445" y="236" fill="#c084fc" font-weight="bold" font-size="10">AWS NETWORK LOAD BALANCER</text>
+              <text x="445" y="253" fill="#94a3b8" font-size="8.5">Ex 5: Raw L4 TCP Load Balancing (Port 80/8080)</text>
+              <text x="445" y="268" fill="#a855f7" font-size="8.5">Ex 8 & 9: TCP Passthrough to Ingress-NGINX</text>
+              <rect x="442" y="278" width="236" height="52" rx="4" fill="#1e293b" stroke="#a855f7" stroke-width="0.8"/>
+              <text x="450" y="295" fill="#f8fafc" font-size="8" font-weight="bold">Ingress-NGINX Controller Pods:</text>
+              <text x="450" y="308" fill="#94a3b8" font-size="7.5">Ex 8: Host: ex8.aiguru.website (Port 80)</text>
+              <text x="450" y="321" fill="#34d399" font-size="7.5">Ex 9: Cert-Manager Let's Encrypt TLS (Secret: ex9-...)</text>
+
+              <!-- Tier 4: Private Subnets (Worker Nodes & Pods) -->
+              <rect x="730" y="25" width="270" height="330" rx="10" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
+              <text x="742" y="48" fill="#34d399" font-weight="bold" font-size="11">4. PRIVATE SUBNETS (WORKER PODS)</text>
+              <text x="742" y="65" fill="#64748b" font-size="9">10.0.0.0/19 (1a) & 10.0.32.0/19 (1b) | Zero Public IPs</text>
+
+              <!-- Worker Node Box -->
+              <rect x="742" y="80" width="246" height="260" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.2"/>
+              <text x="865" y="103" fill="#f8fafc" font-weight="bold" text-anchor="middle" font-size="10">EC2 Worker Node (t3.large)</text>
+              <text x="865" y="118" fill="#64748b" text-anchor="middle" font-size="8">Security Group: Inbound allowed ONLY from ELB</text>
+
+              <!-- Pod 1 -->
+              <rect x="755" y="130" width="220" height="60" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+              <text x="765" y="150" fill="#38bdf8" font-weight="bold" font-size="9">App Pod: myapp-195 (Ex 6 & 7)</text>
+              <text x="765" y="165" fill="#94a3b8" font-size="8">VPC CNI IP: 10.0.14.82 (Secondary ENI)</text>
+              <text x="765" y="178" fill="#34d399" font-size="8">Container Port: 8080 (myapp-195:v2)</text>
+
+              <!-- Pod 2 -->
+              <rect x="755" y="200" width="220" height="60" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1"/>
+              <text x="765" y="220" fill="#c084fc" font-weight="bold" font-size="9">App Pod: myapp-195 (Ex 8 & 9)</text>
+              <text x="765" y="235" fill="#94a3b8" font-size="8">VPC CNI IP: 10.0.45.110 (Secondary ENI)</text>
+              <text x="765" y="248" fill="#34d399" font-size="8">Container Port: 8080 (myapp-195:v2)</text>
+
+              <!-- Direct VPC CNI Note -->
+              <rect x="755" y="270" width="220" height="58" rx="6" fill="#132322" stroke="#10b981" stroke-width="0.8"/>
+              <text x="865" y="290" fill="#34d399" font-size="8.5" text-anchor="middle" font-weight="bold">AWS VPC CNI Direct Routing</text>
+              <text x="865" y="304" fill="#a7f3d0" font-size="7.5" text-anchor="middle">No NodePort &bull; No iptables kube-proxy DNAT</text>
+              <text x="865" y="318" fill="#6ee7b7" font-size="7.5" text-anchor="middle">Load Balancer &rarr; Direct Pod ENI Private IP</text>
+
+              <!-- Path connections -->
+              <!-- Internet to IGW -->
+              <path d="M 170 115 L 220 180" stroke="#38bdf8" stroke-width="2" class="flow-dash"/>
+              <!-- IGW to ALB -->
+              <path d="M 380 185 L 432 140" stroke="#38bdf8" stroke-width="2" class="flow-dash"/>
+              <!-- IGW to NLB -->
+              <path d="M 380 205 L 432 265" stroke="#a855f7" stroke-width="2" class="flow-dash"/>
+              <!-- ALB to Pod 1 -->
+              <path d="M 688 150 L 755 155" stroke="#38bdf8" stroke-width="2" class="flow-dash"/>
+              <!-- NLB/NGINX to Pod 2 -->
+              <path d="M 688 280 L 755 235" stroke="#a855f7" stroke-width="2" class="flow-dash"/>
+
+              <!-- Animated Moving Packets -->
+              <circle cx="190" cy="140" r="4.5" fill="#38bdf8">
+                <animate attributeName="cx" from="170" to="220" dur="1.8s" repeatCount="indefinite"/>
+                <animate attributeName="cy" from="115" to="180" dur="1.8s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="400" cy="160" r="4.5" fill="#38bdf8">
+                <animate attributeName="cx" from="380" to="432" dur="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="cy" from="185" to="140" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="400" cy="235" r="4.5" fill="#a855f7">
+                <animate attributeName="cx" from="380" to="432" dur="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="cy" from="205" to="265" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="720" cy="152" r="4.5" fill="#34d399">
+                <animate attributeName="cx" from="688" to="755" dur="1.2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="720" cy="255" r="4.5" fill="#c084fc">
+                <animate attributeName="cx" from="688" to="755" dur="1.2s" repeatCount="indefinite"/>
+                <animate attributeName="cy" from="280" to="235" dur="1.2s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 6-STAGE INBOUND PACKET LIFECYCLE DEEP-DIVE -->
+        <div class="glass-card p-6 sm:p-8 rounded-2xl space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h4 class="text-base font-bold text-white flex items-center gap-2 font-mono uppercase tracking-wider text-xs">
+              <i class="fa-solid fa-list-ol text-cyan-400"></i> The 6-Stage Inbound Packet Lifecycle (Internet to Pod)
+            </h4>
+            <p class="text-xs text-slate-400 mt-1">How requests navigate from public DNS to private container network interfaces.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-sans">
+            <!-- Stage 1 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-cyan-400 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-cyan-500/20 flex items-center justify-center text-[11px] border border-cyan-500/30">1</span>
+                DNS Resolution
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                The user types <code class="text-cyan-300 font-mono">https://ex7.aiguru.website</code>. GoDaddy delegates authority to <strong>AWS Route 53</strong>, which resolves the CNAME to the public DNS hostname of the AWS Load Balancer.
+              </p>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center text-[11px] border border-emerald-500/30">2</span>
+                AWS Edge & IGW
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                Traffic reaches AWS edge infrastructure protected by <strong>AWS Shield Standard</strong> (DDoS mitigation). The <strong>Internet Gateway (IGW)</strong> translates the public destination IP to the internal AWS network.
+              </p>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-amber-400 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-amber-500/20 flex items-center justify-center text-[11px] border border-amber-500/30">3</span>
+                Firewall & Security Groups
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                Subnet <strong>NACLs</strong> and <strong>Load Balancer Security Groups</strong> inspect the packet. Inbound traffic is allowed strictly on ports 80 and 443; all unauthorized ports are dropped at the edge.
+              </p>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-purple-400 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center text-[11px] border border-purple-500/30">4</span>
+                Public Subnet Ingestion
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                Load Balancer nodes live in <strong>Public Subnets</strong> (<code class="text-slate-400 font-mono">10.0.64.0/19</code> & <code class="text-slate-400 font-mono">10.0.96.0/19</code>) across 2 Availability Zones for high availability and load distribution.
+              </p>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-pink-400 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-pink-500/20 flex items-center justify-center text-[11px] border border-pink-500/30">5</span>
+                Private Subnet Transit
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                The Load Balancer forwards traffic into the <strong>Private Subnets</strong> (<code class="text-slate-400 font-mono">10.0.0.0/19</code> & <code class="text-slate-400 font-mono">10.0.32.0/19</code>). Worker node Security Groups permit traffic <em>only</em> from the Load Balancer security group.
+              </p>
+            </div>
+
+            <!-- Stage 6 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-cyan-300 font-bold font-mono">
+                <span class="w-5 h-5 rounded bg-cyan-400/20 flex items-center justify-center text-[11px] border border-cyan-400/30">6</span>
+                Pod Delivery via VPC CNI
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                Because target groups use <code class="text-cyan-300 font-mono">target-type: ip</code>, traffic routes directly to the Pod's private IP (<code class="text-slate-400 font-mono">10.0.x.x</code>) allocated by AWS VPC CNI, eliminating NodePort and kube-proxy overhead.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 INBOUND OPTIONS COMPARISON MATRIX -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h4 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-amber-400"></i> The 5 Inbound Ingress Options in this Project
+            </h4>
+            <p class="text-xs text-slate-400">Architectural breakdown of the five different methods used across Examples 5 to 9 to ingest traffic into the EKS cluster.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-sans">
+            <!-- Option 1: NLB Layer 4 Direct (Ex 5) -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-cyan-400 font-bold font-mono text-sm">Option 1: AWS NLB Direct</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">Example 5</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed">
+                  Provisions an AWS Network Load Balancer (Layer 4) with direct IP target mode. Ultra-low latency, millions of requests per second, ideal for gaming, raw TCP, and microservices.
+                </p>
+                <div class="space-y-1 font-mono text-[11px] text-slate-400 pt-1">
+                  <div><strong>Protocol:</strong> TCP / Layer 4</div>
+                  <div><strong>TLS Termination:</strong> None (Plaintext / Passthrough)</div>
+                  <div><strong>Target Mode:</strong> <code class="text-cyan-300">target-type: ip</code></div>
+                  <div><strong>K8s Resource:</strong> Service (<code class="text-slate-200">type: LoadBalancer</code>)</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-mono">Tested: curl http://&lt;NLB-DNS&gt;</span>
+            </div>
+
+            <!-- Option 2: ALB Layer 7 HTTP (Ex 6) -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-blue-400 font-bold font-mono text-sm">Option 2: AWS ALB (HTTP)</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-300 border border-blue-500/30">Example 6</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed">
+                  Layer 7 HTTP routing using AWS Application Load Balancer. Inspects Host headers (<code class="text-cyan-300 font-mono">ex6.aiguru.website</code>) and URL paths, performing health checks on <code class="text-slate-200 font-mono">/health</code>.
+                </p>
+                <div class="space-y-1 font-mono text-[11px] text-slate-400 pt-1">
+                  <div><strong>Protocol:</strong> HTTP:80 / Layer 7</div>
+                  <div><strong>TLS Termination:</strong> None (Plaintext HTTP)</div>
+                  <div><strong>Target Mode:</strong> <code class="text-blue-300">target-type: ip</code></div>
+                  <div><strong>K8s Resource:</strong> Ingress (<code class="text-slate-200">ingressClassName: alb</code>)</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-mono">Tested: curl http://ex6.aiguru.website</span>
+            </div>
+
+            <!-- Option 3: ALB Layer 7 HTTPS + ACM (Ex 7) -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-pink-400 font-bold font-mono text-sm">Option 3: ALB + HTTPS (ACM)</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-pink-500/10 text-pink-300 border border-pink-500/30">Example 7</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed">
+                  Enterprise SSL offloading at AWS edge. ALB terminates TLS 1.3 using an AWS ACM certificate (<code class="text-cyan-300 font-mono">*.aiguru.website</code>) and auto-redirects HTTP:80 &rarr; HTTPS:443.
+                </p>
+                <div class="space-y-1 font-mono text-[11px] text-slate-400 pt-1">
+                  <div><strong>Protocol:</strong> HTTPS:443 (with 301 Redirect)</div>
+                  <div><strong>TLS Termination:</strong> AWS ALB Hardware (Edge)</div>
+                  <div><strong>SSL Cert:</strong> AWS Certificate Manager (ACM)</div>
+                  <div><strong>Pod Traffic:</strong> Decrypted inside private VPC</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-mono">Tested: curl -v https://ex7.aiguru.website</span>
+            </div>
+
+            <!-- Option 4: Ingress-NGINX over NLB (Ex 8) -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-amber-400 font-bold font-mono text-sm">Option 4: Ingress-NGINX (HTTP)</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30">Example 8</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed">
+                  Kubernetes-native ingress controller. AWS NLB passes TCP:80 directly to NGINX pods in the cluster, which evaluate routing rules and proxy traffic to backend services.
+                </p>
+                <div class="space-y-1 font-mono text-[11px] text-slate-400 pt-1">
+                  <div><strong>Protocol:</strong> TCP:80 &rarr; HTTP Layer 7 NGINX</div>
+                  <div><strong>TLS Termination:</strong> None (Plaintext HTTP)</div>
+                  <div><strong>Controller:</strong> Ingress NGINX (Helm 16)</div>
+                  <div><strong>K8s Resource:</strong> Ingress (<code class="text-slate-200">ingressClassName: external-nginx</code>)</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-mono">Tested: curl http://ex8.aiguru.website</span>
+            </div>
+
+            <!-- Option 5: Ingress-NGINX + Cert-Manager (Ex 9) -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between md:col-span-2 lg:col-span-2">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-emerald-400 font-bold font-mono text-sm">Option 5: Ingress-NGINX + Cert-Manager (Let's Encrypt TLS)</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Example 9</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed">
+                  100% automated, zero-touch Kubernetes PKI. AWS NLB passes encrypted TCP:443 to Ingress-NGINX. Cert-Manager automates ACME HTTP-01 challenge verification, requests free certificates from Let's Encrypt, writes TLS keys into Kubernetes Secrets (<code class="text-cyan-300 font-mono">ex9-aiguru-website-tls</code>), and auto-renews them.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-[11px] text-slate-400 pt-1">
+                  <div><strong>Protocol:</strong> HTTPS:443 (End-to-End)</div>
+                  <div><strong>TLS Termination:</strong> Ingress-NGINX Pods (Cluster)</div>
+                  <div><strong>Certificate Authority:</strong> Let's Encrypt (Public CA)</div>
+                  <div><strong>Automated Solver:</strong> ACME HTTP-01 (<code class="text-emerald-300">/.well-known/acme-challenge</code>)</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-mono">Tested: curl -v https://ex9.aiguru.website</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEFENSE IN DEPTH: SECURITY TIERS -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h4 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-rose-400"></i> Defense-in-Depth Security & Firewall Rules
+            </h4>
+            <p class="text-xs text-slate-400">How AWS and Kubernetes isolate private worker nodes from direct internet exposure.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-sans">
+            <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-cyan-400 font-bold font-mono block">1. Perimeter Firewalls (Edge)</span>
+              <ul class="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
+                <li><strong>AWS Shield Standard:</strong> Always-on L3/L4 DDoS mitigation.</li>
+                <li><strong>Internet Gateway:</strong> Allows public traffic only destined for public subnet load balancers.</li>
+                <li><strong>Subnet NACLs:</strong> Stateless boundary packet filtering.</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-amber-400 font-bold font-mono block">2. Security Groups (Stateful)</span>
+              <ul class="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
+                <li><strong>ELB Security Group:</strong> Permits Inbound Port 80 & 443 from <code class="text-slate-200 font-mono">0.0.0.0/0</code>.</li>
+                <li><strong>Worker Node Security Group:</strong> Forbids direct internet connections! Permits inbound traffic <em>only</em> from the ELB Security Group or VPC CIDR.</li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold font-mono block">3. Private Subnet Isolation</span>
+              <ul class="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
+                <li><strong>Zero Public IPs:</strong> Worker nodes and application pods never receive public IP addresses.</li>
+                <li><strong>Private Route Tables:</strong> Only route outbound default traffic (<code class="text-slate-200 font-mono">0.0.0.0/0</code>) to the NAT Gateway.</li>
+                <li><strong>Zero Attack Surface:</strong> Attackers on the internet cannot scan, ping, or connect directly to any node or pod.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 5.2 OUTBOUND (EGRESS) ARCHITECTURE & TRAFFIC FLOW -->
+      <!-- ========================================================================= -->
+      <div class="space-y-6 pt-4 border-t border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 font-mono font-bold flex items-center justify-center text-xs border border-amber-500/40">5.2</span>
+              Outbound (Egress) Architecture & Traffic Flow (Pods &rarr; Internet via NAT Gateway)
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Detailed packet tracing when a private worker node contacts external APIs (Docker Hub, GitHub, AWS APIs) via the NAT Gateway.</p>
+          </div>
+          <span class="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-xs rounded-full w-fit">
+            SNAT with Elastic IP
+          </span>
+        </div>
+
+        <!-- ANIMATED NAT GATEWAY SVG -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h4 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-arrow-right-arrow-left text-amber-400"></i> Outbound Packet Flow via NAT Gateway
+              </h4>
+              <p class="text-xs text-slate-400">Visualizing Source Network Address Translation (SNAT) from Private Node to Public Internet.</p>
+            </div>
+            <span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-xs rounded-full w-fit">
+              Elastic IP Attached: domain = "vpc"
+            </span>
+          </div>
+
+          <div class="w-full overflow-x-auto py-2">
+            <svg viewBox="0 0 920 220" class="w-full min-w-[850px] h-auto text-xs font-mono">
+              <!-- Background Zone Boxes -->
+              <rect x="20" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#10b981" stroke-width="1.5"/>
+              <text x="35" y="42" fill="#34d399" font-weight="bold">1. PRIVATE SUBNET</text>
+              <text x="35" y="58" fill="#64748b" font-size="10">10.0.0.0/19 | eu-north-1a</text>
+
+              <rect x="260" y="20" width="180" height="180" rx="10" fill="#090d16" stroke="#6366f1" stroke-width="1.5"/>
+              <text x="275" y="42" fill="#818cf8" font-weight="bold">2. ROUTE TABLE</text>
+              <text x="275" y="58" fill="#64748b" font-size="10">0.0.0.0/0 -> nat-xxx</text>
+
+              <rect x="460" y="20" width="200" height="180" rx="10" fill="#090d16" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="475" y="42" fill="#fbbf24" font-weight="bold">3. PUBLIC SUBNET</text>
+              <text x="475" y="58" fill="#64748b" font-size="10">10.0.64.0/19 | NAT Gateway</text>
+
+              <rect x="680" y="20" width="220" height="180" rx="10" fill="#090d16" stroke="#0ea5e9" stroke-width="1.5"/>
+              <text x="695" y="42" fill="#38bdf8" font-weight="bold">4. INTERNET GATEWAY</text>
+              <text x="695" y="58" fill="#64748b" font-size="10">Public Internet (0.0.0.0/0)</text>
+
+              <!-- Node 1 Component -->
+              <rect x="40" y="80" width="170" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+              <text x="125" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">Worker Pod</text>
+              <text x="125" y="122" fill="#34d399" font-size="9" text-anchor="middle">Src IP: 10.0.12.45</text>
+
+              <!-- Route Component -->
+              <rect x="280" y="80" width="140" height="60" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+              <text x="350" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-private</text>
+              <text x="350" y="122" fill="#a5b4fc" font-size="9" text-anchor="middle">Target: nat-gateway</text>
+
+              <!-- NAT Component -->
+              <rect x="480" y="80" width="160" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1" class="pulse-box-amber"/>
+              <text x="560" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">NAT Gateway</text>
+              <text x="560" y="122" fill="#fbbf24" font-size="9" text-anchor="middle">SNAT to Elastic IP</text>
+
+              <!-- IGW Component -->
+              <rect x="700" y="80" width="180" height="60" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="1"/>
+              <text x="790" y="105" fill="#f8fafc" font-weight="bold" text-anchor="middle">staging-igw</text>
+              <text x="790" y="122" fill="#7dd3fc" font-size="9" text-anchor="middle">Docker Hub / GitHub</text>
+
+              <!-- Path lines -->
+              <path d="M 210 110 L 280 110" stroke="#10b981" stroke-width="2.5" class="flow-dash"/>
+              <path d="M 420 110 L 480 110" stroke="#f59e0b" stroke-width="2.5" class="flow-dash"/>
+              <path d="M 640 110 L 700 110" stroke="#0ea5e9" stroke-width="2.5" class="flow-dash"/>
+
+              <!-- Moving Packet Animation -->
+              <circle cx="70" cy="110" r="7" fill="#f59e0b" class="anim-packet-nat"/>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
