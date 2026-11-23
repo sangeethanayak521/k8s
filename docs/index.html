@@ -2095,29 +2095,29 @@ kubectl get secret -n 9-example ex9-aiguru-website-tls</code></pre>
     "num": "11",
     "file": "11-helm-provider.tf",
     "category": "Helm & K8s Auth",
-    "aws_resources": "Data Sources: aws_eks_cluster, aws_eks_cluster_auth",
-    "purpose": "Configures authentication for the Helm and Kubernetes providers. Extracts the API endpoint, cluster Certificate Authority, and temporary bearer token directly from EKS to manage Kubernetes resources inside Terraform.",
-    "code": "data \"aws_eks_cluster\" \"eks\" {\n  name = \"${local.env}-${local.eks_name}\"\n}\n\ndata \"aws_eks_cluster_auth\" \"eks\" {\n  name = \"${local.env}-${local.eks_name}\"\n}\n\nprovider \"helm\" {\n  kubernetes {\n    host                   = data.aws_eks_cluster.eks.endpoint\n    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n    token                  = data.aws_eks_cluster_auth.eks.token\n  }\n}\n\nprovider \"kubernetes\" {\n  host                   = data.aws_eks_cluster.eks.endpoint\n  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)\n  token                  = data.aws_eks_cluster_auth.eks.token\n}",
+    "aws_resources": "Data Source: aws_eks_cluster_auth | Direct Resource: aws_eks_cluster.eks",
+    "purpose": "Configures authentication for the Helm and Kubernetes providers directly from the managed aws_eks_cluster.eks resource. By avoiding a pre-creation data lookup, brand-new clusters can be provisioned without 'couldn't find resource' errors.",
+    "code": "data \"aws_eks_cluster_auth\" \"eks\" {\n  name = aws_eks_cluster.eks.name\n}\n\nprovider \"helm\" {\n  kubernetes {\n    host                   = aws_eks_cluster.eks.endpoint\n    cluster_ca_certificate = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)\n    token                  = data.aws_eks_cluster_auth.eks.token\n  }\n}\n\nprovider \"kubernetes\" {\n  host                   = aws_eks_cluster.eks.endpoint\n  cluster_ca_certificate = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)\n  token                  = data.aws_eks_cluster_auth.eks.token\n}",
     "components_used": [
       [
-        "name = '${local.env}-${local.eks_name}'",
-        "CRITICAL FIX. Using static string decouples data sources from pending cluster changes, preventing (known after apply) provider planning errors."
-      ],
-      [
-        "host = data.aws_eks_cluster.eks.endpoint",
-        "The public HTTPS URL of kube-apiserver."
+        "host = aws_eks_cluster.eks.endpoint",
+        "Direct reference to the EKS cluster resource being created in 7-eks.tf, eliminating premature data lookup."
       ],
       [
         "cluster_ca_certificate = base64decode(...)",
-        "Root certificate ensuring encrypted TLS communication with API server."
+        "Extracts the root CA certificate directly from the managed EKS cluster resource."
+      ],
+      [
+        "name = aws_eks_cluster.eks.name",
+        "Explicitly links the STS authentication token generation to the managed cluster name."
       ],
       [
         "token = data.aws_eks_cluster_auth.eks.token",
-        "Short-lived 15-minute STS authentication token generated on the fly."
+        "Short-lived STS bearer token used to authenticate Helm releases to kube-apiserver."
       ]
     ],
-    "dependencies": "Upstream: 7-eks.tf cluster endpoint. Downstream: Authenticates all Helm charts in 12, 14, 15, 16, 17, 20, and 21 .tf files.",
-    "pitfalls": "Common Error: Referencing aws_eks_cluster.eks.name inside data source block. During cluster updates, Terraform treats the name as unknown, breaking provider initialization."
+    "dependencies": "Upstream: 7-eks.tf (aws_eks_cluster.eks). Downstream: Authenticates all Helm charts in 12, 14, 15, 16, 17, 20, and 21 .tf files.",
+    "pitfalls": "Critical Fix: Never use data 'aws_eks_cluster' to read a cluster created in the same project. During a brand-new implementation, the data source queries AWS before the cluster exists, causing 'Error: reading EKS Cluster: couldn't find resource'."
   },
   "12-metrics-server": {
     "num": "12",
